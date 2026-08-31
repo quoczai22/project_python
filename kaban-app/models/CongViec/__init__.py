@@ -1,4 +1,4 @@
-from .CongViecThuong import CongViecThuong
+from .CongViecThuong import CongViec, CongViecThuong
 from .CongViecKhan import CongViecKhan
 
-__all__ = ["CongViecThuong", "CongViecKhan"]
+__all__ = ["CongViec", "CongViecThuong", "CongViecKhan"]

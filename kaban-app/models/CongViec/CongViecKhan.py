@@ -4,8 +4,9 @@ from .CongViecThuong import CongViecThuong
 class CongViecKhan(CongViecThuong):
     """Công việc ưu tiên khẩn, cảnh báo hạn chót sớm hơn việc thường."""
 
-    def __init__(self, maCongViec, tieuDe, moTa, nguoiPhuTrach, ngayBatDau, ngayKetThuc, trangThai="Cần làm", mucUuTien="Khẩn", nhan="Backend"):
-        super().__init__(maCongViec, tieuDe, moTa, nguoiPhuTrach, ngayBatDau, ngayKetThuc, trangThai, mucUuTien, nhan)
+    def __init__(self, maCongViec, tieuDe, moTa, nguoiPhuTrach, ngayBatDau, ngayKetThuc, trangThai="Cần làm", nhan="Backend"):
+        # Công việc thuộc class này luôn có mức ưu tiên Khẩn.
+        super().__init__(maCongViec, tieuDe, moTa, nguoiPhuTrach, ngayBatDau, ngayKetThuc, trangThai, "Khẩn", nhan)
 
     def CanhBao(self):
         if self.DaQuaHan():

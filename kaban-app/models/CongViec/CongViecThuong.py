@@ -30,8 +30,8 @@ class CongViecThuong:
         if not maCongViec or not re.match(r"^CV-\d{3,}$", str(maCongViec)):
             print(f"Mã công việc {maCongViec} sai định dạng (VD: CV-001)")
             self._maCongViec = None
-        else:
-            self._maCongViec = maCongViec
+            return
+        self._maCongViec = str(maCongViec)
 
     @property
     def TieuDe(self):
@@ -42,8 +42,8 @@ class CongViecThuong:
         if not tieuDe or not str(tieuDe).strip():
             print("Tiêu đề không được để trống")
             self._tieuDe = ""
-        else:
-            self._tieuDe = str(tieuDe).strip()
+            return
+        self._tieuDe = str(tieuDe).strip()
 
     @property
     def MoTa(self):
@@ -62,8 +62,8 @@ class CongViecThuong:
         if not nguoiPhuTrach or not str(nguoiPhuTrach).strip():
             print("Người phụ trách không được để trống")
             self._nguoiPhuTrach = ""
-        else:
-            self._nguoiPhuTrach = str(nguoiPhuTrach).strip()
+            return
+        self._nguoiPhuTrach = str(nguoiPhuTrach).strip()
 
     @property
     def NgayBatDau(self):
@@ -73,12 +73,14 @@ class CongViecThuong:
     def NgayBatDau(self, ngayBatDau):
         try:
             if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(ngayBatDau)):
-                raise ValueError("phải có dạng YYYY-MM-DD")
-
+                print("Ngày bắt đầu phải có dạng YYYY-MM-DD")
+                self._ngayBatDau = None
+                return
             datetime.strptime(str(ngayBatDau), "%Y-%m-%d")
             self._ngayBatDau = str(ngayBatDau)
         except ValueError as loi:
-            raise ValueError(f"Ngày bắt đầu không hợp lệ: {loi}")
+            print(f"Ngày bắt đầu không hợp lệ: {loi}")
+            self._ngayBatDau = None
 
     @property
     def NgayKetThuc(self):
@@ -88,7 +90,9 @@ class CongViecThuong:
     def NgayKetThuc(self, ngayKetThuc):
         try:
             if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(ngayKetThuc)):
-                raise ValueError("phải có dạng YYYY-MM-DD")
+                print("Ngày kết thúc phải có dạng YYYY-MM-DD")
+                self._ngayKetThuc = None
+                return
 
             ngay_ket_thuc = datetime.strptime(
                 str(ngayKetThuc), "%Y-%m-%d"
@@ -99,11 +103,14 @@ class CongViecThuong:
                     self._ngayBatDau, "%Y-%m-%d"
                 ).date()
                 if ngay_ket_thuc < ngay_bat_dau:
-                    raise ValueError("không được trước ngày bắt đầu")
+                    print("Ngày kết thúc không được trước ngày bắt đầu")
+                    self._ngayKetThuc = None
+                    return
 
             self._ngayKetThuc = str(ngayKetThuc)
         except ValueError as loi:
-            raise ValueError(f"Ngày kết thúc không hợp lệ: {loi}")
+            print(f"Ngày kết thúc không hợp lệ: {loi}")
+            self._ngayKetThuc = None
 
     @property
     def TrangThai(self):
@@ -112,10 +119,10 @@ class CongViecThuong:
     @TrangThai.setter
     def TrangThai(self, trangThai):
         if trangThai not in TRANG_THAI_HOP_LE:
-            raise ValueError(
-                "Trạng thái không hợp lệ. Giá trị hợp lệ: "
-                + ", ".join(TRANG_THAI_HOP_LE)
-            )
+            print("Trạng thái không hợp lệ. Giá trị hợp lệ: "
+                  + ", ".join(TRANG_THAI_HOP_LE))
+            self._trangThai = TRANG_THAI_HOP_LE[0]
+            return
         self._trangThai = trangThai
 
     @property
@@ -125,10 +132,10 @@ class CongViecThuong:
     @MucUuTien.setter
     def MucUuTien(self, mucUuTien):
         if mucUuTien not in MUC_UU_TIEN_HOP_LE:
-            raise ValueError(
-                "Mức ưu tiên không hợp lệ. Giá trị hợp lệ: "
-                + ", ".join(MUC_UU_TIEN_HOP_LE)
-            )
+            print("Mức ưu tiên không hợp lệ. Giá trị hợp lệ: "
+                  + ", ".join(MUC_UU_TIEN_HOP_LE))
+            self._mucUuTien = "Trung bình"
+            return
         self._mucUuTien = mucUuTien
 
     @property
@@ -138,10 +145,10 @@ class CongViecThuong:
     @Nhan.setter
     def Nhan(self, nhan):
         if nhan not in NHAN_HOP_LE:
-            raise ValueError(
-                "Nhãn không hợp lệ. Giá trị hợp lệ: "
-                + ", ".join(NHAN_HOP_LE)
-            )
+            print("Nhãn không hợp lệ. Giá trị hợp lệ: "
+                  + ", ".join(NHAN_HOP_LE))
+            self._nhan = NHAN_HOP_LE[0]
+            return
         self._nhan = nhan
 
     def CapNhatCongViec(self, data):
@@ -159,6 +166,7 @@ class CongViecThuong:
 
     def toDict(self):
         return {
+            "LoaiCongViec": self.__class__.__name__,
             "MaCongViec": self.MaCongViec,
             "TieuDe": self.TieuDe,
             "MoTa": self.MoTa,
@@ -173,7 +181,23 @@ class CongViecThuong:
     @classmethod #tạo 1 object từ dict
     def fromDict(cls, data): 
         if not isinstance(data, dict):
+            print("Dữ liệu công việc phải là dictionary")
             return None
+
+        if (data.get("LoaiCongViec") == "CongViecKhan"
+                or data.get("MucUuTien") == "Khẩn"):
+            # Import cục bộ để tránh vòng lặp import giữa hai class.
+            from .CongViecKhan import CongViecKhan
+            return CongViecKhan(
+                maCongViec=data.get("MaCongViec"),
+                tieuDe=data.get("TieuDe"),
+                moTa=data.get("MoTa", ""),
+                nguoiPhuTrach=data.get("NguoiPhuTrach"),
+                ngayBatDau=data.get("NgayBatDau"),
+                ngayKetThuc=data.get("NgayKetThuc"),
+                trangThai=data.get("TrangThai", "Cần làm"),
+                nhan=data.get("Nhan")
+            )
 
         return cls(
             maCongViec=data.get("MaCongViec"),
@@ -223,30 +247,5 @@ class CongViecThuong:
     
     def IsHoanThanh(self):
         return self.TrangThai.lower() == "hoàn thành"
-
-    def ThemNhan(self,nhanMoi):
-        if nhanMoi not in NHAN_HOP_LE:
-            raise ValueError(
-                "Nhãn không hợp lệ. Giá trị hợp lệ: "
-                + ", ".join(NHAN_HOP_LE)
-            )
-        self.Nhan.append(nhanMoi)
-        print(f"Đã thêm nhãn {nhanMoi} cho công việc {self.MaCongViec}")
-        return True
-
-    def XoaNhan(self,nhanCanXoa):
-        if nhanCanXoa not in self.Nhan:
-            print(f"Không tìm thấy nhãn {nhanCanXoa} trong công việc {self.MaCongViec}")
-            return False
-        self.Nhan.remove(nhanCanXoa)
-        print(f"Đã xóa nhãn {nhanCanXoa} khỏi công việc {self.MaCongViec}")
-        return True
-
-    def TimNhan(self,nhanCanTim):
-        if nhanCanTim in self.Nhan:
-            print(f"Đã tìm thấy nhãn {nhanCanTim} trong công việc {self.MaCongViec}")
-            return True
-        print(f"Không tìm thấy nhãn {nhanCanTim} trong công việc {self.MaCongViec}")
-        return False
 
 
