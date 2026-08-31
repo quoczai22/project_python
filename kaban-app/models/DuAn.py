@@ -111,6 +111,14 @@ class DuAn:
             return
         self._danhSachCot = danhSachCot
 
+    @property
+    def soLuongCongViec(self):
+        return len(self.danhSachCongViec)
+
+    @property
+    def soLuongThanhVien(self):
+        return len(self.thanhVienThamGia)
+
     def ThemCongViec(self, congViec):
         """Thêm công việc vào dự án, kiểm tra trùng mã và cột trạng thái hợp lệ."""
         from models.CongViec import CongViec
