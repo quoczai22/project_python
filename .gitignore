@@ -22,3 +22,8 @@ dist/
 .idea/
 .DS_Store
 Thumbs.db
+
+# Ghi chú/báo cáo nội bộ tạo cùng trợ lý
+REPORT_QUAN_LY_KANBAN.md
+REPORT_CLAUDE_MODEL_REVIEW.md
+XUAT_CODE_DE_REVIEW.md

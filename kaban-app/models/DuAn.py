@@ -3,267 +3,186 @@ from datetime import datetime
 from config import TRANG_THAI_HOP_LE
 
 class DuAn:
-    def __init__(self, maDuAn, tenDuAn, danhSachCot=None, thanhVienThamGia=None,danhSachCongViec=None,ngayTao=None):
-        self.maDuAn = maDuAn
-        self.tenDuAn = tenDuAn
-        self.danhSachCot = danhSachCot if danhSachCot is not None else list(TRANG_THAI_HOP_LE)
-        self.thanhVienThamGia = thanhVienThamGia if thanhVienThamGia is not None else []
-        self.danhSachCongViec = danhSachCongViec if danhSachCongViec is not None else []
-        self.ngayTao = ngayTao if ngayTao is not None else datetime.now().strftime("%Y-%m-%d")
+    def __init__(self, ma_du_an, ten_du_an, danh_sach_cot=None, thanh_vien_tham_gia=None, danh_sach_cong_viec=None, ngay_tao=None):
+        self.ma_du_an = ma_du_an
+        self.ten_du_an = ten_du_an
+        self.danh_sach_cot = danh_sach_cot if danh_sach_cot is not None else list(TRANG_THAI_HOP_LE)
+        self.thanh_vien_tham_gia = thanh_vien_tham_gia if thanh_vien_tham_gia is not None else []
+        self.danh_sach_cong_viec = danh_sach_cong_viec if danh_sach_cong_viec is not None else []
+        self.ngay_tao = ngay_tao if ngay_tao is not None else datetime.now().strftime("%Y-%m-%d")
         
     def __str__(self):
-        return f"DuAn(MaDuAn={self.maDuAn}, TenDuAn={self.tenDuAn}, DanhSachCot={self.danhSachCot}, ThanhVienThamGia={self.thanhVienThamGia}, DanhSachCongViec={self.danhSachCongViec}, NgayTao={self.ngayTao})"
+        return f"DuAn(MaDuAn={self.ma_du_an}, TenDuAn={self.ten_du_an}, DanhSachCot={self.danh_sach_cot}, ThanhVienThamGia={self.thanh_vien_tham_gia}, DanhSachCongViec={self.danh_sach_cong_viec}, NgayTao={self.ngay_tao})"
     
     def __repr__(self):
         return self.__str__()
 
     @property
-    def maDuAn(self):
-        return getattr(self, "_maDuAn", None)
+    def ma_du_an(self):
+        return getattr(self, "_ma_du_an", None)
 
-    @maDuAn.setter
-    def maDuAn(self, maDuAn):
-        if not maDuAn or not re.match(r"^DA-\d{3,}$", str(maDuAn)):
-            print(f"Mã dự án {maDuAn} sai định dạng (VD: DA-001)")
-            self._maDuAn = None
+    @ma_du_an.setter
+    def ma_du_an(self, ma_du_an):
+        if not ma_du_an or not re.match(r"^DA-\d{3,}$", str(ma_du_an)):
+            print(f"Mã dự án {ma_du_an} sai định dạng (VD: DA-001)")
+            self._ma_du_an = None
             return
-        self._maDuAn = str(maDuAn)
+        self._ma_du_an = str(ma_du_an)
 
     @property
-    def tenDuAn(self):
-        return getattr(self, "_tenDuAn", None)
+    def ten_du_an(self):
+        return getattr(self, "_ten_du_an", None)
 
-    @tenDuAn.setter
-    def tenDuAn(self, tenDuAn):
-        if not tenDuAn or not str(tenDuAn).strip():
+    @ten_du_an.setter
+    def ten_du_an(self, ten_du_an):
+        if not ten_du_an or not str(ten_du_an).strip():
             print("Tên dự án không được để trống")
-            self._tenDuAn = ""
+            self._ten_du_an = ""
             return
-        self._tenDuAn = str(tenDuAn).strip()
+        self._ten_du_an = str(ten_du_an).strip()
     
     @property
-    def ngayTao(self):
-        return getattr(self, "_ngayTao", None)
+    def ngay_tao(self):
+        return getattr(self, "_ngay_tao", None)
 
-    @ngayTao.setter
-    def ngayTao(self, ngayTao):
+    @ngay_tao.setter
+    def ngay_tao(self, ngay_tao):
         try:
-            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(ngayTao)):
+            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(ngay_tao)):
                 print("Ngày tạo phải có dạng YYYY-MM-DD")
-                self._ngayTao = None
+                self._ngay_tao = None
                 return
-            datetime.strptime(str(ngayTao), "%Y-%m-%d")
-            self._ngayTao = str(ngayTao)
+            datetime.strptime(str(ngay_tao), "%Y-%m-%d")
+            self._ngay_tao = str(ngay_tao)
         except ValueError as loi:
             print(f"Ngày tạo không hợp lệ: {loi}")
-            self._ngayTao = None
+            self._ngay_tao = None
 
     @property
-    def thanhVienThamGia(self):
-        return getattr(self, "_thanhVienThamGia", None)
+    def thanh_vien_tham_gia(self):
+        return getattr(self, "_thanh_vien_tham_gia", None)
 
-    @thanhVienThamGia.setter
-    def thanhVienThamGia(self, thanhVienThamGia):
-        if not isinstance(thanhVienThamGia, list):
+    @thanh_vien_tham_gia.setter
+    def thanh_vien_tham_gia(self, thanh_vien_tham_gia):
+        if not isinstance(thanh_vien_tham_gia, list):
             print("Danh sách thành viên phải là list")
-            self._thanhVienThamGia = []
+            self._thanh_vien_tham_gia = []
             return
         if any(not isinstance(thanh_vien, str) or not thanh_vien.strip()
-               for thanh_vien in thanhVienThamGia):
+               for thanh_vien in thanh_vien_tham_gia):
             print("Mỗi thành viên phải là tên đăng nhập không rỗng")
-            self._thanhVienThamGia = []
+            self._thanh_vien_tham_gia = []
             return
-        if len(thanhVienThamGia) != len(set(thanhVienThamGia)):
+        if len(thanh_vien_tham_gia) != len(set(thanh_vien_tham_gia)):
             print("Danh sách thành viên không được trùng")
-            self._thanhVienThamGia = []
+            self._thanh_vien_tham_gia = []
             return
-        self._thanhVienThamGia = thanhVienThamGia
+        self._thanh_vien_tham_gia = thanh_vien_tham_gia
 
     @property
-    def danhSachCongViec(self):
-        return getattr(self, "_danhSachCongViec", None)
+    def danh_sach_cong_viec(self):
+        return getattr(self, "_danh_sach_cong_viec", None)
 
-    @danhSachCongViec.setter
-    def danhSachCongViec(self, danhSachCongViec):
-        if not isinstance(danhSachCongViec, list):
+    @danh_sach_cong_viec.setter
+    def danh_sach_cong_viec(self, danh_sach_cong_viec):
+        if not isinstance(danh_sach_cong_viec, list):
             print("Danh sách công việc phải là list")
-            self._danhSachCongViec = []
+            self._danh_sach_cong_viec = []
             return
-        self._danhSachCongViec = danhSachCongViec
+        self._danh_sach_cong_viec = danh_sach_cong_viec
 
     @property
-    def danhSachCot(self):
-        return getattr(self, "_danhSachCot", None)
+    def danh_sach_cot(self):
+        return getattr(self, "_danh_sach_cot", None)
 
-    @danhSachCot.setter
-    def danhSachCot(self, danhSachCot):
-        if not isinstance(danhSachCot, list) or not danhSachCot:
+    @danh_sach_cot.setter
+    def danh_sach_cot(self, danh_sach_cot):
+        if not isinstance(danh_sach_cot, list) or not danh_sach_cot:
             print("Danh sách cột phải là list không rỗng")
-            self._danhSachCot = list(TRANG_THAI_HOP_LE)
+            self._danh_sach_cot = list(TRANG_THAI_HOP_LE)
             return
-        if len(danhSachCot) != len(set(danhSachCot)):
+        if len(danh_sach_cot) != len(set(danh_sach_cot)):
             print("Danh sách cột không được trùng")
-            self._danhSachCot = list(TRANG_THAI_HOP_LE)
+            self._danh_sach_cot = list(TRANG_THAI_HOP_LE)
             return
-        if any(cot not in TRANG_THAI_HOP_LE for cot in danhSachCot):
+        if any(cot not in TRANG_THAI_HOP_LE for cot in danh_sach_cot):
             print("Danh sách cột có trạng thái không hợp lệ")
-            self._danhSachCot = list(TRANG_THAI_HOP_LE)
+            self._danh_sach_cot = list(TRANG_THAI_HOP_LE)
             return
-        self._danhSachCot = danhSachCot
+        self._danh_sach_cot = danh_sach_cot
 
-    @property
-    def soLuongCongViec(self):
-        return len(self.danhSachCongViec)
-
-    @property
-    def soLuongThanhVien(self):
-        return len(self.thanhVienThamGia)
-
-    def ThemCongViec(self, congViec):
-        """Thêm công việc vào dự án, kiểm tra trùng mã và cột trạng thái hợp lệ."""
+    def them_cong_viec(self, cong_viec):
+        """Thêm công việc vào dự án, kiểm tra trùng mã."""
         from models.CongViec import CongViec
 
-        if not isinstance(congViec, CongViec):
+        if not isinstance(cong_viec, CongViec):
             print("Công việc phải là object CongViec")
             return False
 
-        if self.TimCongViecTheoMa(congViec.MaCongViec) is not None:
-            print(f"Mã công việc '{congViec.MaCongViec}' đã tồn tại")
+        if self.tim_cong_viec_theo_ma(cong_viec.ma_cong_viec) is not None:
+            print(f"Mã công việc '{cong_viec.ma_cong_viec}' đã tồn tại")
             return False
-        if congViec.TrangThai not in self.danhSachCot:
-            print(f"Trạng thái '{congViec.TrangThai}' không thuộc danh sách cột của dự án này")
-            return False
-        self._danhSachCongViec.append(congViec)
+        self._danh_sach_cong_viec.append(cong_viec)
         return True
 
-    def XoaCongViec(self, maCongViec):
+    def xoa_cong_viec(self, ma_cong_viec):
         """Xóa công việc theo mã; trả về True nếu tìm thấy và xóa thành công."""
-        cong_viec = self.TimCongViecTheoMa(maCongViec)
+        cong_viec = self.tim_cong_viec_theo_ma(ma_cong_viec)
         if cong_viec is None:
-            print(f"Không tìm thấy công việc '{maCongViec}'")
             return False
-        self._danhSachCongViec.remove(cong_viec)
+        self._danh_sach_cong_viec.remove(cong_viec)
         return True
 
-    def TimCongViecTheoMa(self, maCongViec):
+    def tim_cong_viec_theo_ma(self, ma_cong_viec):
         """Tìm và trả về công việc theo mã; không có thì trả về None."""
-        for cong_viec in self._danhSachCongViec:
-            if cong_viec.MaCongViec == maCongViec:
+        for cong_viec in self._danh_sach_cong_viec:
+            if cong_viec.ma_cong_viec == ma_cong_viec:
                 return cong_viec
         return None
 
-    def ThemThanhVien(self, tenDangNhap):
+    def them_thanh_vien(self, ten_dang_nhap):
         """Thêm username thành viên vào dự án."""
-        if not isinstance(tenDangNhap, str) or not tenDangNhap.strip():
+        if not isinstance(ten_dang_nhap, str) or not ten_dang_nhap.strip():
             print("Tên đăng nhập không được để trống")
             return False
-        if tenDangNhap in self._thanhVienThamGia:
-            print(f"Thành viên '{tenDangNhap}' đã có trong dự án")
+        if ten_dang_nhap in self._thanh_vien_tham_gia:
+            print(f"Thành viên '{ten_dang_nhap}' đã có trong dự án")
             return False
-        self._thanhVienThamGia.append(tenDangNhap.strip())
+        self._thanh_vien_tham_gia.append(ten_dang_nhap)
         return True
 
-    def XoaThanhVien(self, tenDangNhap):
+    def xoa_thanh_vien(self, ten_dang_nhap):
         """Xóa username khỏi dự án; trả về True nếu tìm thấy và xóa thành công."""
-        if not isinstance(tenDangNhap, str) or not tenDangNhap.strip():
+        if ten_dang_nhap not in self._thanh_vien_tham_gia:
             return False
-        ten_dang_nhap = tenDangNhap.strip()
-        if ten_dang_nhap not in self._thanhVienThamGia:
-            print(f"Không tìm thấy thành viên '{ten_dang_nhap}' trong dự án")
-            return False
-        self._thanhVienThamGia.remove(ten_dang_nhap)
+        self._thanh_vien_tham_gia.remove(ten_dang_nhap)
         return True
 
-    def LayCongViecTheoTrangThai(self, trangThai):
+    def lay_cong_viec_theo_trang_thai(self, trang_thai):
         """Lấy các công việc đang thuộc một cột Kanban."""
-        if trangThai not in self.danhSachCot:
-            print(f"Trạng thái '{trangThai}' không thuộc dự án")
+        if trang_thai not in self.danh_sach_cot:
+            print(f"Trạng thái '{trang_thai}' không thuộc dự án")
             return []
         return [
-            cong_viec for cong_viec in self._danhSachCongViec
-            if cong_viec.TrangThai == trangThai
+            cong_viec for cong_viec in self._danh_sach_cong_viec
+            if cong_viec.trang_thai == trang_thai
         ]
 
-    def TimKiem(self, tuKhoa):
-        """Tìm công việc theo tiêu đề hoặc mã, không phân biệt hoa thường."""
-        if not tuKhoa or not str(tuKhoa).strip():
-            return list(self._danhSachCongViec)
-        tu_khoa = str(tuKhoa).lower().strip()
-        return [
-            cv for cv in self._danhSachCongViec
-            if tu_khoa in str(cv.TieuDe or "").lower()
-            or tu_khoa in str(cv.MaCongViec or "").lower()
-        ]
-
-    def LocTheoCot(self, tenCot):
-        """Lọc công việc theo cột trạng thái."""
-        return self.LayCongViecTheoTrangThai(tenCot)
-
-    def LocTheoNguoiPhuTrach(self, tenDangNhap):
-        """Lọc danh sách các công việc được giao cho một người phụ trách."""
-        if not tenDangNhap or not str(tenDangNhap).strip():
-            return []
-        nguoi_pt = str(tenDangNhap).strip().lower()
-        return [
-            cv for cv in self._danhSachCongViec
-            if str(cv.NguoiPhuTrach or "").strip().lower() == nguoi_pt
-        ]
-
-    def LocTheoNhan(self, tenNhan):
-        """Lọc danh sách công việc theo nhãn."""
-        if not tenNhan:
-            return []
-        return [
-            cv for cv in self._danhSachCongViec
-            if cv.Nhan == tenNhan
-        ]
-
-    def DemTheoCot(self):
-
-        return {
-            cot: len(self.LayCongViecTheoTrangThai(cot))
-            for cot in self.danhSachCot
-        }
-
-    def DemQuaHan(self):
-        """Đếm số công việc chưa hoàn thành nhưng đã quá hạn."""
-        return len([
-            cv for cv in self._danhSachCongViec
-            if cv.DaQuaHan() and not cv.IsHoanThanh()
-        ])
-
-    def DemHoanThanh(self):
-        """Đếm số công việc đã hoàn thành."""
-        return len([
-            cv for cv in self._danhSachCongViec
-            if cv.IsHoanThanh()
-        ])
-
-    def LayCongViecCanCanhBao(self):
-
-        ket_qua = []
-        for cv in self._danhSachCongViec:
-            if not cv.IsHoanThanh():
-                thong_bao = cv.CanhBao()
-                if thong_bao:
-                    ket_qua.append((cv, thong_bao))
-        return ket_qua
-
-    def ToDict(self):
+    def to_dict(self):
         """Chuyển dự án thành dictionary để lưu JSON."""
         return {
-            "MaDuAn": self.maDuAn,
-            "TenDuAn": self.tenDuAn,
-            "DanhSachCot": self.danhSachCot,
-            "ThanhVienThamGia": self.thanhVienThamGia,
+            "MaDuAn": self.ma_du_an,
+            "TenDuAn": self.ten_du_an,
+            "DanhSachCot": self.danh_sach_cot,
+            "ThanhVienThamGia": self.thanh_vien_tham_gia,
             "DanhSachCongViec": [
-                cong_viec.toDict() for cong_viec in self.danhSachCongViec
+                cong_viec.to_dict() for cong_viec in self.danh_sach_cong_viec
             ],
-            "NgayTao": self.ngayTao,
+            "NgayTao": self.ngay_tao,
         }
 
     @classmethod
-    def FromDict(cls, data):
+    def from_dict(cls, data):
         """Tạo dự án và các object công việc từ dữ liệu JSON """
         if not isinstance(data, dict):
             print("Dữ liệu dự án phải là dictionary")
@@ -277,15 +196,13 @@ class DuAn:
             return None
 
         return cls(
-            maDuAn=data.get("MaDuAn"),
-            tenDuAn=data.get("TenDuAn"),
-            danhSachCot=data.get("DanhSachCot"),
-            thanhVienThamGia=data.get("ThanhVienThamGia", []),
-            danhSachCongViec=[
-                CongViec.fromDict(cong_viec)
+            ma_du_an=data.get("MaDuAn"),
+            ten_du_an=data.get("TenDuAn"),
+            danh_sach_cot=data.get("DanhSachCot"),
+            thanh_vien_tham_gia=data.get("ThanhVienThamGia", []),
+            danh_sach_cong_viec=[
+                CongViec.from_dict(cong_viec)
                 for cong_viec in du_lieu_cong_viec
             ],
-            ngayTao=data.get("NgayTao"),
+            ngay_tao=data.get("NgayTao"),
         )
-
-
