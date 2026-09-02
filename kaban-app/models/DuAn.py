@@ -92,6 +92,11 @@ class DuAn:
         self._danh_sach_cong_viec = danh_sach_cong_viec
 
     @property
+    def cong_viec(self):
+        return self.danh_sach_cong_viec
+
+
+    @property
     def danh_sach_cot(self):
         return getattr(self, "_danh_sach_cot", None)
 

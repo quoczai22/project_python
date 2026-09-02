@@ -3,11 +3,94 @@ from models.DuAn import DuAn
 from models.CongViec import CongViec, CongViecKhan
 
 
+class BoLuuTruMock:
+    """Lớp lưu trữ mặc định đọc/ghi file JSON để phục vụ demo khi chưa có module lưu trữ chính thức."""
+    def __init__(self, ten_file_du_an="du_an.json", ten_file_du_lieu_moc="du_lieu_moc.json"):
+        import os
+        self.ten_file_du_an = ten_file_du_an or "du_an.json"
+        self.ten_file_du_lieu_moc = ten_file_du_lieu_moc or "du_lieu_moc.json"
+        self.ten_file_nhat_ky = "nhat_ky.json"
+
+    def _lay_duong_dan(self, ten_file):
+        import os
+        if os.path.isabs(ten_file) or os.path.exists(ten_file):
+            return ten_file
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        app_path = os.path.join(base_dir, ten_file)
+        if os.path.exists(app_path):
+            return app_path
+        return ten_file
+
+    def doc_json(self, ten_file):
+        import json, os
+        duong_dan = self._lay_duong_dan(ten_file)
+        if not os.path.exists(duong_dan):
+            raise FileNotFoundError(f"Không tìm thấy file: {ten_file}")
+        with open(duong_dan, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    def ghi_json(self, ten_file, du_lieu):
+        import json, os
+        duong_dan = self._lay_duong_dan(ten_file)
+        with open(duong_dan, "w", encoding="utf-8") as f:
+            json.dump(du_lieu, f, ensure_ascii=False, indent=2)
+
+    def ghi_nhat_ky(self, du_lieu_log):
+        import json, os
+        duong_dan = self._lay_duong_dan(self.ten_file_nhat_ky)
+        danh_sach = []
+        if os.path.exists(duong_dan):
+            try:
+                with open(duong_dan, "r", encoding="utf-8") as f:
+                    danh_sach = json.load(f)
+            except Exception:
+                danh_sach = []
+        danh_sach.append(du_lieu_log)
+        with open(duong_dan, "w", encoding="utf-8") as f:
+            json.dump(danh_sach, f, ensure_ascii=False, indent=2)
+
+    def doc_danh_sach_thanh_vien(self):
+        try:
+            du_lieu = self.doc_json(self.ten_file_du_lieu_moc)
+        except Exception:
+            du_lieu = {}
+
+        if isinstance(du_lieu, dict):
+            ds = du_lieu.get("thanh_vien", [])
+        elif isinstance(du_lieu, list):
+            ds = du_lieu
+        else:
+            ds = []
+
+        from models.ThanhVien import ThanhVien
+        thanh_vien_list = []
+        for item in ds:
+            if isinstance(item, dict):
+                thanh_vien_list.append(ThanhVien(
+                    ten_dang_nhap=item.get("ten_dang_nhap"),
+                    mat_khau=item.get("mat_khau"),
+                    ho_ten=item.get("ho_ten", ""),
+                    email=item.get("email", ""),
+                    vai_tro=item.get("vai_tro", "thanh_vien")
+                ))
+        return thanh_vien_list
+
+
 class QuanLyKanban:
-    def __init__(self, bo_luu_tru):
-        self.bo_luu_tru = bo_luu_tru
+    def __init__(self, bo_luu_tru=None, ten_file_du_lieu_moc=None):
+        if bo_luu_tru is None or isinstance(bo_luu_tru, str):
+            self.bo_luu_tru = BoLuuTruMock(
+                ten_file_du_an=bo_luu_tru,
+                ten_file_du_lieu_moc=ten_file_du_lieu_moc
+            )
+        else:
+            self.bo_luu_tru = bo_luu_tru
         self.danh_sach_du_an = self._nap_du_lieu()
         self.nguoi_dung_hien_tai = None
+
+    def lay_danh_sach_du_an(self):
+        """UI gọi để lấy danh sách tất cả các dự án hiện có."""
+        return self.danh_sach_du_an
 
     def _nap_du_lieu(self):
         try:

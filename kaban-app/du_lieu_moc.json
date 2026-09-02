@@ -1,0 +1,39 @@
+{
+  "thanh_vien": [
+    {
+      "ten_dang_nhap": "admin",
+      "mat_khau": "123456",
+      "ho_ten": "Quản trị viên Hệ thống",
+      "email": "admin@kanban.local",
+      "vai_tro": "quan_tri"
+    },
+    {
+      "ten_dang_nhap": "quoc",
+      "mat_khau": "123456",
+      "ho_ten": "Trịnh Quốc",
+      "email": "quoc@kanban.local",
+      "vai_tro": "thanh_vien"
+    },
+    {
+      "ten_dang_nhap": "khoa",
+      "mat_khau": "123456",
+      "ho_ten": "Đăng Khoa",
+      "email": "khoa@kanban.local",
+      "vai_tro": "thanh_vien"
+    },
+    {
+      "ten_dang_nhap": "huy",
+      "mat_khau": "123456",
+      "ho_ten": "Gia Huy",
+      "email": "huy@kanban.local",
+      "vai_tro": "thanh_vien"
+    },
+    {
+      "ten_dang_nhap": "phu",
+      "mat_khau": "123456",
+      "ho_ten": "Hồng Phú",
+      "email": "phu@kanban.local",
+      "vai_tro": "thanh_vien"
+    }
+  ]
+}

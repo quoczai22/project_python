@@ -1,0 +1,95 @@
+[
+  {
+    "MaDuAn": "DA-001",
+    "TenDuAn": "Hệ thống Quản lý Công việc Kanban",
+    "DanhSachCot": [
+      "Cần làm",
+      "Đang làm",
+      "Kiểm tra",
+      "Hoàn thành"
+    ],
+    "ThanhVienThamGia": [
+      "admin",
+      "quoc",
+      "khoa",
+      "huy",
+      "phu"
+    ],
+    "DanhSachCongViec": [
+      {
+        "MaCongViec": "CV-001",
+        "TieuDe": "Thiết kế kiến trúc hệ thống và cơ sở dữ liệu",
+        "MoTa": "Xây dựng các model dữ liệu và luồng xử lý Kanban",
+        "NguoiPhuTrach": "quoc",
+        "NgayBatDau": "2026-09-01",
+        "NgayKetThuc": "2026-09-05",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Cao",
+        "Nhan": "Backend"
+      },
+      {
+        "MaCongViec": "CV-002",
+        "TieuDe": "Xây dựng giao diện bảng Kanban",
+        "MoTa": "Phát triển UI hiển thị các cột trạng thái và kéo thả thẻ",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-09-02",
+        "NgayKetThuc": "2026-09-08",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Giao diện"
+      },
+      {
+        "MaCongViec": "CV-003",
+        "TieuDe": "Sửa lỗi xử lý đăng nhập khẩn cấp",
+        "MoTa": "Khắc phục lỗi xác thực mật khẩu người dùng",
+        "NguoiPhuTrach": "admin",
+        "NgayBatDau": "2026-09-02",
+        "NgayKetThuc": "2026-09-03",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Lỗi"
+      }
+    ],
+    "NgayTao": "2026-09-01"
+  },
+  {
+    "MaDuAn": "DA-002",
+    "TenDuAn": "Ứng dụng Di động Kanban Mobile",
+    "DanhSachCot": [
+      "Cần làm",
+      "Đang làm",
+      "Kiểm tra",
+      "Hoàn thành"
+    ],
+    "ThanhVienThamGia": [
+      "admin",
+      "khoa",
+      "phu"
+    ],
+    "DanhSachCongViec": [
+      {
+        "MaCongViec": "CV-004",
+        "TieuDe": "Viết tài liệu API đồng bộ",
+        "MoTa": "Tài liệu hóa các endpoint cho ứng dụng di động",
+        "NguoiPhuTrach": "khoa",
+        "NgayBatDau": "2026-09-01",
+        "NgayKetThuc": "2026-09-06",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Tài liệu"
+      },
+      {
+        "MaCongViec": "CV-005",
+        "TieuDe": "Kiểm thử hiệu năng đồng bộ dữ liệu",
+        "MoTa": "Chạy benchmark kiểm tra tốc độ nạp dữ liệu công việc",
+        "NguoiPhuTrach": "phu",
+        "NgayBatDau": "2026-09-02",
+        "NgayKetThuc": "2026-09-07",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Kiểm thử"
+      }
+    ],
+    "NgayTao": "2026-09-02"
+  }
+]
