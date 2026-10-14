@@ -17,6 +17,7 @@
     ],
     "DanhSachCongViec": [
       {
+        "LoaiCongViec": "CongViecThuong",
         "MaCongViec": "CV-001",
         "TieuDe": "Thiết kế kiến trúc hệ thống và cơ sở dữ liệu",
         "MoTa": "Xây dựng các model dữ liệu và luồng xử lý Kanban",
@@ -25,9 +26,11 @@
         "NgayKetThuc": "2026-09-05",
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Cao",
-        "Nhan": "Backend"
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
       },
       {
+        "LoaiCongViec": "CongViecThuong",
         "MaCongViec": "CV-002",
         "TieuDe": "Xây dựng giao diện bảng Kanban",
         "MoTa": "Phát triển UI hiển thị các cột trạng thái và kéo thả thẻ",
@@ -36,9 +39,11 @@
         "NgayKetThuc": "2026-09-08",
         "TrangThai": "Đang làm",
         "MucUuTien": "Cao",
-        "Nhan": "Giao diện"
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
       },
       {
+        "LoaiCongViec": "CongViecKhan",
         "MaCongViec": "CV-003",
         "TieuDe": "Sửa lỗi xử lý đăng nhập khẩn cấp",
         "MoTa": "Khắc phục lỗi xác thực mật khẩu người dùng",
@@ -47,7 +52,8 @@
         "NgayKetThuc": "2026-09-03",
         "TrangThai": "Cần làm",
         "MucUuTien": "Khẩn",
-        "Nhan": "Lỗi"
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": []
       }
     ],
     "NgayTao": "2026-09-01"
@@ -68,6 +74,7 @@
     ],
     "DanhSachCongViec": [
       {
+        "LoaiCongViec": "CongViecThuong",
         "MaCongViec": "CV-004",
         "TieuDe": "Viết tài liệu API đồng bộ",
         "MoTa": "Tài liệu hóa các endpoint cho ứng dụng di động",
@@ -76,9 +83,11 @@
         "NgayKetThuc": "2026-09-06",
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Trung bình",
-        "Nhan": "Tài liệu"
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
       },
       {
+        "LoaiCongViec": "CongViecThuong",
         "MaCongViec": "CV-005",
         "TieuDe": "Kiểm thử hiệu năng đồng bộ dữ liệu",
         "MoTa": "Chạy benchmark kiểm tra tốc độ nạp dữ liệu công việc",
@@ -87,7 +96,8 @@
         "NgayKetThuc": "2026-09-07",
         "TrangThai": "Cần làm",
         "MucUuTien": "Thấp",
-        "Nhan": "Kiểm thử"
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": []
       }
     ],
     "NgayTao": "2026-09-02"

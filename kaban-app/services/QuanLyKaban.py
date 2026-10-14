@@ -1,82 +1,24 @@
-from datetime import datetime
+from services.BoLuuTru import BoLuuTruBase, BoLuuTruMock
+from services.XacThucService import XacThucService
+from services.DuAnService import DuAnService
+from services.CongViecService import CongViecService
 from models.DuAn import DuAn
-from models.CongViec import CongViec, CongViecKhan
-
-
-class BoLuuTruMock:
-    """Lớp lưu trữ mặc định đọc/ghi file JSON để phục vụ demo khi chưa có module lưu trữ chính thức."""
-    def __init__(self, ten_file_du_an="du_an.json", ten_file_du_lieu_moc="du_lieu_moc.json"):
-        import os
-        self.ten_file_du_an = ten_file_du_an or "du_an.json"
-        self.ten_file_du_lieu_moc = ten_file_du_lieu_moc or "du_lieu_moc.json"
-        self.ten_file_nhat_ky = "nhat_ky.json"
-
-    def _lay_duong_dan(self, ten_file):
-        import os
-        if os.path.isabs(ten_file) or os.path.exists(ten_file):
-            return ten_file
-        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        app_path = os.path.join(base_dir, ten_file)
-        if os.path.exists(app_path):
-            return app_path
-        return ten_file
-
-    def doc_json(self, ten_file):
-        import json, os
-        duong_dan = self._lay_duong_dan(ten_file)
-        if not os.path.exists(duong_dan):
-            raise FileNotFoundError(f"Không tìm thấy file: {ten_file}")
-        with open(duong_dan, "r", encoding="utf-8") as f:
-            return json.load(f)
-
-    def ghi_json(self, ten_file, du_lieu):
-        import json, os
-        duong_dan = self._lay_duong_dan(ten_file)
-        with open(duong_dan, "w", encoding="utf-8") as f:
-            json.dump(du_lieu, f, ensure_ascii=False, indent=2)
-
-    def ghi_nhat_ky(self, du_lieu_log):
-        import json, os
-        duong_dan = self._lay_duong_dan(self.ten_file_nhat_ky)
-        danh_sach = []
-        if os.path.exists(duong_dan):
-            try:
-                with open(duong_dan, "r", encoding="utf-8") as f:
-                    danh_sach = json.load(f)
-            except Exception:
-                danh_sach = []
-        danh_sach.append(du_lieu_log)
-        with open(duong_dan, "w", encoding="utf-8") as f:
-            json.dump(danh_sach, f, ensure_ascii=False, indent=2)
-
-    def doc_danh_sach_thanh_vien(self):
-        try:
-            du_lieu = self.doc_json(self.ten_file_du_lieu_moc)
-        except Exception:
-            du_lieu = {}
-
-        if isinstance(du_lieu, dict):
-            ds = du_lieu.get("thanh_vien", [])
-        elif isinstance(du_lieu, list):
-            ds = du_lieu
-        else:
-            ds = []
-
-        from models.ThanhVien import ThanhVien
-        thanh_vien_list = []
-        for item in ds:
-            if isinstance(item, dict):
-                thanh_vien_list.append(ThanhVien(
-                    ten_dang_nhap=item.get("ten_dang_nhap"),
-                    mat_khau=item.get("mat_khau"),
-                    ho_ten=item.get("ho_ten", ""),
-                    email=item.get("email", ""),
-                    vai_tro=item.get("vai_tro", "thanh_vien")
-                ))
-        return thanh_vien_list
+from models.CongViec import CongViec
 
 
 class QuanLyKanban:
+    """
+    Facade Controller: Lớp điều phối trung tâm của toàn bộ ứng dụng Kanban (Facade Pattern).
+    
+    TÍNH ĐÓNG GÓI & THIẾT KẾ HƯỚNG ĐỐI TƯỢNG (OOP Facade):
+    - Tích hợp và điều phối các dịch vụ chuyên biệt:
+      + `bo_luu_tru`: Quản lý tầng đọc/ghi dữ liệu JSON (Dependency Inversion).
+      + `xac_thuc`: Quản lý phiên đăng nhập và phân quyền đa hình.
+      + `du_an_service`: Quản lý các dự án và thành viên dự án.
+      + `cong_viec_service`: Quản lý công việc, kéo chuyển cột, bình luận, lọc.
+    - Cung cấp giao diện đồng nhất, trực quan cho tầng Giao diện (UI) hoặc Client sử dụng.
+    """
+
     def __init__(self, bo_luu_tru=None, ten_file_du_lieu_moc=None):
         if bo_luu_tru is None or isinstance(bo_luu_tru, str):
             self.bo_luu_tru = BoLuuTruMock(
@@ -85,313 +27,100 @@ class QuanLyKanban:
             )
         else:
             self.bo_luu_tru = bo_luu_tru
-        self.danh_sach_du_an = self._nap_du_lieu()
-        self.nguoi_dung_hien_tai = None
 
-    def lay_danh_sach_du_an(self):
-        """UI gọi để lấy danh sách tất cả các dự án hiện có."""
-        return self.danh_sach_du_an
+        # Khởi tạo các sub-services chuyên trách
+        self.xac_thuc = XacThucService()
+        self.du_an_service = DuAnService(self.bo_luu_tru)
+        self.cong_viec_service = CongViecService(self.du_an_service, self.xac_thuc, self.bo_luu_tru)
 
-    def _nap_du_lieu(self):
-        try:
-            du_lieu = self.bo_luu_tru.doc_json("du_an.json")
-            if not isinstance(du_lieu, list):
-                return []
-            danh_sach = []
-            for item in du_lieu:
-                if isinstance(item, dict):
-                    da = DuAn.from_dict(item)
-                    if da is not None:
-                        danh_sach.append(da)
-            return danh_sach
-        except (FileNotFoundError, ValueError, KeyError, TypeError) as loi:
-            print(f"Lỗi khi nạp dữ liệu dự án: {loi}")
-            return []
+    # ==================== PROPERTIES TƯƠNG THÍCH ====================
+    @property
+    def danh_sach_du_an(self):
+        return self.du_an_service.danh_sach_du_an
 
-    def _luu_du_lieu(self):
-        try:
-            du_lieu = [du_an.to_dict() for du_an in self.danh_sach_du_an]
-            self.bo_luu_tru.ghi_json("du_an.json", du_lieu)
-            return True
-        except (OSError, ValueError, TypeError) as loi:
-            print(f"Lỗi khi lưu dữ liệu dự án: {loi}")
-            return False
+    @danh_sach_du_an.setter
+    def danh_sach_du_an(self, value):
+        self.du_an_service.danh_sach_du_an = value
 
-    def tao_du_an(self, ma_du_an, ten_du_an, danh_sach_cot=None):
-        """UI gọi để tạo mới một dự án; gọi DuAn và lưu vào bộ lưu trữ."""
-        if self.tim_du_an_theo_ma(ma_du_an) is not None:
-            print(f"Mã dự án '{ma_du_an}' đã tồn tại")
-            return None
+    @property
+    def nguoi_dung_hien_tai(self):
+        return self.xac_thuc.nguoi_dung_hien_tai
 
-        du_an = DuAn(ma_du_an=ma_du_an, ten_du_an=ten_du_an, danh_sach_cot=danh_sach_cot)
-        if du_an.ma_du_an is None:
-            return None
+    @nguoi_dung_hien_tai.setter
+    def nguoi_dung_hien_tai(self, user):
+        self.xac_thuc.nguoi_dung_hien_tai = user
 
-        self.danh_sach_du_an.append(du_an)
-        if self._luu_du_lieu():
-            return du_an
-
-        self.danh_sach_du_an.remove(du_an)
-        return None
-
-    def tim_du_an_theo_ma(self, ma_du_an):
-        """UI gọi để tìm kiếm dự án theo mã trong danh sách dự án hiện có."""
-        for du_an in self.danh_sach_du_an:
-            if du_an.ma_du_an == ma_du_an:
-                return du_an
-        return None
-
-    def dang_nhap(self, ten_dang_nhap, mat_khau):
-        """UI gọi để xác thực đăng nhập người dùng qua tầng lưu trữ thành viên."""
-        try:
-            danh_sach_thanh_vien = self.bo_luu_tru.doc_danh_sach_thanh_vien()
-        except Exception as loi:
-            print(f"Lỗi khi đọc danh sách thành viên: {loi}")
-            return False
-
-        if not isinstance(danh_sach_thanh_vien, list):
-            print("Danh sách thành viên không hợp lệ")
-            return False
-
-        thanh_vien = next(
-            (tv for tv in danh_sach_thanh_vien if getattr(tv, "ten_dang_nhap", None) == ten_dang_nhap),
-            None
-        )
-        if thanh_vien is None:
-            print(f"Không tìm thấy tên đăng nhập '{ten_dang_nhap}'")
-            return False
-
-        if not thanh_vien.kiem_tra_mat_khau(mat_khau):
-            print("Sai mật khẩu")
-            return False
-
-        self.nguoi_dung_hien_tai = thanh_vien
-        return True
+    # ==================== XÁC THỰC & PHÂN QUYỀN ====================
+    def dang_nhap(self, ten_dang_nhap: str, mat_khau: str):
+        return self.xac_thuc.dang_nhap(ten_dang_nhap, mat_khau, self.bo_luu_tru)
 
     def dang_xuat(self):
-        """UI gọi để đăng xuất tài khoản hiện tại."""
-        self.nguoi_dung_hien_tai = None
+        return self.xac_thuc.dang_xuat()
 
-    def kiem_tra_quyen_du_an(self, du_an):
-        """Kiểm tra quyền truy cập dự án của người dùng hiện tại."""
-        if self.nguoi_dung_hien_tai is None:
-            print("Bạn chưa đăng nhập")
-            return False
+    def kiem_tra_quyen_du_an(self, du_an: DuAn, bat_loi: bool = False) -> bool:
+        return self.xac_thuc.kiem_tra_quyen_du_an(du_an, bat_loi)
 
-        if du_an is None:
-            return False
+    def kiem_tra_quyen_cong_viec(self, cong_viec: CongViec, bat_loi: bool = False) -> bool:
+        return self.xac_thuc.kiem_tra_quyen_cong_viec(cong_viec, bat_loi)
 
-        vai_tro = getattr(self.nguoi_dung_hien_tai, "vai_tro", None)
-        if vai_tro == "quan_tri":
-            return True
+    # ==================== QUẢN LÝ DỰ ÁN ====================
+    def lay_danh_sach_du_an(self):
+        return self.du_an_service.danh_sach_du_an
 
-        ten_dang_nhap = getattr(self.nguoi_dung_hien_tai, "ten_dang_nhap", None)
-        if ten_dang_nhap and ten_dang_nhap in (du_an.thanh_vien_tham_gia or []):
-            return True
+    def tao_du_an(self, ma_du_an: str, ten_du_an: str, danh_sach_cot=None):
+        return self.du_an_service.tao_du_an(ma_du_an, ten_du_an, danh_sach_cot)
 
-        print("Bạn không có quyền truy cập dự án này")
-        return False
+    def tim_du_an_theo_ma(self, ma_du_an: str):
+        return self.du_an_service.tim_du_an_theo_ma(ma_du_an)
 
-    def kiem_tra_quyen_cong_viec(self, cong_viec):
-        """Kiểm tra quyền thao tác trên công việc của người dùng hiện tại."""
-        if self.nguoi_dung_hien_tai is None:
-            print("Bạn chưa đăng nhập")
-            return False
-        if cong_viec is None:
-            return False
+    def tim_du_an_hoac_loi(self, ma_du_an: str) -> DuAn:
+        return self.du_an_service.tim_du_an_hoac_loi(ma_du_an)
 
-        vai_tro = getattr(self.nguoi_dung_hien_tai, "vai_tro", None)
-        if vai_tro == "quan_tri":
-            return True
+    def xoa_du_an(self, ma_du_an: str):
+        return self.du_an_service.xoa_du_an(ma_du_an, self.nguoi_dung_hien_tai)
 
-        ten_dang_nhap = getattr(self.nguoi_dung_hien_tai, "ten_dang_nhap", None)
-        if ten_dang_nhap and cong_viec.nguoi_phu_trach == ten_dang_nhap:
-            return True
+    def them_thanh_vien_du_an(self, du_an: DuAn, ten_dang_nhap: str):
+        self.kiem_tra_quyen_du_an(du_an, bat_loi=True)
+        return self.du_an_service.them_thanh_vien_du_an(du_an, ten_dang_nhap)
 
-        print("Bạn không có quyền thao tác trên công việc này")
-        return False
+    def xoa_thanh_vien_du_an(self, du_an: DuAn, ten_dang_nhap: str):
+        self.kiem_tra_quyen_du_an(du_an, bat_loi=True)
+        return self.du_an_service.xoa_thanh_vien_du_an(du_an, ten_dang_nhap)
 
-    def tao_cong_viec(self, du_an, du_lieu, la_cong_viec_khan=False):
-        """UI gọi để tạo mới công việc trong dự án; khởi tạo model CongViec và lưu trữ."""
-        if not self.kiem_tra_quyen_du_an(du_an):
-            return False
+    # ==================== QUẢN LÝ CÔNG VIỆC ====================
+    def tao_cong_viec(self, du_an: DuAn, du_lieu: dict, la_cong_viec_khan: bool = False):
+        return self.cong_viec_service.tao_cong_viec(du_an, du_lieu, la_cong_viec_khan)
 
-        if not isinstance(du_lieu, dict):
-            print("Dữ liệu công việc không hợp lệ")
-            return False
+    def cap_nhat_cong_viec(self, du_an: DuAn, ma_cong_viec: str, du_lieu_moi: dict):
+        return self.cong_viec_service.cap_nhat_cong_viec(du_an, ma_cong_viec, du_lieu_moi)
 
-        ma_cong_viec = du_lieu.get("ma_cong_viec", du_lieu.get("MaCongViec"))
-        tieu_de = du_lieu.get("tieu_de", du_lieu.get("TieuDe"))
-        mo_ta = du_lieu.get("mo_ta", du_lieu.get("MoTa", ""))
-        nguoi_phu_trach = du_lieu.get("nguoi_phu_trach", du_lieu.get("NguoiPhuTrach"))
-        ngay_bat_dau = du_lieu.get("ngay_bat_dau", du_lieu.get("NgayBatDau"))
-        ngay_ket_thuc = du_lieu.get("ngay_ket_thuc", du_lieu.get("NgayKetThuc"))
-        trang_thai = du_lieu.get("trang_thai", du_lieu.get("TrangThai", "Cần làm"))
-        muc_uu_tien = du_lieu.get("muc_uu_tien", du_lieu.get("MucUuTien", "Trung bình"))
-        nhan = du_lieu.get("nhan", du_lieu.get("Nhan", "Backend"))
+    def xoa_cong_viec(self, du_an: DuAn, ma_cong_viec: str):
+        return self.cong_viec_service.xoa_cong_viec(du_an, ma_cong_viec)
 
-        if la_cong_viec_khan or muc_uu_tien == "Khẩn":
-            cv = CongViecKhan(
-                ma_cong_viec=ma_cong_viec,
-                tieu_de=tieu_de,
-                mo_ta=mo_ta,
-                nguoi_phu_trach=nguoi_phu_trach,
-                ngay_bat_dau=ngay_bat_dau,
-                ngay_ket_thuc=ngay_ket_thuc,
-                trang_thai=trang_thai,
-                nhan=nhan
-            )
-        else:
-            cv = CongViec(
-                ma_cong_viec=ma_cong_viec,
-                tieu_de=tieu_de,
-                mo_ta=mo_ta,
-                nguoi_phu_trach=nguoi_phu_trach,
-                ngay_bat_dau=ngay_bat_dau,
-                ngay_ket_thuc=ngay_ket_thuc,
-                trang_thai=trang_thai,
-                muc_uu_tien=muc_uu_tien,
-                nhan=nhan
-            )
+    def chuyen_trang_thai(self, du_an: DuAn, ma_cong_viec: str, trang_thai_moi: str):
+        return self.cong_viec_service.chuyen_trang_thai(du_an, ma_cong_viec, trang_thai_moi)
 
-        if cv.ma_cong_viec is None:
-            return False
+    # ==================== QUẢN LÝ BÌNH LUẬN ====================
+    def them_binh_luan_cong_viec(self, du_an: DuAn, ma_cong_viec: str, noi_dung: str):
+        return self.cong_viec_service.them_binh_luan_cong_viec(du_an, ma_cong_viec, noi_dung)
 
-        if not du_an.them_cong_viec(cv):
-            return False
+    def xoa_binh_luan_cong_viec(self, du_an: DuAn, ma_cong_viec: str, ma_binh_luan: str):
+        return self.cong_viec_service.xoa_binh_luan_cong_viec(du_an, ma_cong_viec, ma_binh_luan)
 
-        if not self._luu_du_lieu():
-            du_an.xoa_cong_viec(cv.ma_cong_viec)
-            return False
+    # ==================== TÌM KIẾM & LỌC ====================
+    def tim_kiem_cong_viec(self, du_an: DuAn, tu_khoa: str):
+        return self.cong_viec_service.tim_kiem_cong_viec(du_an, tu_khoa)
 
-        return True
+    def loc_theo_thanh_vien(self, du_an: DuAn, ten_dang_nhap: str):
+        return self.cong_viec_service.loc_theo_thanh_vien(du_an, ten_dang_nhap)
 
-    def cap_nhat_cong_viec(self, du_an, ma_cong_viec, du_lieu_moi):
-        """UI gọi để cập nhật công việc; kiểm tra quyền, gọi model cập nhật và lưu trữ."""
-        if du_an is None:
-            print("Dự án không hợp lệ")
-            return False
+    def loc_theo_nhan(self, du_an: DuAn, ten_nhan: str):
+        return self.cong_viec_service.loc_theo_nhan(du_an, ten_nhan)
 
-        cv = du_an.tim_cong_viec_theo_ma(ma_cong_viec)
-        if cv is None:
-            print(f"Không tìm thấy công việc '{ma_cong_viec}' trong dự án")
-            return False
+    def loc_theo_muc_uu_tien(self, du_an: DuAn, muc_uu_tien: str):
+        return self.cong_viec_service.loc_theo_muc_uu_tien(du_an, muc_uu_tien)
 
-        if not self.kiem_tra_quyen_cong_viec(cv):
-            return False
 
-        if not isinstance(du_lieu_moi, dict):
-            print("Dữ liệu cập nhật không hợp lệ")
-            return False
-
-        du_lieu_model = {
-            "TieuDe": du_lieu_moi.get("tieu_de", du_lieu_moi.get("TieuDe", cv.tieu_de)),
-            "MoTa": du_lieu_moi.get("mo_ta", du_lieu_moi.get("MoTa", cv.mo_ta)),
-            "NguoiPhuTrach": du_lieu_moi.get("nguoi_phu_trach", du_lieu_moi.get("NguoiPhuTrach", cv.nguoi_phu_trach)),
-            "NgayBatDau": du_lieu_moi.get("ngay_bat_dau", du_lieu_moi.get("NgayBatDau", cv.ngay_bat_dau)),
-            "NgayKetThuc": du_lieu_moi.get("ngay_ket_thuc", du_lieu_moi.get("NgayKetThuc", cv.ngay_ket_thuc)),
-            "TrangThai": du_lieu_moi.get("trang_thai", du_lieu_moi.get("TrangThai", cv.trang_thai)),
-            "MucUuTien": du_lieu_moi.get("muc_uu_tien", du_lieu_moi.get("MucUuTien", cv.muc_uu_tien)),
-            "Nhan": du_lieu_moi.get("nhan", du_lieu_moi.get("Nhan", cv.nhan)),
-        }
-        cv.cap_nhat_cong_viec(du_lieu_model)
-        return self._luu_du_lieu()
-
-    def xoa_cong_viec(self, du_an, ma_cong_viec):
-        """UI gọi để xóa công việc; chỉ quản trị viên có quyền và lưu dữ liệu sau khi xóa."""
-        if self.nguoi_dung_hien_tai is None:
-            print("Bạn chưa đăng nhập")
-            return False
-
-        vai_tro = getattr(self.nguoi_dung_hien_tai, "vai_tro", None)
-        if vai_tro != "quan_tri":
-            print("Chỉ quản trị viên mới có quyền xóa công việc")
-            return False
-
-        if du_an is None:
-            print("Dự án không hợp lệ")
-            return False
-
-        if not du_an.xoa_cong_viec(ma_cong_viec):
-            print(f"Không tìm thấy công việc '{ma_cong_viec}' để xóa")
-            return False
-
-        return self._luu_du_lieu()
-
-    def chuyen_trang_thai(self, du_an, ma_cong_viec, trang_thai_moi):
-        """UI gọi để chuyển cột Kanban; kiểm tra quyền, đổi trạng thái, ghi nhật ký và lưu dữ liệu."""
-        if du_an is None:
-            print("Dự án không hợp lệ")
-            return False
-
-        cv = du_an.tim_cong_viec_theo_ma(ma_cong_viec)
-        if cv is None:
-            print(f"Không tìm thấy công việc '{ma_cong_viec}'")
-            return False
-
-        if not self.kiem_tra_quyen_cong_viec(cv):
-            return False
-
-        trang_thai_cu, trang_thai_cap_nhat = cv.chuyen_trang_thai(trang_thai_moi)
-
-        ten_dang_nhap = getattr(self.nguoi_dung_hien_tai, "ten_dang_nhap", "unknown")
-        du_lieu_log = {
-            "ten_dang_nhap": ten_dang_nhap,
-            "thoi_gian": datetime.now().isoformat(),
-            "ma_cong_viec": ma_cong_viec,
-            "trang_thai_cu": trang_thai_cu,
-            "trang_thai_moi": trang_thai_cap_nhat,
-        }
-        try:
-            self.bo_luu_tru.ghi_nhat_ky(du_lieu_log)
-        except Exception as loi:
-            print(f"Lỗi ghi nhật ký: {loi}")
-
-        return self._luu_du_lieu()
-
-    def tim_kiem_cong_viec(self, du_an, tu_khoa):
-        """UI gọi để tìm kiếm công việc theo từ khóa tiêu đề hoặc mã việc trong dự án."""
-        if du_an is None or not hasattr(du_an, "danh_sach_cong_viec"):
-            return []
-
-        if not tu_khoa or not str(tu_khoa).strip():
-            return list(du_an.danh_sach_cong_viec)
-
-        tu_khoa_str = str(tu_khoa).lower().strip()
-        return [
-            cv for cv in du_an.danh_sach_cong_viec
-            if tu_khoa_str in str(cv.tieu_de or "").lower()
-            or tu_khoa_str in str(cv.ma_cong_viec or "").lower()
-        ]
-
-    def loc_theo_thanh_vien(self, du_an, ten_dang_nhap):
-        """UI gọi để lọc danh sách công việc theo tên người phụ trách trong dự án."""
-        if du_an is None or not hasattr(du_an, "danh_sach_cong_viec") or not ten_dang_nhap:
-            return []
-
-        user_str = str(ten_dang_nhap).strip().lower()
-        return [
-            cv for cv in du_an.danh_sach_cong_viec
-            if str(cv.nguoi_phu_trach or "").strip().lower() == user_str
-        ]
-
-    def loc_theo_nhan(self, du_an, ten_nhan):
-        """UI gọi để lọc danh sách công việc theo nhãn trong dự án."""
-        if du_an is None or not hasattr(du_an, "danh_sach_cong_viec") or not ten_nhan:
-            return []
-
-        return [
-            cv for cv in du_an.danh_sach_cong_viec
-            if cv.nhan == ten_nhan
-        ]
-
-    def loc_theo_muc_uu_tien(self, du_an, muc_uu_tien):
-        """UI gọi để lọc danh sách công việc theo mức ưu tiên trong dự án."""
-        if du_an is None or not hasattr(du_an, "danh_sach_cong_viec") or not muc_uu_tien:
-            return []
-
-        return [
-            cv for cv in du_an.danh_sach_cong_viec
-            if cv.muc_uu_tien == muc_uu_tien
-        ]
-
+# Re-export để tương thích ngược nếu có file import BoLuuTru từ module QuanLyKaban
+BoLuuTruBase = BoLuuTruBase
+BoLuuTruMock = BoLuuTruMock
