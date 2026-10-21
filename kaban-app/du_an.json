@@ -1,0 +1,168 @@
+[
+  {
+    "MaDuAn": "DA-001",
+    "TenDuAn": "Ứng dụng Quản lý Kanban",
+    "DanhSachCot": [
+      "Cần làm",
+      "Đang làm",
+      "Kiểm tra",
+      "Hoàn thành"
+    ],
+    "ThanhVienThamGia": [
+      "quoc",
+      "khoa",
+      "huy",
+      "phu"
+    ],
+    "DanhSachCongViec": [
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-001",
+        "TieuDe": "Viết model CongViec",
+        "MoTa": "",
+        "NguoiPhuTrach": "quoc",
+        "NgayBatDau": "2026-10-07",
+        "NgayKetThuc": "2026-10-14",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Cao",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-002",
+        "TieuDe": "Viết lớp BoLuuTru đọc/ghi JSON",
+        "MoTa": "",
+        "NguoiPhuTrach": "khoa",
+        "NgayBatDau": "2026-10-08",
+        "NgayKetThuc": "2026-10-15",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Cao",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-003",
+        "TieuDe": "Dựng cửa sổ đăng nhập",
+        "MoTa": "",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-10-14",
+        "NgayKetThuc": "2026-10-23",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-004",
+        "TieuDe": "Dựng bảng Kanban theo cột",
+        "MoTa": "Mỗi cột là một Frame, mỗi thẻ là một TaskCard.",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-10-16",
+        "NgayKetThuc": "2026-10-26",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-005",
+        "TieuDe": "Sửa lỗi mất dữ liệu khi lưu",
+        "MoTa": "",
+        "NguoiPhuTrach": "khoa",
+        "NgayBatDau": "2026-10-19",
+        "NgayKetThuc": "2026-10-22",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-006",
+        "TieuDe": "Viết unit test cho rollback",
+        "MoTa": "",
+        "NguoiPhuTrach": "quoc",
+        "NgayBatDau": "2026-10-21",
+        "NgayKetThuc": "2026-10-31",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-007",
+        "TieuDe": "Viết báo cáo đồ án",
+        "MoTa": "",
+        "NguoiPhuTrach": "phu",
+        "NgayBatDau": "2026-10-21",
+        "NgayKetThuc": "2026-11-10",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-008",
+        "TieuDe": "Chuẩn bị slide thuyết trình",
+        "MoTa": "Việc này cố ý để quá hạn để xem thẻ báo đỏ.",
+        "NguoiPhuTrach": "phu",
+        "NgayBatDau": "2026-10-11",
+        "NgayKetThuc": "2026-10-20",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Thấp",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      }
+    ],
+    "NgayTao": "2026-10-07"
+  },
+  {
+    "MaDuAn": "DA-002",
+    "TenDuAn": "Website giới thiệu lớp",
+    "DanhSachCot": [
+      "Cần làm",
+      "Đang làm",
+      "Kiểm tra",
+      "Hoàn thành"
+    ],
+    "ThanhVienThamGia": [
+      "huy",
+      "phu"
+    ],
+    "DanhSachCongViec": [
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-001",
+        "TieuDe": "Thiết kế trang chủ",
+        "MoTa": "",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-10-21",
+        "NgayKetThuc": "2026-10-28",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-002",
+        "TieuDe": "Viết nội dung giới thiệu",
+        "MoTa": "",
+        "NguoiPhuTrach": "phu",
+        "NgayBatDau": "2026-10-20",
+        "NgayKetThuc": "2026-10-27",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      }
+    ],
+    "NgayTao": "2026-10-18"
+  }
+]
