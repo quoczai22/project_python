@@ -54,6 +54,15 @@ class QuanLyKanban:
     def dang_nhap(self, ten_dang_nhap: str, mat_khau: str):
         return self.xac_thuc.dang_nhap(ten_dang_nhap, mat_khau, self.bo_luu_tru)
 
+    def dang_ky(self, ten_dang_nhap: str, mat_khau: str, ho_ten: str = "", email: str = ""):
+        return self.xac_thuc.dang_ky(ten_dang_nhap, mat_khau, ho_ten, email, self.bo_luu_tru)
+
+    def lay_danh_sach_nguoi_dung(self):
+        return self.bo_luu_tru.doc_danh_sach_thanh_vien()
+
+    def lay_nhat_ky(self):
+        return self.bo_luu_tru.doc_nhat_ky()
+
     def dang_xuat(self):
         return self.xac_thuc.dang_xuat()
 
