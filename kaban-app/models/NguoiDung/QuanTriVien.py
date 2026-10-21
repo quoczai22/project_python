@@ -7,8 +7,8 @@ class QuanTriVien(NguoiDung):
     KẾ THỪA (Inheritance) từ NguoiDung và cài đặt phương thức ĐA HÌNH (Polymorphism) toàn quyền.
     """
 
-    def __init__(self, ten_dang_nhap, mat_khau, ho_ten="", email="", vai_tro="quan_tri"):
-        super().__init__(ten_dang_nhap, mat_khau, ho_ten, email, vai_tro="quan_tri")
+    def __init__(self, ten_dang_nhap, mat_khau, ho_ten="", email="", vai_tro="quan_tri", da_bam=False):
+        super().__init__(ten_dang_nhap, mat_khau, ho_ten, email, vai_tro="quan_tri", da_bam=da_bam)
 
     def kiem_tra_quyen_du_an(self, du_an) -> bool:
         """ĐA HÌNH: Quản trị viên có toàn quyền truy cập mọi dự án."""

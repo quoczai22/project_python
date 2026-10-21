@@ -7,8 +7,8 @@ class ThanhVien(NguoiDung):
     KẾ THỪA (Inheritance) từ NguoiDung và cài đặt phương thức ĐA HÌNH (Polymorphism).
     """
 
-    def __init__(self, ten_dang_nhap, mat_khau, ho_ten="", email="", vai_tro="thanh_vien"):
-        super().__init__(ten_dang_nhap, mat_khau, ho_ten, email, vai_tro="thanh_vien")
+    def __init__(self, ten_dang_nhap, mat_khau, ho_ten="", email="", vai_tro="thanh_vien", da_bam=False):
+        super().__init__(ten_dang_nhap, mat_khau, ho_ten, email, vai_tro="thanh_vien", da_bam=da_bam)
 
     def kiem_tra_quyen_du_an(self, du_an) -> bool:
         """ĐA HÌNH: Chỉ có quyền nếu tên đăng nhập nằm trong danh sách thành viên tham gia."""
