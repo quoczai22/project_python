@@ -3,6 +3,8 @@ import json
 import os
 from datetime import date, timedelta
 
+from models.NguoiDung.NguoiDungBase import bam_mat_khau  # mật khẩu mẫu cũng được băm SHA-256
+
 THU_MUC = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -29,11 +31,11 @@ def cong_viec(ma, tieu_de, nguoi, trang_thai, uu_tien, nhan, bat_dau, ket_thuc, 
 
 THANH_VIEN = {
     "thanh_vien": [
-        {"ten_dang_nhap": "admin", "mat_khau": "123456", "ho_ten": "Quản trị viên Hệ thống", "email": "admin@kanban.vn", "vai_tro": "quan_tri"},
-        {"ten_dang_nhap": "quoc", "mat_khau": "123456", "ho_ten": "Trịnh Quốc", "email": "quoc@kanban.vn", "vai_tro": "thanh_vien"},
-        {"ten_dang_nhap": "khoa", "mat_khau": "123456", "ho_ten": "Đăng Khoa", "email": "khoa@kanban.vn", "vai_tro": "thanh_vien"},
-        {"ten_dang_nhap": "huy", "mat_khau": "123456", "ho_ten": "Gia Huy", "email": "huy@kanban.vn", "vai_tro": "thanh_vien"},
-        {"ten_dang_nhap": "phu", "mat_khau": "123456", "ho_ten": "Hồng Phú", "email": "phu@kanban.vn", "vai_tro": "thanh_vien"},
+        {"ten_dang_nhap": "admin", "mat_khau": bam_mat_khau("123456"), "ho_ten": "Quản trị viên Hệ thống", "email": "admin@kanban.vn", "vai_tro": "quan_tri"},
+        {"ten_dang_nhap": "quoc", "mat_khau": bam_mat_khau("123456"), "ho_ten": "Trịnh Quốc", "email": "quoc@kanban.vn", "vai_tro": "thanh_vien"},
+        {"ten_dang_nhap": "khoa", "mat_khau": bam_mat_khau("123456"), "ho_ten": "Đăng Khoa", "email": "khoa@kanban.vn", "vai_tro": "thanh_vien"},
+        {"ten_dang_nhap": "huy", "mat_khau": bam_mat_khau("123456"), "ho_ten": "Gia Huy", "email": "huy@kanban.vn", "vai_tro": "thanh_vien"},
+        {"ten_dang_nhap": "phu", "mat_khau": bam_mat_khau("123456"), "ho_ten": "Hồng Phú", "email": "phu@kanban.vn", "vai_tro": "thanh_vien"},
     ]
 }
 

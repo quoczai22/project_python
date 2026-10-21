@@ -2,35 +2,35 @@
   "thanh_vien": [
     {
       "ten_dang_nhap": "admin",
-      "mat_khau": "123456",
+      "mat_khau": "8c846523df576a90391a87180dbb392b$79dd793c4986b30a43d2abf12cd8b68b5cb1fdb425c3f0cf330cd209f290c63c",
       "ho_ten": "Quản trị viên Hệ thống",
       "email": "admin@kanban.vn",
       "vai_tro": "quan_tri"
     },
     {
       "ten_dang_nhap": "quoc",
-      "mat_khau": "123456",
+      "mat_khau": "e9fa971f4669f225d5608475241aba21$ac48cd7920e929f126dabdeb14cf815006ecb41d357f9e2347f0ec4d575cd667",
       "ho_ten": "Trịnh Quốc",
       "email": "quoc@kanban.vn",
       "vai_tro": "thanh_vien"
     },
     {
       "ten_dang_nhap": "khoa",
-      "mat_khau": "123456",
+      "mat_khau": "79f8576be277d104c8d784463d5990f8$e25c47aedb1350d0539e569ea775a874afe507c3f737f428097b039c8f6cc59e",
       "ho_ten": "Đăng Khoa",
       "email": "khoa@kanban.vn",
       "vai_tro": "thanh_vien"
     },
     {
       "ten_dang_nhap": "huy",
-      "mat_khau": "123456",
+      "mat_khau": "2522d29a30529896936899e89ecdf925$63e2bf654341a910005c2e73755933907aed8d63b7acee9d93cc32f12653ecae",
       "ho_ten": "Gia Huy",
       "email": "huy@kanban.vn",
       "vai_tro": "thanh_vien"
     },
     {
       "ten_dang_nhap": "phu",
-      "mat_khau": "123456",
+      "mat_khau": "58b5668d17d510d9e8009025c2b7c01c$1d7891a5e3947c33d4a5b05ae8315dbf25959d1bdd35c522d768d7b181dce2e8",
       "ho_ten": "Hồng Phú",
       "email": "phu@kanban.vn",
       "vai_tro": "thanh_vien"
