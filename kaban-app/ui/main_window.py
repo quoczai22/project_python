@@ -1,513 +1,491 @@
-"""Cửa sổ chính: menu, header Figma, thanh công cụ lọc, bảng Kanban, thanh trạng thái."""
+"""MainWindow: Cửa sổ chính của ứng dụng Kanban điều phối Sidebar, Topbar và BoardView."""
 import tkinter as tk
-from tkinter import messagebox, simpledialog
+from tkinter import ttk, messagebox
 import customtkinter as ctk
 
-from ui.du_an_dialog import TaoDuAnDialog, ThanhVienDuAnDialog
-from ui.thong_ke_window import ThongKeWindow
-from exceptions import KanbanException
-from ui import theme
-from ui.cong_viec_dialog import CongViecDialog
-from ui.cot_kanban import CotKanban
-from ui.tien_ich import can_giua
+from exceptions import (
+    KanbanException, KhongCoQuyenError, KhongTimThayError,
+    LoiLuuTruError, DuLieuKhongHopLeError
+)
+from ui.styles import theme
+from ui.components.sidebar import SidebarComponent
+from ui.components.topbar import TopbarComponent, TAT_CA
+from ui.views.board_view import BoardView
+from ui.views.stats_view import StatsView
+from ui.dialogs.task_dialog import TaskDialog
+from ui.dialogs.column_dialog import TaoDuAnDialog, ThanhVienDuAnDialog
+from ui.dialogs.confirm_dialog import xac_nhan
 
-TAT_CA = "Tất cả"
 
+class MainWindow(ctk.CTk):
+    """
+    Cửa sổ chính của ứng dụng Kanban:
+    - Điều phối SidebarComponent, TopbarComponent, BoardView.
+    - Đồng bộ dữ liệu với QuanLyKanban.
+    - Hỗ trợ phím tắt, menu chuột phải, kéo thả task.
+    """
 
-class MainWindow(tk.Toplevel):
-    def __init__(self, master, ql, khi_dang_xuat):
-        super().__init__(master)
-        self.cua_so_thong_ke = None
-        self._the_ma = None
+    def __init__(self, goc, ql, khi_dang_xuat=None):
+        super().__init__()
+        self.goc = goc
         self.ql = ql
-        self.khi_dang_xuat = khi_dang_xuat
+        self.khi_dang_xuat_cb = khi_dang_xuat
+
         self.ds_du_an = []
         self.du_an = None
-        self.cac_cot = {}              # {ten_cot: CotKanban}
         self.cv_dang_chon = None
         self.the_dang_chon = None
+        self._the_ma = None
+        self._sap_xep_dao = {}
 
-        self.title("Kanban Workspace - Quản lý công việc")
-        self.configure(bg=theme.MAU_NEN)
-        self.minsize(980, 560)
-        self.protocol("WM_DELETE_WINDOW", self.thoat)
+        self.title("Kanban Board — Quản lý công việc")
+        self.geometry("1280x800")
+        self.minsize(980, 640)
+        self.configure(fg_color=theme.MAU_NEN)
 
-        self.var_du_an = tk.StringVar()
-        self.var_tu_khoa = tk.StringVar()
-        self.var_uu_tien = tk.StringVar(value=TAT_CA)
-        self.var_thanh_vien = tk.StringVar(value=TAT_CA)
-
-        # Thứ tự pack: menu, header Figma, thanh công cụ, thanh trạng thái dưới, bảng Kanban ở giữa
-        self._dung_menu()
-        self._dung_header_chinh()
-        self._dung_thanh_cong_cu()
-        self._dung_thanh_trang_thai()
-        self._dung_bang_kanban()
-        self._dung_menu_chuot_phai()
+        self._khoi_tao_bien_trang_thai()
+        self._dung_thanh_menu()
+        self._dung_bo_cuc_chinh()
+        self._tao_menu_chuot_phai()
+        self._dang_ky_phim_tat()
 
         self._nap_du_an()
-        can_giua(self, 1260, 720)
+        self.protocol("WM_DELETE_WINDOW", self._khi_dong_cua_so)
 
-    # ------------------------------------------------------------ dựng giao diện
-    def _dung_menu(self):
-        thanh = tk.Menu(self)
+    def _khoi_tao_bien_trang_thai(self):
+        """Khởi tạo các biến theo dõi để liên kết component và tương thích ngược."""
+        self.var_du_an = tk.StringVar(value="(Chưa có dự án)")
+        self.var_tim_kiem, self.var_uu_tien = tk.StringVar(), tk.StringVar(value=TAT_CA)
+        self.var_nhan, self.var_thanh_vien = tk.StringVar(value=TAT_CA), tk.StringVar(value=TAT_CA)
+        self.var_loc_nhanh = tk.StringVar(value="tat_ca")
+        self.ten_nguoi_map = {nd.ten_dang_nhap: nd.ho_ten for nd in self.ql.lay_danh_sach_nguoi_dung()}
 
-        m_tep = tk.Menu(thanh, tearoff=0)
-        m_tep.add_command(label="Làm mới", accelerator="F5", command=self.ve_lai)
-        m_tep.add_separator()
-        m_tep.add_command(label="Đăng xuất", command=self.dang_xuat)
-        m_tep.add_command(label="Thoát", command=self.thoat)
-        thanh.add_cascade(label="Tệp", menu=m_tep)
+    def _dung_thanh_menu(self):
+        """Tạo menu bar chuẩn phía trên cửa sổ."""
+        self.menubar = tk.Menu(self)
+        self.configure(menu=self.menubar)
 
-        self.m_da = tk.Menu(thanh, tearoff=0)
-        self.m_da.add_command(label="Tạo dự án mới...", command=self.tao_du_an)
-        self.m_da.add_command(label="Quản lý thành viên dự án...",
-                              command=self.quan_ly_thanh_vien)
-        self.m_da.add_separator()
-        self.m_da.add_command(label="Xóa dự án đang mở", command=self.xoa_du_an)
-        thanh.add_cascade(label="Dự án", menu=self.m_da)
+        m_ht = tk.Menu(self.menubar, tearoff=0)
+        m_ht.add_command(label="Đăng xuất", command=self.dang_xuat)
+        m_ht.add_separator()
+        m_ht.add_command(label="Thoát", command=self.destroy)
+        self.menubar.add_cascade(label="Hệ thống", menu=m_ht)
 
-        if self.ql.nguoi_dung_hien_tai.vai_tro != "quan_tri":
-            for vi_tri in (0, 1, 3):
-                self.m_da.entryconfig(vi_tri, state="disabled")
+        m_da = tk.Menu(self.menubar, tearoff=0)
+        m_da.add_command(label="Tạo dự án mới", command=self.tao_du_an)
+        m_da.add_command(label="Quản lý thành viên", command=self.quan_ly_thanh_vien)
+        m_da.add_separator()
+        m_da.add_command(label="Xóa dự án hiện tại", command=self.xoa_du_an_hien_tai)
+        self.menubar.add_cascade(label="Dự án", menu=m_da)
 
-        self.m_cv = tk.Menu(thanh, tearoff=0)
-        self.m_cv.add_command(label="Thêm công việc", accelerator="Ctrl+N",
-                              command=self.them_cong_viec)
-        self.m_cv.add_command(label="Sửa công việc đang chọn", command=self.sua_dang_chon)
-        self.m_cv.add_command(label="Xóa công việc đang chọn", command=self.xoa_dang_chon)
-        thanh.add_cascade(label="Công việc", menu=self.m_cv)
+        m_cv = tk.Menu(self.menubar, tearoff=0)
+        m_cv.add_command(label="Thêm công việc...", command=self.them_cong_viec)
+        m_cv.add_command(label="Làm mới (F5)", command=self.ve_lai)
+        self.menubar.add_cascade(label="Công việc", menu=m_cv)
 
-        m_tk = tk.Menu(thanh, tearoff=0)
-        m_tk.add_command(label="Biểu đồ & cảnh báo", accelerator="Ctrl+T",
-                         command=self.mo_thong_ke)
-        thanh.add_cascade(label="Thống kê", menu=m_tk)
-
-        self.bind("<Control-t>", lambda e: self.mo_thong_ke())
-        self.configure(menu=thanh)
-        self.bind("<F5>", lambda e: self.ve_lai())
-        self.bind("<Control-n>", lambda e: self.them_cong_viec())
-
-        if not self.ql.nguoi_dung_hien_tai.co_quyen_xoa_cong_viec():
-            self.m_cv.entryconfig("Xóa công việc đang chọn", state="disabled")
-
-    def _dung_header_chinh(self):
-        """Thanh Header màu Teal chuẩn thiết kế Figma kèm các nút thao tác nhanh."""
-        nd = self.ql.nguoi_dung_hien_tai
-        vai_tro_txt = "Quản trị viên" if nd.vai_tro == "quan_tri" else "Thành viên"
-
-        header = tk.Frame(self, bg=theme.MAU_CHINH, height=64)
-        header.pack(side="top", fill="x")
-
-        noi_dung = tk.Frame(header, bg=theme.MAU_CHINH)
-        noi_dung.pack(fill="x", padx=18, pady=10)
-
-        # Logo 3 thanh Kanban bên trái
-        khung_logo = ctk.CTkFrame(noi_dung, width=38, height=38, corner_radius=9,
-                                  fg_color="#287870", border_width=1, border_color="#3c8981")
-        khung_logo.pack(side="left", padx=(0, 12))
-        khung_logo.pack_propagate(False)
-        cv_logo = tk.Canvas(khung_logo, width=24, height=22, bg="#287870",
-                            highlightthickness=0, bd=0)
-        cv_logo.place(relx=0.5, rely=0.5, anchor="center")
-        cv_logo.create_rectangle(2, 8, 6, 20, fill="#9bc4c0", width=0)
-        cv_logo.create_rectangle(9, 2, 13, 20, fill="#ffffff", width=0)
-        cv_logo.create_rectangle(16, 5, 20, 20, fill=theme.MAU_NHAN, width=0)
-
-        khung_chu = tk.Frame(noi_dung, bg=theme.MAU_CHINH)
-        khung_chu.pack(side="left")
-        tk.Label(khung_chu, text="KANBAN WORKSPACE", bg=theme.MAU_CHINH,
-                 fg="#a9d1cd", font=theme.FONT_EYEBROW, anchor="w").pack(anchor="w")
-        tk.Label(khung_chu, text="BẢNG QUẢN LÝ CÔNG VIỆC KANBAN", bg=theme.MAU_CHINH,
-                 fg="white", font=("Segoe UI", 13, "bold"), anchor="w").pack(anchor="w")
-
-        # Cụm nút nhanh & thông tin tài khoản bên phải
-        cum_phai = tk.Frame(noi_dung, bg=theme.MAU_CHINH)
-        cum_phai.pack(side="right")
-
-        ctk.CTkButton(
-            cum_phai, text="Đăng xuất", command=self.dang_xuat,
-            width=86, height=32, corner_radius=6,
-            fg_color="#11564f", hover_color="#0d433d",
-            border_width=1, border_color="#3c8981",
-            text_color="white", font=theme.FONT_NHO
-        ).pack(side="right", padx=(8, 0))
-
-        ctk.CTkButton(
-            cum_phai, text="📊 Thống kê", command=self.mo_thong_ke,
-            width=102, height=32, corner_radius=6,
-            fg_color="#25766e", hover_color="#11564f",
-            border_width=1, border_color="#3c8981",
-            text_color="white", font=theme.FONT_DAM
-        ).pack(side="right", padx=(8, 0))
-
-        if nd.vai_tro == "quan_tri":
-            ctk.CTkButton(
-                cum_phai, text="👥 Thành viên", command=self.quan_ly_thanh_vien,
-                width=108, height=32, corner_radius=6,
-                fg_color="#25766e", hover_color="#11564f",
-                border_width=1, border_color="#3c8981",
-                text_color="white", font=theme.FONT_DAM
-            ).pack(side="right", padx=(8, 0))
-
-            ctk.CTkButton(
-                cum_phai, text="+ Dự án mới", command=self.tao_du_an,
-                width=102, height=32, corner_radius=6,
-                fg_color="#25766e", hover_color="#11564f",
-                border_width=1, border_color="#3c8981",
-                text_color=theme.MAU_NHAN, font=theme.FONT_DAM
-            ).pack(side="right", padx=(8, 0))
-
-        tk.Label(
-            cum_phai,
-            text=f"👤 {nd.ho_ten or nd.ten_dang_nhap} ({vai_tro_txt})",
-            bg=theme.MAU_CHINH, fg="#e4f3f0", font=theme.FONT_DAM
-        ).pack(side="right", padx=(0, 8))
-
-    def _dung_thanh_cong_cu(self):
-        khung_tc = ctk.CTkFrame(
-            self, fg_color=theme.MAU_THE, corner_radius=10,
-            border_width=1, border_color=theme.MAU_VIEN
+    def _dung_bo_cuc_chinh(self):
+        """Dựng khung Sidebar (trái) + Khung Làm việc (phải) với Topbar & BoardView."""
+        # 1. Sidebar bên trái
+        self.sidebar = SidebarComponent(
+            self, self.ql, khi_chon_du_an=self._chon_du_an, khi_tao_du_an=self.tao_du_an,
+            khi_chon_loc_nhanh=self._chon_loc_nhanh, khi_dang_xuat=self.dang_xuat,
+            khi_thay_doi_trang_thai=lambda t: self.lbl_trang_thai.configure(text=t)
         )
-        khung_tc.pack(side="top", fill="x", padx=12, pady=(10, 8))
+        self.sidebar.pack(side="left", fill="y")
+        self.nut_loc_nhanh = self.sidebar.nut_loc_nhanh
 
-        tc = tk.Frame(khung_tc, bg=theme.MAU_THE, padx=14, pady=10)
-        tc.pack(fill="x")
-        tc.columnconfigure(3, weight=1)
+        # Splitter kéo giãn chiều rộng Sidebar
+        self.splitter = tk.Frame(self, bg="#e2e8f0", width=4, cursor="sb_h_double_arrow")
+        self.splitter.pack(side="left", fill="y")
+        self._gan_su_kien_splitter()
 
-        tk.Label(tc, text="Dự án:", bg=theme.MAU_THE, fg=theme.MAU_CHU_NHAN,
-                 font=theme.FONT_DAM).grid(row=0, column=0, padx=(0, 6))
-        self.cbb_du_an = ctk.CTkComboBox(
-            tc, variable=self.var_du_an, values=[],
-            command=self._khi_doi_du_an, state="readonly",
-            width=250, height=36, corner_radius=6,
-            fg_color=theme.MAU_O_NHAP, border_color=theme.MAU_VIEN_THE, border_width=1,
-            button_color=theme.MAU_VIEN_THE, button_hover_color=theme.MAU_CHINH_NHAT,
-            text_color=theme.MAU_CHU, font=theme.FONT_DAM
-        )
-        self.cbb_du_an.grid(row=0, column=1, padx=(0, 14))
+        # 2. Khung làm việc chính bên phải
+        self.khung_phai = tk.Frame(self, bg=theme.MAU_NEN)
+        self.khung_phai.pack(side="left", fill="both", expand=True)
 
-        tk.Label(tc, text="Tìm kiếm:", bg=theme.MAU_THE, fg=theme.MAU_CHU_NHAN,
-                 font=theme.FONT_DAM).grid(row=0, column=2, padx=(0, 6))
-        self.ent_tim = ctk.CTkEntry(
-            tc, textvariable=self.var_tu_khoa,
-            placeholder_text="Nhập tiêu đề hoặc mô tả công việc...",
-            height=36, corner_radius=6, fg_color=theme.MAU_O_NHAP,
-            border_color=theme.MAU_VIEN_THE, border_width=1,
-            text_color=theme.MAU_CHU, font=theme.FONT_CHUAN
-        )
-        self.ent_tim.grid(row=0, column=3, sticky="ew", padx=(0, 14))
-        self.ent_tim.bind("<KeyRelease>", lambda e: self.ve_lai())
-
-        tk.Label(tc, text="Ưu tiên:", bg=theme.MAU_THE, fg=theme.MAU_CHU_NHAN,
-                 font=theme.FONT_DAM).grid(row=0, column=4, padx=(0, 6))
-        self.cbb_ut = ctk.CTkComboBox(
-            tc, variable=self.var_uu_tien,
-            values=[TAT_CA, "Thấp", "Trung bình", "Cao", "Khẩn"],
-            command=lambda _: self.ve_lai(), state="readonly",
-            width=125, height=36, corner_radius=6,
-            fg_color=theme.MAU_O_NHAP, border_color=theme.MAU_VIEN_THE, border_width=1,
-            button_color=theme.MAU_VIEN_THE, button_hover_color=theme.MAU_CHINH_NHAT,
-            text_color=theme.MAU_CHU, font=theme.FONT_CHUAN
-        )
-        self.cbb_ut.grid(row=0, column=5, padx=(0, 14))
-
-        tk.Label(tc, text="Thành viên:", bg=theme.MAU_THE, fg=theme.MAU_CHU_NHAN,
-                 font=theme.FONT_DAM).grid(row=0, column=6, padx=(0, 6))
-        self.cbb_tv = ctk.CTkComboBox(
-            tc, variable=self.var_thanh_vien, values=[TAT_CA],
-            command=lambda _: self.ve_lai(), state="readonly",
-            width=125, height=36, corner_radius=6,
-            fg_color=theme.MAU_O_NHAP, border_color=theme.MAU_VIEN_THE, border_width=1,
-            button_color=theme.MAU_VIEN_THE, button_hover_color=theme.MAU_CHINH_NHAT,
-            text_color=theme.MAU_CHU, font=theme.FONT_CHUAN
-        )
-        self.cbb_tv.grid(row=0, column=7, padx=(0, 14))
-
-        ctk.CTkButton(
-            tc, text="+ Thêm công việc", command=self.them_cong_viec,
-            width=142, height=36, corner_radius=7,
-            fg_color=theme.MAU_CHINH, hover_color=theme.MAU_CHINH_DAM,
-            text_color="white", font=theme.FONT_DAM
-        ).grid(row=0, column=8)
-
-    def _dung_thanh_trang_thai(self):
-        khung_duoi = tk.Frame(self, bg=theme.MAU_THE, bd=0, highlightthickness=1,
-                              highlightbackground=theme.MAU_VIEN)
-        khung_duoi.pack(side="bottom", fill="x")
+        # Statusbar ở đáy
+        self.statusbar = tk.Frame(self.khung_phai, bg="#ffffff", height=24, highlightthickness=1, highlightbackground="#e2e8f0")
+        self.statusbar.pack(side="bottom", fill="x")
         self.lbl_trang_thai = tk.Label(
-            khung_duoi, anchor="w", bg=theme.MAU_THE, fg=theme.MAU_CHU_NHAN,
-            font=theme.FONT_NHO, padx=14, pady=5
+            self.statusbar, text="Sẵn sàng.", bg="#ffffff",
+            fg="#64748b", font=theme.FONT_NHO, anchor="w", padx=10
         )
         self.lbl_trang_thai.pack(side="left", fill="x", expand=True)
 
-        tk.Label(
-            khung_duoi,
-            text="Mẹo: Kéo-thả thẻ để chuyển cột • Double-click để sửa • Chuột phải để mở menu",
-            bg=theme.MAU_THE, fg=theme.MAU_CHU_PHU, font=theme.FONT_NHO, padx=14
-        ).pack(side="right")
+        # Topbar ở trên
+        self.topbar = TopbarComponent(
+            self.khung_phai, khi_them_viec=self.them_cong_viec,
+            khi_bat_tat_hoat_dong=self.bat_tat_hoat_dong, khi_mo_thong_ke=self.mo_thong_ke,
+            khi_ql_thanh_vien=self.quan_ly_thanh_vien, khi_xoa_du_an=self.xoa_du_an_hien_tai,
+            khi_thay_doi_loc=self.ve_lai, khi_dat_lai_loc=self.ve_lai, khi_doi_che_do=self._doi_che_do_xem
+        )
+        self.topbar.pack(fill="x")
 
-    def _dung_bang_kanban(self):
-        self.bang = tk.Frame(self, bg=theme.MAU_NEN)
-        self.bang.pack(fill="both", expand=True, padx=8, pady=(0, 10))
-        self.bang.rowconfigure(0, weight=1)
+        # Ánh xạ thuộc tính tương thích ngược
+        self.btn_them_cv = self.topbar.btn_them_cv
+        self.btn_hoat_dong, self.btn_thong_ke = self.topbar.btn_hoat_dong, self.topbar.btn_thong_ke
+        self.btn_thanh_vien, self.btn_xoa_da = self.topbar.btn_thanh_vien, self.topbar.btn_xoa_da
+        self.btn_dat_lai = self.btn_xoa_loc = self.topbar.btn_dat_lai
+        self.lbl_ten_da = self.topbar.lbl_ten_da
+        self.cbb_du_an = ttk.Combobox(self, textvariable=self.var_du_an, state="readonly")
+        self.cbb_tv, self.cbb_uu_tien = self.topbar.cbb_tv, self.topbar.cbb_uu_tien
+        self.ent_tim = self.entry_tim = self.topbar.entry_tim
+        self.thanh_tien_do, self.lbl_tien_do_nhanh = self.topbar.thanh_tien_do, self.topbar.lbl_tien_do
+        self.lbl_dem_tong = self.lbl_dem_xong = self.lbl_dem_khan = self.lbl_so_luong_hien_thi = self.khung_avatars = tk.Label(self)
 
-    def _dung_menu_chuot_phai(self):
+        # BoardView hiển thị Kanban + Danh sách + Ngăn kéo Hoạt động bên phải
+        self.board_view = BoardView(
+            self.khung_phai, khi_chon_task=self.chon_the, khi_mo_task=self.mo_the,
+            khi_menu_task=self.hien_menu, khi_keo_task=self.khi_keo, khi_tha_task=self.khi_tha,
+            khi_them_nhanh=self.them_cong_viec_tai_cot, khi_chuyen_nhanh=self.chuyen_nhanh_tiep_theo,
+            khi_dong_hoat_dong=None
+        )
+        self.board_view.pack(fill="both", expand=True)
+
+        self.cac_cot = self.board_view.cot_widgets
+        self.cot_kanban = self.cac_cot
+        self.drawer_hoat_dong = self.board_view.drawer_hoat_dong
+        self.tree_ds = self.board_view.tree_ds
+        self.khung_kpi = self.board_view.khung_kpi
+        self.lbl_kpi_tong = self.board_view.lbl_kpis["tong"]
+        self.lbl_kpi_dang_lam = self.board_view.lbl_kpis["dang_lam"]
+        self.lbl_kpi_xong = self.board_view.lbl_kpis["xong"]
+        self.lbl_kpi_khan = self.board_view.lbl_kpis["khan"]
+
+        # Gắn sự kiện danh sách treeview
+        self.tree_ds.bind("<<TreeviewSelect>>", self._khi_chon_dong_ds)
+        self.tree_ds.bind("<Double-1>", lambda _e: self.mo_the(self.cv_dang_chon) if self.cv_dang_chon else None)
+        self.tree_ds.bind("<Button-3>", self._khi_chuot_phai_ds)
+
+    def _gan_su_kien_splitter(self):
+        """Kéo chuột để co giãn chiều rộng Sidebar mượt mà."""
+        self._splitter_keo = False
+        self._splitter_x_dau = 0
+        self._sidebar_w_dau = 218
+
+        def _bam(e):
+            self._splitter_keo = True
+            self._splitter_x_dau = e.x_root
+            self._sidebar_w_dau = self.sidebar.winfo_width()
+            self.splitter.configure(bg="#6d669b")
+
+        def _re(e):
+            if not self._splitter_keo:
+                return
+            delta = e.x_root - self._splitter_x_dau
+            w_moi = max(160, min(380, self._sidebar_w_dau + delta))
+            self.sidebar.configure(width=w_moi)
+            self.sidebar._tinh_chinh_nhan_du_an()
+
+        def _tha(_e):
+            self._splitter_keo = False
+            self.splitter.configure(bg="#e2e8f0")
+
+        self.splitter.bind("<Button-1>", _bam)
+        self.splitter.bind("<B1-Motion>", _re)
+        self.splitter.bind("<ButtonRelease-1>", _tha)
+
+    def _tao_menu_chuot_phai(self):
         self.menu_phai = tk.Menu(self, tearoff=0)
-        self.menu_phai.add_command(label="Sửa công việc", command=self.sua_dang_chon)
+        self.menu_phai.add_command(label="Xem / Sửa chi tiết", command=self.sua_dang_chon)
         self.menu_chuyen = tk.Menu(self.menu_phai, tearoff=0)
         self.menu_phai.add_cascade(label="Chuyển sang cột", menu=self.menu_chuyen)
         self.menu_phai.add_separator()
         self.menu_phai.add_command(label="Xóa công việc", command=self.xoa_dang_chon)
-        if not self.ql.nguoi_dung_hien_tai.co_quyen_xoa_cong_viec():
-            self.menu_phai.entryconfig("Xóa công việc", state="disabled")
 
-    # ------------------------------------------------------------ nạp dữ liệu
+    def _dang_ky_phim_tat(self):
+        self.bind("<Control-n>", lambda _e: self.them_cong_viec())
+        self.bind("<Control-f>", lambda _e: self.topbar.entry_tim.focus_set())
+        self.bind("<F5>", lambda _e: self.ve_lai())
+        self.bind("<Delete>", lambda _e: self.xoa_dang_chon())
+        self.bind("<Alt-Right>", lambda _e: self.chuyen_nhanh_tiep_theo(self.cv_dang_chon) if self.cv_dang_chon else None)
+        self.bind("<Control-Shift-S>", lambda _e: self.mo_thong_ke())
+
     def _nap_du_an(self, chon_ma=None):
-        """Nạp lại danh sách dự án vào Combobox."""
-        chon_ma = chon_ma or (self.du_an.ma_du_an if self.du_an else None)
-        self.ds_du_an = [d for d in self.ql.lay_danh_sach_du_an()
-                         if self.ql.kiem_tra_quyen_du_an(d)]
-        ds_ten = [f"{d.ma_du_an} - {d.ten_du_an}" for d in self.ds_du_an]
-        self.cbb_du_an.configure(values=ds_ten if ds_ten else [""])
-
+        """Tải danh sách dự án và vẽ lại giao diện."""
+        self.ds_du_an = [d for d in self.ql.lay_danh_sach_du_an() if self.ql.kiem_tra_quyen_du_an(d)]
         if not self.ds_du_an:
             self.du_an = None
-            self.var_du_an.set("")
-            self.cbb_tv.configure(values=[TAT_CA])
-            self._xoa_cot()
-            self.cv_dang_chon = None
-            self.the_dang_chon = None
-            ck = self.cua_so_thong_ke
-            if ck is not None and ck.winfo_exists():
-                ck.destroy()
-            self.lbl_trang_thai.configure(
-                text="Chưa có dự án nào. Quản trị viên có thể tạo ở menu Dự án.")
+            self.var_du_an.set("(Chưa có dự án)")
+            self.topbar.cap_nhat_tieu_de("", "Chưa có dự án nào")
+            self.sidebar.cap_nhat_du_an([], None)
+            self._cap_nhat_trang_thai_nut_du_an()
+            self.ve_lai()
             return
 
         vi_tri = next((i for i, d in enumerate(self.ds_du_an) if d.ma_du_an == chon_ma), 0)
-        self.var_du_an.set(ds_ten[vi_tri])
-        self._khi_doi_du_an()
-
-    def _xoa_cot(self):
-        for cot in self.cac_cot.values():
-            cot.destroy()
-        self.cac_cot.clear()
-
-    def _tao_cot(self):
-        self._xoa_cot()
-        for i, ten in enumerate(self.du_an.danh_sach_cot):
-            cot = CotKanban(self.bang, ten, khi_chon=self.chon_the,
-                            khi_mo=self.mo_the, khi_menu=self.hien_menu,
-                            khi_keo=self.khi_keo, khi_tha=self.khi_tha)
-            cot.grid(row=0, column=i, sticky="nsew", padx=5)
-            self.bang.columnconfigure(i, weight=1, uniform="cot")
-            self.cac_cot[ten] = cot
-
-    def _lam_moi_thanh_vien(self):
-        """Gọi sau khi thêm/xóa thành viên dự án: cập nhật ô lọc thành viên."""
-        if self.du_an is None:
-            return
-        ds_tv = [TAT_CA] + list(self.du_an.thanh_vien_tham_gia)
-        self.cbb_tv.configure(values=ds_tv)
-        if self.var_thanh_vien.get() not in ds_tv:
-            self.var_thanh_vien.set(TAT_CA)
-        self.ve_lai()
-
-    def _khi_doi_du_an(self, chon=None):
-        chuoi = self.var_du_an.get()
-        vi_tri = next(
-            (i for i, d in enumerate(self.ds_du_an) if f"{d.ma_du_an} - {d.ten_du_an}" == chuoi),
-            0
-        )
         self.du_an = self.ds_du_an[vi_tri]
-        ds_tv = [TAT_CA] + list(self.du_an.thanh_vien_tham_gia)
-        self.cbb_tv.configure(values=ds_tv)
-        self.var_thanh_vien.set(TAT_CA)
-        self._tao_cot()
+        self.var_du_an.set(f"{self.du_an.ma_du_an} - {self.du_an.ten_du_an}")
+
+        self.topbar.cap_nhat_tieu_de(self.du_an.ma_du_an, self.du_an.ten_du_an)
+        self.sidebar.cap_nhat_du_an(self.ds_du_an, self.du_an.ma_du_an)
+
+        # Cập nhật danh sách thành viên trong topbar
+        nd_map = {nd.ten_dang_nhap: nd for nd in self.ql.lay_danh_sach_nguoi_dung()}
+        ds_tv_objs = [nd_map[u] for u in self.du_an.thanh_vien_tham_gia if u in nd_map]
+        self.topbar.cap_nhat_thanh_vien(ds_tv_objs)
+
+        # Dựng cột Kanban trong BoardView
+        self.board_view.dung_cac_cot(self.du_an.danh_sach_cot, self.ten_nguoi_map)
+        self.cac_cot = self.board_view.cot_widgets
+        self.cot_kanban = self.cac_cot
+
+        self._cap_nhat_trang_thai_nut_du_an()
         self.ve_lai()
 
-    def tao_du_an(self):
-        TaoDuAnDialog(self, self.ql,
-                      khi_xong=lambda du_an: self._nap_du_an(chon_ma=du_an.ma_du_an))
+    def _chon_du_an(self, ma_da):
+        self._nap_du_an(chon_ma=ma_da)
 
-    def quan_ly_thanh_vien(self):
-        if self.du_an is None:
-            messagebox.showinfo("Chưa có dự án", "Hãy tạo hoặc chọn một dự án trước.", parent=self)
-            return
-        ThanhVienDuAnDialog(self, self.ql, self.du_an, khi_xong=self._lam_moi_thanh_vien)
+    def _chon_loc_nhanh(self, ma_loc):
+        self.var_loc_nhanh.set(ma_loc)
+        self.sidebar.cap_nhat_loc_nhanh(ma_loc)
+        self.ve_lai()
 
-    def xoa_du_an(self):
-        da = self.du_an
-        if da is None:
-            messagebox.showinfo("Chưa có dự án", "Không có dự án nào để xóa.", parent=self)
-            return
-        tong = len(da.cong_viec)
-        chua_xong = sum(1 for cv in da.cong_viec if not cv.is_hoan_thanh())
-        if not messagebox.askyesno(
-                "Xác nhận xóa dự án",
-                f"Xóa dự án {da.ma_du_an} - {da.ten_du_an}?\n\n"
-                f"Sẽ mất vĩnh viễn {tong} công việc và danh sách "
-                f"{len(da.thanh_vien_tham_gia)} thành viên.",
-                icon="warning", parent=self):
-            return
-        if chua_xong:
-            nhap = simpledialog.askstring(
-                "Xác nhận lần 2",
-                f"Dự án còn {chua_xong} việc chưa hoàn thành.\n"
-                f"Gõ lại mã dự án ({da.ma_du_an}) để xác nhận:", parent=self)
-            if nhap is None or nhap.strip().upper() != da.ma_du_an:
-                messagebox.showinfo("Đã hủy", "Mã không khớp, dự án chưa bị xóa.", parent=self)
-                return
-        try:
-            self.ql.xoa_du_an(da.ma_du_an)
-        except KanbanException as loi:
-            messagebox.showerror("Không xóa được", loi.thong_diep, parent=self)
-            return
-        self._nap_du_an()
+    def _cap_nhat_trang_thai_nut_du_an(self):
+        co_da = self.du_an is not None
+        la_qt = bool(self.ql.nguoi_dung_hien_tai and self.ql.nguoi_dung_hien_tai.vai_tro == "quan_tri")
+        self.btn_them_cv.configure(state="normal" if co_da else "disabled")
+        self.btn_thong_ke.configure(state="normal" if co_da else "disabled")
+        self.btn_thanh_vien.configure(state="normal" if (co_da and la_qt) else "disabled")
+        self.btn_xoa_da.configure(state="normal" if (co_da and la_qt) else "disabled")
 
     def _cong_viec_sau_loc(self):
-        """Giao của 3 bộ lọc: từ khóa, ưu tiên, thành viên (đều gọi hàm của backend)."""
+        if not self.du_an:
+            return []
         ql, da = self.ql, self.du_an
-        kq = ql.tim_kiem_cong_viec(da, self.var_tu_khoa.get())
-        if self.var_uu_tien.get() != TAT_CA:
-            ma = {cv.ma_cong_viec for cv in ql.loc_theo_muc_uu_tien(da, self.var_uu_tien.get())}
-            kq = [cv for cv in kq if cv.ma_cong_viec in ma]
-        if self.var_thanh_vien.get() != TAT_CA:
-            ma = {cv.ma_cong_viec for cv in ql.loc_theo_thanh_vien(da, self.var_thanh_vien.get())}
-            kq = [cv for cv in kq if cv.ma_cong_viec in ma]
+        kq = ql.tim_kiem_cong_viec(da, self.topbar.var_tim_kiem.get())
+
+        che_do = self.var_loc_nhanh.get()
+        if che_do == "cua_toi":
+            nd = self.ql.nguoi_dung_hien_tai
+            kq = [cv for cv in kq if cv.nguoi_phu_trach == (nd.ten_dang_nhap if nd else "")]
+        elif che_do == "khan_cap":
+            kq = [cv for cv in kq if cv.muc_uu_tien == "Khẩn" or cv.da_qua_han()]
+        elif che_do == "hoan_thanh":
+            kq = [cv for cv in kq if cv.is_hoan_thanh()]
+
+        ut = self.topbar.var_uu_tien.get()
+        if ut != TAT_CA:
+            ds_ut = {cv.ma_cong_viec for cv in ql.loc_theo_muc_uu_tien(da, ut)}
+            kq = [cv for cv in kq if cv.ma_cong_viec in ds_ut]
+
+        tv_str = self.topbar.var_thanh_vien.get()
+        if tv_str != TAT_CA:
+            tv_ma = tv_str.split(" - ")[0].strip()
+            ds_tv = {cv.ma_cong_viec for cv in ql.loc_theo_thanh_vien(da, tv_ma)}
+            kq = [cv for cv in kq if cv.ma_cong_viec in ds_tv]
+
         return kq
 
     def ve_lai(self):
-        if self.du_an is None:
+        """Vẽ lại toàn bộ thẻ công việc, danh sách treeview và KPI."""
+        if not self.du_an:
+            self.board_view.cap_nhat_kpi(0, 0, 0, 0)
+            self.topbar.cap_nhat_tien_do(0, 0)
             return
-        cong_viec = self._cong_viec_sau_loc()
-        for ten, cot in self.cac_cot.items():
-            cot.hien_thi([cv for cv in cong_viec if cv.trang_thai == ten])
-        self.cv_dang_chon = None
-        self.the_dang_chon = None
-        nd = self.ql.nguoi_dung_hien_tai
-        self.lbl_trang_thai.configure(
-            text=f"📁 Dự án: {self.du_an.ma_du_an} - {self.du_an.ten_du_an}   |   "
-                 f"Hiển thị: {len(cong_viec)}/{len(self.du_an.cong_viec)} công việc   |   "
-                 f"Tiến độ: {self.du_an.tinh_tien_do()}%   |   "
-                 f"Phiên: {nd.ho_ten or nd.ten_dang_nhap} ({nd.vai_tro})"
-        )
-        ck = self.cua_so_thong_ke
-        if ck is not None and ck.winfo_exists():
-            ck.dat_du_an(self.du_an)
 
-    # ------------------------------------------------------------ sự kiện trên thẻ
-    def chon_the(self, cv):
-        if self.the_dang_chon is not None and self.the_dang_chon.winfo_exists():
-            self.the_dang_chon.dat_chon(False)
+        cv_hien_thi = self._cong_viec_sau_loc()
+        for ten, cot in self.cac_cot.items():
+            cot.hien_thi([cv for cv in cv_hien_thi if cv.trang_thai == ten])
+
+        tong = len(self.du_an.cong_viec)
+        xong = sum(1 for c in self.du_an.cong_viec if c.is_hoan_thanh())
+        dang_lam = sum(1 for c in self.du_an.cong_viec if c.trang_thai == "Đang làm")
+        khan = sum(1 for c in self.du_an.cong_viec if c.muc_uu_tien == "Khẩn" or c.da_qua_han())
+
+        self.board_view.cap_nhat_kpi(tong, dang_lam, xong, khan)
+        self.topbar.cap_nhat_tien_do(tong, xong)
+        self._cap_nhat_tree_danh_sach(cv_hien_thi)
+
+        if self.drawer_hoat_dong.winfo_ismapped():
+            ds_nk = self.ql.lay_nhat_ky()
+            self.board_view.cap_nhat_hoat_dong(ds_nk)
+
+        self.lbl_trang_thai.configure(
+            text=f"Dự án '{self.du_an.ten_du_an}': {len(cv_hien_thi)}/{tong} công việc."
+        )
+
+    def _cap_nhat_tree_danh_sach(self, ds_cv):
+        self.tree_ds.delete(*self.tree_ds.get_children())
+        for cv in ds_cv:
+            ten_tv = self.ten_nguoi_map.get(cv.nguoi_phu_trach, cv.nguoi_phu_trach)
+            self.tree_ds.insert(
+                "", "end", iid=cv.ma_cong_viec,
+                values=(cv.ma_cong_viec, cv.tieu_de, cv.trang_thai,
+                        cv.muc_uu_tien, ten_tv, cv.ngay_ket_thuc, cv.canh_bao())
+            )
+
+    def _doi_che_do_xem(self, che_do):
+        self.board_view.chuyen_che_do(che_do)
+        self.ve_lai()
+
+    def bat_tat_hoat_dong(self):
+        mo = self.board_view.bat_tat_hoat_dong()
+        if mo and self.du_an:
+            ds_nk = self.ql.lay_nhat_ky()
+            self.board_view.cap_nhat_hoat_dong(ds_nk)
+
+    def chon_the(self, cv, card):
+        for c in self.cac_cot.values():
+            for t in c.cac_the.values():
+                t.chon(False)
         self.cv_dang_chon = cv
-        for cot in self.cac_cot.values():
-            the = cot.cac_the.get(cv.ma_cong_viec)
-            if the:
-                the.dat_chon(True)
-                self.the_dang_chon = the
+        self.the_dang_chon = card
+        if card:
+            card.chon(True)
 
     def mo_the(self, cv):
-        self.chon_the(cv)
-        self.sua_dang_chon()
+        self.cv_dang_chon = cv
+        TaskDialog(self, self.ql, self.du_an, cv, khi_xong=self.ve_lai)
 
     def hien_menu(self, cv, event):
-        self.chon_the(cv)
+        self.cv_dang_chon = cv
         self.menu_chuyen.delete(0, "end")
-        for ten in self.du_an.danh_sach_cot:
-            if ten != cv.trang_thai:
+        for cot in self.du_an.danh_sach_cot:
+            if cot != cv.trang_thai:
                 self.menu_chuyen.add_command(
-                    label=ten, command=lambda t=ten: self.chuyen_cot(cv, t))
-        try:
-            self.menu_phai.tk_popup(event.x_root, event.y_root)
-        finally:
-            self.menu_phai.grab_release()
+                    label=cot, command=lambda c=cot: self.chuyen_cot(cv, c)
+                )
+        self.menu_phai.tk_popup(event.x_root, event.y_root)
 
-    # ------------------------------------------------------------ thao tác
     def them_cong_viec(self):
-        if self.du_an is None:
+        if not self.du_an:
             return
-        CongViecDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai)
+        TaskDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai)
+
+    def them_cong_viec_tai_cot(self, ten_cot):
+        if not self.du_an:
+            return
+        TaskDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai, trang_thai_mac_dinh=ten_cot)
 
     def sua_dang_chon(self):
-        if self.cv_dang_chon is None:
-            messagebox.showinfo("Chưa chọn", "Hãy bấm chọn một thẻ công việc trước.", parent=self)
-            return
-        CongViecDialog(self, self.ql, self.du_an, self.cv_dang_chon, khi_xong=self.ve_lai)
-
-    def chuyen_cot(self, cv, ten_cot):
-        try:
-            self.ql.chuyen_trang_thai(self.du_an, cv.ma_cong_viec, ten_cot)
-        except KanbanException as loi:
-            messagebox.showerror("Không chuyển được", loi.thong_diep, parent=self)
-            return
-        self.ve_lai()
-        self.chon_the(cv)
+        if self.cv_dang_chon:
+            self.mo_the(self.cv_dang_chon)
 
     def xoa_dang_chon(self):
-        cv = self.cv_dang_chon
-        if cv is None:
-            messagebox.showinfo("Chưa chọn", "Hãy bấm chọn một thẻ công việc trước.", parent=self)
+        if not self.cv_dang_chon:
             return
-        if not messagebox.askyesno(
-                "Xác nhận xóa",
-                f"Xóa công việc {cv.ma_cong_viec} - {cv.tieu_de}?\nKhông thể hoàn tác.",
-                icon="warning", parent=self):
+        if not self.ql.nguoi_dung_hien_tai.co_quyen_xoa_cong_viec():
+            messagebox.showwarning("Không có quyền", "Chỉ Quản trị viên mới được xóa công việc.", parent=self)
+            return
+        if not xac_nhan(self, f"Xóa vĩnh viễn công việc '{self.cv_dang_chon.ma_cong_viec}'?"):
             return
         try:
-            self.ql.xoa_cong_viec(self.du_an, cv.ma_cong_viec)
+            self.ql.xoa_cong_viec(self.du_an, self.cv_dang_chon.ma_cong_viec)
+        except KhongCoQuyenError as loi:
+            messagebox.showerror("Từ chối quyền", loi.thong_diep, parent=self)
+            return
+        except LoiLuuTruError as loi:
+            messagebox.showerror("Lỗi lưu trữ", loi.thong_diep, parent=self)
+            return
         except KanbanException as loi:
-            messagebox.showerror("Không xóa được", loi.thong_diep, parent=self)
+            messagebox.showerror("Lỗi xóa việc", loi.thong_diep, parent=self)
+            return
+        except Exception as e:
+            messagebox.showerror("Lỗi hệ thống", f"Không thể xóa công việc: {e}", parent=self)
+            return
+        self.cv_dang_chon = None
+        self.ve_lai()
+
+    def chuyen_cot(self, cv, cot_dich):
+        try:
+            self.ql.chuyen_trang_thai(self.du_an, cv.ma_cong_viec, cot_dich)
+        except KhongCoQuyenError as loi:
+            messagebox.showerror("Từ chối quyền", loi.thong_diep, parent=self)
+            return
+        except (DuLieuKhongHopLeError, KhongTimThayError) as loi:
+            messagebox.showwarning("Không hợp lệ", loi.thong_diep, parent=self)
+            return
+        except LoiLuuTruError as loi:
+            messagebox.showerror("Lỗi lưu trữ", loi.thong_diep, parent=self)
+            return
+        except KanbanException as loi:
+            messagebox.showerror("Lỗi chuyển cột", loi.thong_diep, parent=self)
+            return
+        except Exception as e:
+            messagebox.showerror("Lỗi hệ thống", f"Không thể chuyển trạng thái: {e}", parent=self)
             return
         self.ve_lai()
 
-    def mo_thong_ke(self):
-        if self.du_an is None:
-            return
-        ck = self.cua_so_thong_ke
-        if ck is not None and ck.winfo_exists():
-            ck.dat_du_an(self.du_an)
-            ck.lift()
-            return
-        self.cua_so_thong_ke = ThongKeWindow(self, self.du_an)
-
-    def dang_xuat(self):
-        if messagebox.askyesno("Đăng xuất", "Bạn có chắc muốn đăng xuất?", parent=self):
-            self.ql.dang_xuat()
-            self.destroy()
-            self.khi_dang_xuat()
-
-    def thoat(self):
-        if messagebox.askokcancel("Thoát", "Bạn có chắc muốn thoát ứng dụng?", parent=self):
-            self.master.destroy()
-
-    def _cot_duoi_chuot(self, event):
-        """Tên cột đang nằm dưới con trỏ (None nếu thả ra ngoài)."""
-        for ten, cot in self.cac_cot.items():
-            if cot.chua_diem(event.x_root, event.y_root):
-                return ten
-        return None
+    def chuyen_nhanh_tiep_theo(self, cv):
+        ds_cot = self.du_an.danh_sach_cot
+        if cv.trang_thai in ds_cot:
+            idx = ds_cot.index(cv.trang_thai)
+            if idx < len(ds_cot) - 1:
+                self.chuyen_cot(cv, ds_cot[idx + 1])
 
     def khi_keo(self, cv, event):
-        """Gọi liên tục khi đang kéo: cho nhãn 'bóng' chạy theo chuột, tô sáng cột đích."""
-        if self._the_ma is None:
-            self._the_ma = tk.Label(self, bg=theme.MAU_CHINH, fg="white",
-                                    font=theme.FONT_DAM, padx=12, pady=6)
-        self._the_ma.configure(text=f"✥  {cv.ma_cong_viec} — {cv.tieu_de}")
-        self._the_ma.place(x=event.x_root - self.winfo_rootx() + 12,
-                           y=event.y_root - self.winfo_rooty() + 12)
-        self._the_ma.lift()
-
         dich = self._cot_duoi_chuot(event)
         for ten, cot in self.cac_cot.items():
             cot.to_sang(ten == dich and ten != cv.trang_thai)
 
     def khi_tha(self, cv, event):
-        if self._the_ma is not None:
-            self._the_ma.place_forget()
         for cot in self.cac_cot.values():
             cot.to_sang(False)
         dich = self._cot_duoi_chuot(event)
         if dich and dich != cv.trang_thai:
             self.after(10, lambda: self.chuyen_cot(cv, dich))
+
+    def _cot_duoi_chuot(self, event):
+        for ten, cot in self.cac_cot.items():
+            if cot.chua_diem(event.x_root, event.y_root):
+                return ten
+        return None
+
+    def _khi_chon_dong_ds(self, _event=None):
+        sel = self.tree_ds.selection()
+        if sel and self.du_an:
+            self.cv_dang_chon = self.du_an.tim_cong_viec_theo_ma(sel[0])
+
+    def _khi_chuot_phai_ds(self, event):
+        row_id = self.tree_ds.identify_row(event.y)
+        if row_id:
+            self.tree_ds.selection_set(row_id)
+            self._khi_chon_dong_ds()
+            if self.cv_dang_chon:
+                self.hien_menu(self.cv_dang_chon, event)
+
+    def tao_du_an(self):
+        TaoDuAnDialog(self, self.ql, khi_xong=lambda d: self._nap_du_an(chon_ma=d.ma_du_an))
+
+    def quan_ly_thanh_vien(self):
+        if self.du_an:
+            ThanhVienDuAnDialog(self, self.ql, self.du_an, khi_xong=lambda: self._nap_du_an(chon_ma=self.du_an.ma_du_an))
+
+    def xoa_du_an_hien_tai(self):
+        if not self.du_an:
+            return
+        if not self.ql.nguoi_dung_hien_tai.co_quyen_xoa_du_an():
+            messagebox.showwarning("Không có quyền", "Chỉ Quản trị viên mới được xóa dự án.", parent=self)
+            return
+        if not xac_nhan(self, f"Xóa toàn bộ dự án '{self.du_an.ma_du_an} — {self.du_an.ten_du_an}'?"):
+            return
+        try:
+            self.ql.xoa_du_an(self.du_an.ma_du_an)
+        except KhongCoQuyenError as loi:
+            messagebox.showerror("Từ chối quyền", loi.thong_diep, parent=self)
+            return
+        except LoiLuuTruError as loi:
+            messagebox.showerror("Lỗi lưu trữ", loi.thong_diep, parent=self)
+            return
+        except KanbanException as loi:
+            messagebox.showerror("Lỗi xóa dự án", loi.thong_diep, parent=self)
+            return
+        except Exception as e:
+            messagebox.showerror("Lỗi hệ thống", f"Không thể xóa dự án: {e}", parent=self)
+            return
+        self._nap_du_an()
+
+    def mo_thong_ke(self):
+        if self.du_an:
+            StatsView(self, self.du_an, self.ql)
+
+    def dang_xuat(self):
+        self.destroy()
+        if self.khi_dang_xuat_cb:
+            self.khi_dang_xuat_cb()
+
+    def _khi_dong_cua_so(self):
+        self.destroy()
+        if self.goc:
+            self.goc.destroy()

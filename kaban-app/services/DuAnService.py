@@ -15,7 +15,8 @@ class DuAnService:
 
     def _nap_du_lieu(self):
         try:
-            du_lieu = self.bo_luu_tru.doc_json("du_an.json")
+            ten_file = getattr(self.bo_luu_tru, "ten_file_du_an", "du_an.json")
+            du_lieu = self.bo_luu_tru.doc_json(ten_file)
             if not isinstance(du_lieu, list):
                 return []
             danh_sach = []
@@ -32,7 +33,8 @@ class DuAnService:
     def luu_du_lieu(self):
         """Lưu toàn bộ danh sách dự án hiện tại xuống tầng lưu trữ."""
         du_lieu = [du_an.to_dict() for du_an in self.danh_sach_du_an]
-        self.bo_luu_tru.ghi_json("du_an.json", du_lieu)
+        ten_file = getattr(self.bo_luu_tru, "ten_file_du_an", "du_an.json")
+        self.bo_luu_tru.ghi_json(ten_file, du_lieu)
         return True
 
     def tao_du_an(self, ma_du_an: str, ten_du_an: str, danh_sach_cot=None):

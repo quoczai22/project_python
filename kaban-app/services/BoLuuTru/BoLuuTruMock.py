@@ -8,7 +8,10 @@ from datetime import datetime
 from .BoLuuTruBase import BoLuuTruBase
 from models.ThanhVien import NguoiDung
 from models.NguoiDung.NguoiDungBase import la_mat_khau_da_bam
-from config import TEN_FILE_NHAT_KY, TEN_THU_MUC_SAO_LUU, SO_BAN_SAO_LUU_TOI_DA
+from config import (
+    TEN_FILE_DU_AN, TEN_FILE_DU_LIEU_MOC, TEN_FILE_NHAT_KY,
+    TEN_THU_MUC_SAO_LUU, SO_BAN_SAO_LUU_TOI_DA
+)
 from exceptions import KanbanException, LoiLuuTruError
 from logger import logger
 
@@ -39,9 +42,9 @@ class BoLuuTruMock(BoLuuTruBase):
     - File hỏng không bao giờ bị ghi đè mất: luôn được giữ lại dạng '<tên>.loi-<thời gian>'.
     """
 
-    def __init__(self, ten_file_du_an="du_an.json", ten_file_du_lieu_moc="du_lieu_moc.json"):
-        self.ten_file_du_an = ten_file_du_an or "du_an.json"
-        self.ten_file_du_lieu_moc = ten_file_du_lieu_moc or "du_lieu_moc.json"
+    def __init__(self, ten_file_du_an=None, ten_file_du_lieu_moc=None):
+        self.ten_file_du_an = ten_file_du_an or TEN_FILE_DU_AN
+        self.ten_file_du_lieu_moc = ten_file_du_lieu_moc or TEN_FILE_DU_LIEU_MOC
         self.ten_file_nhat_ky = TEN_FILE_NHAT_KY
 
     # ==================== ĐƯỜNG DẪN ====================

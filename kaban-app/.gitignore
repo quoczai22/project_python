@@ -62,5 +62,11 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
+# Backup data files
+backup/
+data/backup/
+*.loi-*
+*.tmp
+
 # Log files
 *.log
