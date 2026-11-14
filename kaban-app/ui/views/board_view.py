@@ -156,17 +156,34 @@ class BoardView(tk.Frame):
         self.noi_dung_hd.bind("<Configure>", lambda _e: self.canvas_hd.configure(scrollregion=self.canvas_hd.bbox("all")))
         self.canvas_hd.bind("<Configure>", lambda e: self.canvas_hd.itemconfigure(self._cua_so_hd, width=e.width))
 
-    def _cap_nhat_vung_cuon_ngang(self, _event=None):
-        self.canvas_kanban.configure(scrollregion=self.canvas_kanban.bbox("all"))
-        can_cuon = self.khung_cac_cot.winfo_reqwidth() > self.canvas_kanban.winfo_width()
+    def _dong_bo_kich_thuoc_kanban(self, chieu_rong=None, chieu_cao=None):
+        """Đồng bộ chiều rộng các cột phủ đều 2 bên Canvas và kích hoạt cuộn ngang khi hẹp."""
+        cw = chieu_rong or self.canvas_kanban.winfo_width()
+        ch = chieu_cao or self.canvas_kanban.winfo_height()
+        if cw <= 1:
+            cw = self.winfo_width()
+        if ch <= 1:
+            ch = self.winfo_height()
+
+        so_cot = max(len(self.cot_widgets), 1)
+        min_w = so_cot * 260
+        rong = max(cw, min_w)
+        cao = max(ch, 100)
+
+        self.canvas_kanban.itemconfigure(self._cua_so_kanban, width=rong, height=cao)
+        self.canvas_kanban.configure(scrollregion=(0, 0, rong, cao))
+
+        can_cuon = min_w > cw and cw > 100
         if can_cuon and not self.thanh_cuon_ngang.winfo_ismapped():
             self.thanh_cuon_ngang.pack(side="bottom", fill="x")
         elif not can_cuon and self.thanh_cuon_ngang.winfo_ismapped():
             self.thanh_cuon_ngang.pack_forget()
 
+    def _cap_nhat_vung_cuon_ngang(self, _event=None):
+        self._dong_bo_kich_thuoc_kanban()
+
     def _khi_canvas_doi_co(self, event):
-        self.canvas_kanban.itemconfigure(self._cua_so_kanban, height=event.height)
-        self._cap_nhat_vung_cuon_ngang()
+        self._dong_bo_kich_thuoc_kanban(event.width, event.height)
 
     def chuyen_che_do(self, che_do):
         """Chuyển đổi hiển thị giữa 'Bảng Kanban' và 'Danh sách'."""
@@ -203,12 +220,17 @@ class BoardView(tk.Frame):
         self.lbl_kpis["khan"].configure(text=f"{khan} việc")
 
     def dung_cac_cot(self, danh_sach_ten_cot, ten_nguoi_map):
-        """Tạo lại khung các cột trạng thái Kanban."""
+        """Tạo lại khung các cột trạng thái Kanban theo dạng grid căn đều 2 bên."""
         for c in self.khung_cac_cot.winfo_children():
             c.destroy()
         self.cot_widgets.clear()
 
-        for ten_cot in danh_sach_ten_cot:
+        so_cot = len(danh_sach_ten_cot)
+        self.khung_cac_cot.rowconfigure(0, weight=1)
+        for idx in range(so_cot):
+            self.khung_cac_cot.columnconfigure(idx, weight=1, uniform="cot_kanban")
+
+        for idx, ten_cot in enumerate(danh_sach_ten_cot):
             w_cot = ColumnWidget(
                 self.khung_cac_cot,
                 ten_cot=ten_cot,
@@ -221,8 +243,10 @@ class BoardView(tk.Frame):
                 khi_them_nhanh=self.khi_them_nhanh,
                 khi_chuyen_nhanh=self.khi_chuyen_nhanh
             )
-            w_cot.pack(side="left", fill="both", expand=True, padx=4)
+            w_cot.grid(row=0, column=idx, sticky="nsew", padx=4)
             self.cot_widgets[ten_cot] = w_cot
+
+        self._dong_bo_kich_thuoc_kanban()
 
     def cap_nhat_hoat_dong(self, ds_nhat_ky):
         """Vẽ danh sách lịch sử thao tác vào ngăn kéo bên phải."""
