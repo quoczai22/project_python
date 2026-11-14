@@ -17,7 +17,7 @@ from ui.dialogs.column_dialog import TaoDuAnDialog, ThanhVienDuAnDialog
 from ui.dialogs.confirm_dialog import xac_nhan
 
 
-class MainWindow(ctk.CTk):
+class MainWindow(tk.Toplevel):
     """
     Cửa sổ chính của ứng dụng Kanban:
     - Điều phối SidebarComponent, TopbarComponent, BoardView.
@@ -26,7 +26,7 @@ class MainWindow(ctk.CTk):
     """
 
     def __init__(self, goc, ql, khi_dang_xuat=None):
-        super().__init__()
+        super().__init__(goc)
         self.goc = goc
         self.ql = ql
         self.khi_dang_xuat_cb = khi_dang_xuat
@@ -40,8 +40,8 @@ class MainWindow(ctk.CTk):
 
         self.title("Kanban Board — Quản lý công việc")
         self.geometry("1280x800")
-        self.minsize(980, 640)
-        self.configure(fg_color=theme.MAU_NEN)
+        self.minsize(1050, 650)
+        self.configure(bg=theme.MAU_NEN)
 
         self._khoi_tao_bien_trang_thai()
         self._dung_thanh_menu()
@@ -487,5 +487,5 @@ class MainWindow(ctk.CTk):
 
     def _khi_dong_cua_so(self):
         self.destroy()
-        if self.goc:
+        if self.goc and self.goc.winfo_exists():
             self.goc.destroy()
