@@ -138,12 +138,27 @@ class TaoDuAnDialog(tk.Toplevel):
         khung.pack(fill="both", expand=True)
 
         tk.Label(
-            khung, text="Mã dự án * (Định dạng DA-xxx, ví dụ DA-003)", bg=theme.MAU_THE,
+            khung, text="Mã dự án (Hệ thống tự cấp tăng tiến)", bg=theme.MAU_THE,
             fg=theme.MAU_CHU_NHAN, font=theme.FONT_DAM, anchor="w"
         ).pack(fill="x", pady=(0, 4))
-        self.ent_ma = theme.tao_entry(khung, placeholder="VD: DA-003", cao=38)
-        self.ent_ma.pack(fill="x", pady=(0, 10))
-        theme.dat_gia_tri_entry(self.ent_ma, self._sinh_ma())
+        self.ma_du_an_sinh = self._sinh_ma()
+        self.khung_ma = ctk.CTkFrame(
+            khung, fg_color="#f8fafc", corner_radius=0,
+            border_width=1, border_color="#cbd5e1", height=38
+        )
+        self.khung_ma.pack(fill="x", pady=(0, 10))
+        self.khung_ma.pack_propagate(False)
+
+        self.lbl_ma_da = tk.Label(
+            self.khung_ma, text=self.ma_du_an_sinh, bg="#f8fafc", fg="#4338ca",
+            font=theme.FONT_DAM, padx=12
+        )
+        self.lbl_ma_da.pack(side="left", fill="y")
+
+        tk.Label(
+            self.khung_ma, text="(Tự động cấp tăng tiến)", bg="#f8fafc", fg="#64748b",
+            font=theme.FONT_NHO, padx=10
+        ).pack(side="right", fill="y")
 
         tk.Label(
             khung, text="Tên dự án * (3-100 ký tự)", bg=theme.MAU_THE,
@@ -205,13 +220,9 @@ class TaoDuAnDialog(tk.Toplevel):
 
     def luu(self):
         self._dat_loi("")
-        ma = self.ent_ma.get().strip().upper()
+        ma = self.ma_du_an_sinh
         ten = self.ent_ten.get().strip()
 
-        if not re.fullmatch(MAU_MA_DU_AN, ma):
-            self._dat_loi("Mã dự án phải theo định dạng DA-xxx (ví dụ DA-003, DA-101).")
-            self.ent_ma.focus_set()
-            return
         if not ten:
             self._dat_loi("Tên dự án không được để trống.")
             self.ent_ten.focus_set()

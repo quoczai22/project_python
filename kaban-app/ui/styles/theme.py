@@ -285,9 +285,21 @@ def tao_combobox(master, values=None, **kwargs):
     return ctk.CTkComboBox(master, **ch)
 
 def dat_gia_tri_entry(entry, gia_tri: str):
-    """Gán giá trị cho ô nhập Entry an toàn."""
+    """Gán giá trị cho ô nhập Entry an toàn, hỗ trợ cả khi Entry đang ở state disabled."""
+    trang_thai_cu = None
+    try:
+        trang_thai_cu = entry.cget("state")
+        if str(trang_thai_cu) == "disabled":
+            entry.configure(state="normal")
+    except Exception:
+        pass
     entry.delete(0, tk.END)
     entry.insert(0, gia_tri or "")
+    if str(trang_thai_cu) == "disabled":
+        try:
+            entry.configure(state="disabled")
+        except Exception:
+            pass
 
 def tao_badge(master, text, bg, fg, **kwargs):
     """Tạo một badge nhãn phẳng corner_radius=0."""

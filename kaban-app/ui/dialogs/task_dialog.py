@@ -55,7 +55,8 @@ class TaskDialog(tk.Toplevel):
         if cong_viec:
             self._do_du_lieu_cu()
         else:
-            theme.dat_gia_tri_entry(self.ent_ma, self._ma_moi)
+            self.lbl_ma_cv.configure(text=self._ma_moi)
+            self.lbl_loai_ma.configure(text="(Tự động cấp)")
             theme.dat_gia_tri_entry(self.ent_bat_dau, self._ngay_bd_mac_dinh)
             theme.dat_gia_tri_entry(self.ent_ket_thuc, self._ngay_kt_mac_dinh)
             self._cap_nhat_goi_y_han()
@@ -122,8 +123,24 @@ class TaskDialog(tk.Toplevel):
         c1 = tk.Frame(hang1, bg=theme.MAU_THE)
         c1.grid(row=0, column=0, sticky="ew", padx=(0, 10))
         self._nhan(c1, "Mã công việc")
-        self.ent_ma = theme.tao_entry(c1, cao=34, state="disabled")
-        self.ent_ma.pack(fill="x")
+        self.khung_ma = ctk.CTkFrame(
+            c1, fg_color="#f8fafc", corner_radius=0,
+            border_width=1, border_color="#cbd5e1", height=34
+        )
+        self.khung_ma.pack(fill="x")
+        self.khung_ma.pack_propagate(False)
+
+        self.lbl_ma_cv = tk.Label(
+            self.khung_ma, text=self._ma_moi, bg="#f8fafc", fg="#4338ca",
+            font=theme.FONT_DAM, padx=10
+        )
+        self.lbl_ma_cv.pack(side="left", fill="y")
+
+        self.lbl_loai_ma = tk.Label(
+            self.khung_ma, text="(Cố định)" if self.cong_viec else "(Tự động cấp)",
+            bg="#f8fafc", fg="#64748b", font=theme.FONT_NHO, padx=8
+        )
+        self.lbl_loai_ma.pack(side="right", fill="y")
 
         c2 = tk.Frame(hang1, bg=theme.MAU_THE)
         c2.grid(row=0, column=1, sticky="ew")
@@ -238,7 +255,8 @@ class TaskDialog(tk.Toplevel):
 
     def _do_du_lieu_cu(self):
         cv = self.cong_viec
-        theme.dat_gia_tri_entry(self.ent_ma, cv.ma_cong_viec)
+        self.lbl_ma_cv.configure(text=cv.ma_cong_viec)
+        self.lbl_loai_ma.configure(text="(Cố định)")
         theme.dat_gia_tri_entry(self.ent_tieu_de, cv.tieu_de)
         self.txt_mo_ta.insert("1.0", cv.mo_ta or "")
         self.var_nguoi.set(cv.nguoi_phu_trach)
