@@ -229,8 +229,8 @@ def tao_nut(master, text, command=None, loai="chinh", **kwargs):
     cau_hinh.update(kwargs)
     return ctk.CTkButton(master, text=text, command=command, **cau_hinh)
 
-def tao_entry(master, placeholder="", cao=34, **kwargs):
-    """Tạo ô nhập văn bản phẳng corner_radius=0."""
+def tao_entry(master, placeholder="", cao=34, an_chu=False, show=None, **kwargs):
+    """Tạo ô nhập văn bản phẳng corner_radius=0, hỗ trợ an_chu/show để ẩn mật khẩu."""
     ch = {
         "corner_radius": CORNER_RADIUS,
         "font": FONT_CHUAN,
@@ -243,8 +243,25 @@ def tao_entry(master, placeholder="", cao=34, **kwargs):
     }
     if placeholder:
         ch["placeholder_text"] = placeholder
+
+    an_chu_val = kwargs.pop("an_chu", an_chu)
+    show_val = kwargs.pop("show", show)
+    if show_val is not None:
+        ch["show"] = show_val
+    elif an_chu_val:
+        ch["show"] = "*"
+
     ch.update(kwargs)
-    return ctk.CTkEntry(master, **ch)
+    try:
+        return ctk.CTkEntry(master, **ch)
+    except Exception:
+        cac_khoa_hop_le = {
+            "width", "height", "corner_radius", "border_width", "bg_color", "fg_color",
+            "border_color", "text_color", "placeholder_text_color", "textvariable",
+            "placeholder_text", "font", "state", "show"
+        }
+        ch_sach = {k: v for k, v in ch.items() if k in cac_khoa_hop_le}
+        return ctk.CTkEntry(master, **ch_sach)
 
 def tao_combobox(master, values=None, **kwargs):
     """Tạo hộp chọn combobox phẳng corner_radius=0."""
