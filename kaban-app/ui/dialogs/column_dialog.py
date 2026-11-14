@@ -142,9 +142,9 @@ class TaoDuAnDialog(tk.Toplevel):
             fg=theme.MAU_CHU_NHAN, font=theme.FONT_DAM, anchor="w"
         ).pack(fill="x", pady=(0, 4))
         self.ma_du_an_sinh = self._sinh_ma()
-        self.khung_ma = ctk.CTkFrame(
-            khung, fg_color="#f8fafc", corner_radius=0,
-            border_width=1, border_color="#cbd5e1", height=38
+        self.khung_ma = tk.Frame(
+            khung, bg="#f8fafc", highlightthickness=1,
+            highlightbackground="#cbd5e1", height=38
         )
         self.khung_ma.pack(fill="x", pady=(0, 10))
         self.khung_ma.pack_propagate(False)

@@ -123,9 +123,9 @@ class TaskDialog(tk.Toplevel):
         c1 = tk.Frame(hang1, bg=theme.MAU_THE)
         c1.grid(row=0, column=0, sticky="ew", padx=(0, 10))
         self._nhan(c1, "Mã công việc")
-        self.khung_ma = ctk.CTkFrame(
-            c1, fg_color="#f8fafc", corner_radius=0,
-            border_width=1, border_color="#cbd5e1", height=34
+        self.khung_ma = tk.Frame(
+            c1, bg="#f8fafc", highlightthickness=1,
+            highlightbackground="#cbd5e1", height=34
         )
         self.khung_ma.pack(fill="x")
         self.khung_ma.pack_propagate(False)
