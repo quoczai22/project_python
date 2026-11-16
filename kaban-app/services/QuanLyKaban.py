@@ -66,6 +66,23 @@ class QuanLyKanban:
     def dang_xuat(self):
         return self.xac_thuc.dang_xuat()
 
+    def doi_mat_khau(self, mat_khau_cu: str, mat_khau_moi: str):
+        """Đổi mật khẩu người dùng hiện tại và lưu xuống file."""
+        nd = self.nguoi_dung_hien_tai
+        if nd is None:
+            from exceptions import KhongCoQuyenError
+            raise KhongCoQuyenError("Bạn chưa đăng nhập vào hệ thống", hanh_dong="DOI_MAT_KHAU")
+        nd.doi_mat_khau(mat_khau_cu, mat_khau_moi)
+        danh_sach = self.bo_luu_tru.doc_danh_sach_thanh_vien()
+        for i, tv in enumerate(danh_sach):
+            if tv.ten_dang_nhap == nd.ten_dang_nhap:
+                danh_sach[i] = nd
+                break
+        self.bo_luu_tru.ghi_danh_sach_thanh_vien(danh_sach)
+        from logger import logger
+        logger.info(f"Người dùng '{nd.ten_dang_nhap}' đã đổi mật khẩu thành công")
+        return True
+
     def kiem_tra_quyen_du_an(self, du_an: DuAn, bat_loi: bool = False) -> bool:
         return self.xac_thuc.kiem_tra_quyen_du_an(du_an, bat_loi)
 

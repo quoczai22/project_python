@@ -15,6 +15,7 @@ from ui.views.stats_view import StatsView
 from ui.dialogs.task_dialog import TaskDialog
 from ui.dialogs.column_dialog import TaoDuAnDialog, ThanhVienDuAnDialog
 from ui.dialogs.confirm_dialog import xac_nhan
+from ui.dialogs.doi_mat_khau_dialog import DoiMatKhauDialog
 from config import SO_VIEC_API_TOI_DA
 from services.nhap_api import nhap_cong_viec_tu_api
 

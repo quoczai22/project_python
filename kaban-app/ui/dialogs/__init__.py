@@ -8,6 +8,7 @@ from ui.dialogs.column_dialog import (
     TEN_VAI_TRO,
 )
 from ui.dialogs.task_dialog import TaskDialog, CongViecDialog
+from ui.dialogs.doi_mat_khau_dialog import DoiMatKhauDialog
 
 __all__ = [
     "ConfirmDialog",
@@ -18,5 +19,6 @@ __all__ = [
     "ThanhVienDuAnDialog",
     "TaskDialog",
     "CongViecDialog",
+    "DoiMatKhauDialog",
     "TEN_VAI_TRO",
 ]
