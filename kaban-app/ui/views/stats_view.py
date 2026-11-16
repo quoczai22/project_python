@@ -1,11 +1,12 @@
 """StatsView: Cửa sổ thống kê tiến độ, KPI tổng quan, biểu đồ và cảnh báo đa hình OOP."""
 import math
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, filedialog, messagebox
 import customtkinter as ctk
 
 from ui.styles import theme
 from utils.helpers import can_giua
+from services.thong_ke import xuat_bao_cao_file
 
 
 class StatsView(tk.Toplevel):
@@ -152,6 +153,15 @@ class StatsView(tk.Toplevel):
         self.seg_bang.pack(side="left")
         self.seg_bang.set("Cảnh báo thời hạn")
 
+        self.btn_xuat_bc = ctk.CTkButton(
+            thanh_tab, text="📥 Xuất báo cáo",
+            command=self._xuat_bao_cao,
+            width=120, height=32, corner_radius=0,
+            fg_color="#6d669b", hover_color="#5a5386",
+            text_color="#ffffff", font=theme.FONT_NHO_DAM
+        )
+        self.btn_xuat_bc.pack(side="right", padx=(8, 0))
+
         self.chk_chua_xong = ctk.CTkCheckBox(
             thanh_tab, text="Chỉ hiện việc chưa hoàn thành",
             variable=self.var_chua_xong, command=self._nap_canh_bao,
@@ -228,6 +238,25 @@ class StatsView(tk.Toplevel):
             self.chk_chua_xong.pack_forget()
             self.tree_nk.grid(row=0, column=0, sticky="nsew")
             self.thanh_nk.grid(row=0, column=1, sticky="ns")
+
+    def _xuat_bao_cao(self):
+        if not self.du_an:
+            return
+        ten_mac_dinh = f"BaoCao_{self.du_an.ma_du_an}.txt"
+        duong_dan = filedialog.asksaveasfilename(
+            parent=self,
+            title="Lưu báo cáo tiến độ",
+            initialfile=ten_mac_dinh,
+            defaultextension=".txt",
+            filetypes=[("Text File (*.txt)", "*.txt"), ("CSV File (*.csv)", "*.csv"), ("All Files (*.*)", "*.*")]
+        )
+        if not duong_dan:
+            return
+        try:
+            xuat_bao_cao_file(self.du_an, duong_dan, self.ql)
+            messagebox.showinfo("Thành công", f"Đã xuất báo cáo ra file:\n{duong_dan}", parent=self)
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể xuất báo cáo: {e}", parent=self)
 
     def dat_du_an(self, du_an):
         self.du_an = du_an

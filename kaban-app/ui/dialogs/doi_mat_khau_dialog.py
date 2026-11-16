@@ -27,7 +27,8 @@ class DoiMatKhauDialog(tk.Toplevel):
         self.var_hien_mk = tk.BooleanVar(value=False)
 
         self._dung_giao_dien()
-        can_giua(self, 440, 420)
+        can_giua(self, 460, 500)
+        self.minsize(460, 500)
         self.ent_mk_cu.focus_set()
         self.bind("<Escape>", lambda _e: self.destroy())
         self.wait_visibility()
@@ -60,11 +61,30 @@ class DoiMatKhauDialog(tk.Toplevel):
             cao=68
         )
 
+        # Footer nút bấm đóng gói dưới đáy trước để luôn luôn hiển thị
+        footer = tk.Frame(khung_ngoai, bg=theme.MAU_THE, padx=28, pady=12)
+        footer.pack(side="bottom", fill="x")
+        tk.Frame(footer, bg="#edf1f4", height=1).pack(fill="x", pady=(0, 10))
+
+        hang_nut = tk.Frame(footer, bg=theme.MAU_THE)
+        hang_nut.pack(fill="x")
+
+        self.btn_xac_nhan = theme.tao_nut_chinh(
+            hang_nut, text="Xác nhận", command=self._xu_ly_doi_mat_khau,
+            width=130, height=38
+        )
+        self.btn_xac_nhan.pack(side="right")
+
+        theme.tao_nut_phu(
+            hang_nut, text="Hủy", command=self.destroy,
+            width=80, height=38
+        ).pack(side="right", padx=(0, 8))
+
         nd = self.ql.nguoi_dung_hien_tai
         ten_hien_thi = f"{nd.ho_ten} ({nd.ten_dang_nhap})" if nd else ""
 
         khung = tk.Frame(khung_ngoai, bg=theme.MAU_THE, padx=28, pady=8)
-        khung.pack(fill="both", expand=True)
+        khung.pack(side="top", fill="both", expand=True)
 
         tk.Label(
             khung, text=f"Tài khoản: {ten_hien_thi}",
@@ -99,23 +119,6 @@ class DoiMatKhauDialog(tk.Toplevel):
             font=theme.FONT_NHO, anchor="w", wraplength=360
         )
         self.lbl_thong_bao.pack(fill="x", pady=(8, 0))
-
-        # Footer nút bấm
-        footer = tk.Frame(khung_ngoai, bg=theme.MAU_THE, padx=28, pady=12)
-        footer.pack(fill="x")
-        tk.Frame(footer, bg="#edf1f4", height=1).pack(fill="x", pady=(0, 10))
-
-        hang_nut = tk.Frame(footer, bg=theme.MAU_THE)
-        hang_nut.pack(fill="x")
-
-        theme.tao_nut_chinh(
-            hang_nut, text="Đổi mật khẩu", command=self._xu_ly_doi_mat_khau,
-            width=140, height=38
-        ).pack(side="right")
-        theme.tao_nut_phu(
-            hang_nut, text="Hủy", command=self.destroy,
-            width=80, height=38
-        ).pack(side="right", padx=(0, 8))
 
         # Bind Enter
         self.ent_mk_cu.bind("<Return>", lambda _e: self.ent_mk_moi.focus_set())

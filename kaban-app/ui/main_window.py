@@ -68,6 +68,7 @@ class MainWindow(tk.Toplevel):
         self.configure(menu=self.menubar)
 
         m_ht = tk.Menu(self.menubar, tearoff=0)
+        m_ht.add_command(label="Đổi mật khẩu...", command=self.doi_mat_khau)
         m_ht.add_command(label="Đăng xuất", command=self.dang_xuat)
         m_ht.add_separator()
         m_ht.add_command(label="Thoát", command=self.destroy)
@@ -76,6 +77,7 @@ class MainWindow(tk.Toplevel):
         m_da = tk.Menu(self.menubar, tearoff=0)
         m_da.add_command(label="Tạo dự án mới", command=self.tao_du_an)
         m_da.add_command(label="Quản lý thành viên", command=self.quan_ly_thanh_vien)
+        m_da.add_command(label="Xuất báo cáo tiến độ ra file...", command=self.xuat_bao_cao)
         m_da.add_separator()
         m_da.add_command(label="Xóa dự án hiện tại", command=self.xoa_du_an_hien_tai)
         self.menubar.add_cascade(label="Dự án", menu=m_da)
@@ -93,6 +95,7 @@ class MainWindow(tk.Toplevel):
         self.sidebar = SidebarComponent(
             self, self.ql, khi_chon_du_an=self._chon_du_an, khi_tao_du_an=self.tao_du_an,
             khi_chon_loc_nhanh=self._chon_loc_nhanh, khi_dang_xuat=self.dang_xuat,
+            khi_doi_mat_khau=self.doi_mat_khau,
             khi_thay_doi_trang_thai=lambda t: self.lbl_trang_thai.configure(text=t)
         )
         self.sidebar.pack(side="left", fill="y")
@@ -514,6 +517,33 @@ class MainWindow(tk.Toplevel):
     def mo_thong_ke(self):
         if self.du_an:
             StatsView(self, self.du_an, self.ql)
+
+    def xuat_bao_cao(self):
+        """Xuất báo cáo tiến độ dự án ra file văn bản (.txt) hoặc bảng tính (.csv)."""
+        if not self.du_an:
+            messagebox.showinfo("Chưa có dự án", "Vui lòng chọn hoặc tạo dự án trước khi xuất báo cáo.", parent=self)
+            return
+        from tkinter import filedialog
+        from services.thong_ke import xuat_bao_cao_file
+        ten_mac_dinh = f"BaoCao_{self.du_an.ma_du_an}.txt"
+        duong_dan = filedialog.asksaveasfilename(
+            parent=self,
+            title="Lưu báo cáo tiến độ",
+            initialfile=ten_mac_dinh,
+            defaultextension=".txt",
+            filetypes=[("Text File (*.txt)", "*.txt"), ("CSV File (*.csv)", "*.csv"), ("All Files (*.*)", "*.*")]
+        )
+        if not duong_dan:
+            return
+        try:
+            xuat_bao_cao_file(self.du_an, duong_dan, self.ql)
+            messagebox.showinfo("Thành công", f"Đã xuất báo cáo ra file:\n{duong_dan}", parent=self)
+        except Exception as e:
+            messagebox.showerror("Lỗi", f"Không thể xuất báo cáo: {e}", parent=self)
+
+    def doi_mat_khau(self):
+        """Mở hộp thoại đổi mật khẩu."""
+        DoiMatKhauDialog(self, self.ql)
 
     def dang_xuat(self):
         self.destroy()

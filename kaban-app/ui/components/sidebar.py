@@ -18,7 +18,7 @@ class SidebarComponent(tk.Frame):
 
     def __init__(self, master, ql, khi_chon_du_an=None, khi_tao_du_an=None,
                  khi_chon_loc_nhanh=None, khi_dang_xuat=None,
-                 khi_thay_doi_trang_thai=None):
+                 khi_thay_doi_trang_thai=None, khi_doi_mat_khau=None):
         super().__init__(master, bg="#ffffff", width=218)
         self.pack_propagate(False)
 
@@ -28,6 +28,7 @@ class SidebarComponent(tk.Frame):
         self.khi_chon_loc_nhanh = khi_chon_loc_nhanh
         self.khi_dang_xuat = khi_dang_xuat
         self.khi_thay_doi_trang_thai = khi_thay_doi_trang_thai
+        self.khi_doi_mat_khau = khi_doi_mat_khau
 
         self._ds_du_an = []
         self._ma_du_an_hien_tai = None
@@ -148,41 +149,77 @@ class SidebarComponent(tk.Frame):
 
         nd = self.ql.nguoi_dung_hien_tai
         ten_nd = (nd.ho_ten or nd.ten_dang_nhap) if nd else "Khách"
-        the_user = tk.Frame(
-            vung_day, bg="#f8fafc", padx=8, pady=8,
+        self.the_user = tk.Frame(
+            vung_day, bg="#f8fafc", padx=8, pady=8, cursor="hand2",
             highlightthickness=1, highlightbackground="#e2e8f0"
         )
-        the_user.pack(fill="x")
+        self.the_user.pack(fill="x")
 
-        ctk.CTkLabel(
-            the_user, text=tao_chu_viet_tat(ten_nd),
+        lbl_avatar = ctk.CTkLabel(
+            self.the_user, text=tao_chu_viet_tat(ten_nd),
             width=28, height=28, corner_radius=0,
             fg_color=theme.mau_avatar(nd.ten_dang_nhap if nd else ""),
             text_color="white", font=theme.FONT_NHO_DAM
-        ).pack(side="left", padx=(0, 6))
+        )
+        lbl_avatar.pack(side="left", padx=(0, 6))
 
-        thong_tin = tk.Frame(the_user, bg="#f8fafc")
+        thong_tin = tk.Frame(self.the_user, bg="#f8fafc", cursor="hand2")
         thong_tin.pack(side="left", fill="x", expand=True)
 
-        tk.Label(
+        lbl_ten = tk.Label(
             thong_tin, text=ten_nd, bg="#f8fafc", fg="#0f172a",
             font=theme.FONT_NHO_DAM, anchor="w",
-            wraplength=95, justify="left"
-        ).pack(fill="x")
-        tk.Label(
+            wraplength=105, justify="left", cursor="hand2"
+        )
+        lbl_ten.pack(fill="x")
+        lbl_vai_tro = tk.Label(
             thong_tin, text="Quản trị viên" if la_qt else "Thành viên",
-            bg="#f8fafc", fg="#64748b", font=theme.FONT_NHO, anchor="w"
-        ).pack(fill="x")
+            bg="#f8fafc", fg="#64748b", font=theme.FONT_NHO, anchor="w", cursor="hand2"
+        )
+        lbl_vai_tro.pack(fill="x")
 
-        ctk.CTkButton(
-            the_user, text="Thoát", command=self._khi_bam_dang_xuat,
-            width=42, height=24, corner_radius=0,
-            fg_color="#ffffff", hover_color="#fee2e2",
-            border_width=1, border_color="#e2e8f0",
-            text_color="#64748b", font=theme.FONT_NHO_DAM
-        ).pack(side="right")
+        # Nút mũi tên / 3 chấm biểu thị menu
+        lbl_menu_icon = tk.Label(
+            self.the_user, text="⋮", bg="#f8fafc", fg="#64748b",
+            font=theme.FONT_DAM, cursor="hand2", padx=4
+        )
+        lbl_menu_icon.pack(side="right")
+
+        # Menu popup 2 lựa chọn: Đổi mật khẩu hoặc Thoát
+        self.menu_profile = tk.Menu(self, tearoff=0, font=theme.FONT_CHUAN)
+        self.menu_profile.add_command(label="🔑 Đổi mật khẩu...", command=self._khi_bam_doi_mat_khau)
+        self.menu_profile.add_separator()
+        self.menu_profile.add_command(label="🚪 Thoát (Đăng xuất)", command=self._khi_bam_dang_xuat)
+
+        # Gắn sự kiện click mở menu
+        for w in (self.the_user, thong_tin, lbl_ten, lbl_vai_tro, lbl_menu_icon):
+            w.bind("<Button-1>", self._hien_menu_profile)
+
+        # Hiệu ứng hover
+        def _on_enter(_e):
+            for widget in (self.the_user, thong_tin, lbl_ten, lbl_vai_tro, lbl_menu_icon):
+                widget.configure(bg="#f1f5f9")
+            self.the_user.configure(highlightbackground="#cbd5e1")
+
+        def _on_leave(_e):
+            for widget in (self.the_user, thong_tin, lbl_ten, lbl_vai_tro, lbl_menu_icon):
+                widget.configure(bg="#f8fafc")
+            self.the_user.configure(highlightbackground="#e2e8f0")
+
+        self.the_user.bind("<Enter>", _on_enter)
+        self.the_user.bind("<Leave>", _on_leave)
 
         self.bind("<Configure>", self._khi_doi_kich_thuoc)
+
+    def _hien_menu_profile(self, event=None):
+        """Hiển thị menu 2 lựa chọn tại vị trí thẻ profile."""
+        if event:
+            x = event.x_root
+            y = event.y_root
+        else:
+            x = self.the_user.winfo_rootx()
+            y = self.the_user.winfo_rooty()
+        self.menu_profile.tk_popup(x, y)
 
     def _khi_bam_loc(self, ma_loc):
         if self.khi_chon_loc_nhanh:
@@ -195,6 +232,10 @@ class SidebarComponent(tk.Frame):
     def _khi_bam_dang_xuat(self):
         if self.khi_dang_xuat:
             self.khi_dang_xuat()
+
+    def _khi_bam_doi_mat_khau(self):
+        if self.khi_doi_mat_khau:
+            self.khi_doi_mat_khau()
 
     def chuyen_thu_phong(self):
         """Bật/tắt trạng thái thu gọn Sidebar."""
