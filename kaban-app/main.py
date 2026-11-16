@@ -5,6 +5,8 @@ Cách chạy:
     - Chạy thẳng với quyền Admin:              python main.py --admin
     - Chạy chế độ Terminal/CLI:               python main.py --cli
 """
+import os
+import shutil
 import sys
 import tkinter as tk
 
@@ -62,7 +64,26 @@ def chay_giao_dien(ql: QuanLyKanban):
     goc.mainloop()
 
 
+def chuan_bi_du_lieu_khi_dong_goi():
+    """Khi chạy từ file .exe (PyInstaller): chép dữ liệu mẫu đã đóng gói ra thư mục data cạnh file .exe.
+
+    Dữ liệu cần nằm cạnh .exe để ghi được và còn nguyên sau khi tắt ứng dụng. Nếu thư mục data
+    đã có du_an.json thì giữ nguyên, không ghi đè dữ liệu của người dùng. Chạy bằng `python main.py` thì bỏ qua.
+    """
+    if not getattr(sys, "frozen", False):
+        return
+    nguon = os.path.join(getattr(sys, "_MEIPASS", ""), "data")
+    dich = os.path.join(os.path.dirname(os.path.abspath(sys.executable)), "data")
+    if os.path.isdir(nguon) and not os.path.exists(os.path.join(dich, "du_an.json")):
+        try:
+            shutil.copytree(nguon, dich, dirs_exist_ok=True, ignore=shutil.ignore_patterns("backup"))
+            logger.info(f"Đã chép dữ liệu mẫu ra '{dich}'")
+        except OSError as loi:
+            logger.error(f"Không chép được dữ liệu mẫu (thư mục có thể không cho ghi): {loi}")
+
+
 def main():
+    chuan_bi_du_lieu_khi_dong_goi()
     logger.info("Khởi động Ứng dụng Quản lý Kanban...")
     ql = QuanLyKanban(TEN_FILE_DU_AN, TEN_FILE_DU_LIEU_MOC)
 
@@ -70,7 +91,6 @@ def main():
         chay_che_do_cli(ql)
     else:
         chay_giao_dien(ql)
-
 
 if __name__ == "__main__":
     main()

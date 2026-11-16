@@ -245,7 +245,7 @@ class StatsView(tk.Toplevel):
         dang_lam = self.so_lieu.get("Đang làm", 0) + self.so_lieu.get("Kiểm tra", 0)
         canh_bao = sum(
             1 for cv in da.cong_viec
-            if not cv.is_hoan_thanh() and (cv.da_qua_han() or cv.muc_uu_tien == "Khẩn")
+            if cv.can_chu_y()
         )
 
         ty_le = (xong / tong * 100) if tong > 0 else 0.0

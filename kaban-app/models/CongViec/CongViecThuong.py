@@ -35,9 +35,11 @@ class CongViecThuong(CongViec):
 
     def canh_bao(self) -> str:
         """ĐA HÌNH: Cảnh báo mức độ thông thường."""
-        if self.da_qua_han():
-            return "Công việc đã quá hạn hoàn thành!"
+        if self.is_hoan_thanh():
+            return "Đã hoàn thành"
         ngay_con_lai = self.tinh_ngay_con_lai()
         if ngay_con_lai is None:
             return "Chưa xác định thời hạn"
+        if ngay_con_lai < 0:
+            return f"Trễ {-ngay_con_lai} ngày"
         return f"Còn {ngay_con_lai} ngày để hoàn thành công việc"

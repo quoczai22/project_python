@@ -1,0 +1,36 @@
+{
+  "nguon": "https://dummyjson.com/todos",
+  "thoi_diem": "2026-11-16T16:30:02",
+  "todos": [
+    {
+      "id": 45,
+      "tieu_de": "Patronize a local independent restaurant",
+      "hoan_thanh": true,
+      "user_id": 42
+    },
+    {
+      "id": 46,
+      "tieu_de": "Watch a Khan Academy lecture on a subject of choosing",
+      "hoan_thanh": false,
+      "user_id": 135
+    },
+    {
+      "id": 47,
+      "tieu_de": "Learn Javascript",
+      "hoan_thanh": false,
+      "user_id": 1
+    },
+    {
+      "id": 48,
+      "tieu_de": "Volunteer at a local animal shelter",
+      "hoan_thanh": false,
+      "user_id": 56
+    },
+    {
+      "id": 49,
+      "tieu_de": "Volunteer at local food pantry",
+      "hoan_thanh": true,
+      "user_id": 18
+    }
+  ]
+}

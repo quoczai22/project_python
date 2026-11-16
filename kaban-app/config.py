@@ -20,3 +20,10 @@ SO_BAN_SAO_LUU_TOI_DA = 10          # mỗi file giữ tối đa 10 bản sao l�
 MAT_KHAU_TOI_THIEU = 6
 MAU_TEN_DANG_NHAP = r"[A-Za-z0-9_]{3,20}"
 MAU_EMAIL = r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)*\.[A-Za-z]{2,}"
+
+# ---- API bên ngoài (nhập công việc mẫu) ----
+# Nguồn dữ liệu: DummyJSON Todos - https://dummyjson.com/docs/todos (miễn phí, không cần khóa API)
+URL_API_TODOS = "https://dummyjson.com/todos"
+TEN_FILE_API = os.path.join(THU_MUC_DATA, "api_todos.json")   # nơi lưu dữ liệu đã làm sạch
+TIMEOUT_API = 5            # giây; quá thời gian thì báo lỗi, không treo ứng dụng
+SO_VIEC_API_TOI_DA = 10    # số công việc tối đa cho mỗi lần nhập

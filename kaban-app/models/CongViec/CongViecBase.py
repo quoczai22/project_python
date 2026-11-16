@@ -3,7 +3,7 @@ from datetime import datetime
 import re
 from config import NHAN_HOP_LE, MUC_UU_TIEN_HOP_LE, TRANG_THAI_HOP_LE
 from exceptions import DuLieuKhongHopLeError, KhongTimThayError
-
+TRANG_THAI_DANG_XU_LY = ("Đang làm", "Kiểm tra")
 
 class CongViec(ABC):
     """
@@ -326,9 +326,16 @@ class CongViec(ABC):
         bat_dau = datetime.strptime(self.ngay_bat_dau, "%Y-%m-%d").date()
         return (hom_nay - bat_dau).days
 
+
+    def can_chu_y(self) -> bool:
+        """Việc chưa xong và (ưu tiên Khẩn hoặc đã quá hạn)."""
+        return (not self.is_hoan_thanh()) and (self.muc_uu_tien == "Khẩn" or self.da_qua_han())
+
     def da_qua_han(self):
-        ngay_con_lai = self.tinh_ngay_con_lai()
-        return ngay_con_lai is not None and ngay_con_lai < 0
+            if self.is_hoan_thanh():         
+                return False
+            ngay_con_lai = self.tinh_ngay_con_lai()
+            return ngay_con_lai is not None and ngay_con_lai < 0
 
     def is_hoan_thanh(self):
         return self.trang_thai.lower() == "hoàn thành"

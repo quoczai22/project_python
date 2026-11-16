@@ -49,6 +49,8 @@ class CongViecKhan(CongViec):
         return "Công việc khẩn"
 
     def canh_bao(self) -> str:
+        if self.is_hoan_thanh():
+            return "Đã hoàn thành"
         """ĐA HÌNH: Cảnh báo mức độ khẩn cấp."""
         if self.da_qua_han():
             return "QUÁ HẠN - CẦN XỬ LÝ NGAY"

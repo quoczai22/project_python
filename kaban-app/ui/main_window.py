@@ -1,8 +1,8 @@
 """MainWindow: Cửa sổ chính của ứng dụng Kanban điều phối Sidebar, Topbar và BoardView."""
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 import customtkinter as ctk
-
+from models.CongViec.CongViecBase import TRANG_THAI_DANG_XU_LY
 from exceptions import (
     KanbanException, KhongCoQuyenError, KhongTimThayError,
     LoiLuuTruError, DuLieuKhongHopLeError
@@ -15,7 +15,8 @@ from ui.views.stats_view import StatsView
 from ui.dialogs.task_dialog import TaskDialog
 from ui.dialogs.column_dialog import TaoDuAnDialog, ThanhVienDuAnDialog
 from ui.dialogs.confirm_dialog import xac_nhan
-
+from config import SO_VIEC_API_TOI_DA
+from services.nhap_api import nhap_cong_viec_tu_api
 
 class MainWindow(tk.Toplevel):
     """
@@ -80,6 +81,8 @@ class MainWindow(tk.Toplevel):
 
         m_cv = tk.Menu(self.menubar, tearoff=0)
         m_cv.add_command(label="Thêm công việc...", command=self.them_cong_viec)
+        m_cv.add_command(label="Nhập công việc từ API...", command=self.nhap_tu_api)
+        m_cv.add_separator()
         m_cv.add_command(label="Làm mới (F5)", command=self.ve_lai)
         self.menubar.add_cascade(label="Công việc", menu=m_cv)
 
@@ -260,7 +263,7 @@ class MainWindow(tk.Toplevel):
             nd = self.ql.nguoi_dung_hien_tai
             kq = [cv for cv in kq if cv.nguoi_phu_trach == (nd.ten_dang_nhap if nd else "")]
         elif che_do == "khan_cap":
-            kq = [cv for cv in kq if cv.muc_uu_tien == "Khẩn" or cv.da_qua_han()]
+            kq = [cv for cv in kq if cv.can_chu_y()]
         elif che_do == "hoan_thanh":
             kq = [cv for cv in kq if cv.is_hoan_thanh()]
 
@@ -290,9 +293,8 @@ class MainWindow(tk.Toplevel):
 
         tong = len(self.du_an.cong_viec)
         xong = sum(1 for c in self.du_an.cong_viec if c.is_hoan_thanh())
-        dang_lam = sum(1 for c in self.du_an.cong_viec if c.trang_thai == "Đang làm")
-        khan = sum(1 for c in self.du_an.cong_viec if c.muc_uu_tien == "Khẩn" or c.da_qua_han())
-
+        dang_lam = sum(1 for c in self.du_an.cong_viec if c.trang_thai in TRANG_THAI_DANG_XU_LY)
+        khan     = sum(1 for c in self.du_an.cong_viec if c.can_chu_y())
         self.board_view.cap_nhat_kpi(tong, dang_lam, xong, khan)
         self.topbar.cap_nhat_tien_do(tong, xong)
         self._cap_nhat_tree_danh_sach(cv_hien_thi)
@@ -352,7 +354,39 @@ class MainWindow(tk.Toplevel):
         if not self.du_an:
             return
         TaskDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai)
+    def nhap_tu_api(self):
+        """Lấy công việc mẫu từ API công khai, làm sạch, lưu JSON rồi thêm vào dự án đang mở."""
+        if not self.du_an:
+            messagebox.showinfo("Chưa có dự án", "Hãy chọn hoặc tạo dự án trước khi nhập từ API.", parent=self)
+            return
+        so = simpledialog.askinteger(
+            "Nhập từ API", f"Số công việc muốn nhập (1–{SO_VIEC_API_TOI_DA}):",
+            parent=self, minvalue=1, maxvalue=SO_VIEC_API_TOI_DA, initialvalue=5
+        )
+        if so is None:          # người dùng bấm Cancel
+            return
 
+        self.lbl_trang_thai.configure(text="Đang tải dữ liệu từ API...")
+        self.configure(cursor="watch")
+        self.update_idletasks()
+        try:
+            kq = nhap_cong_viec_tu_api(self.ql, self.du_an, so)
+        except Exception as loi:   # lỗi ngoài dự kiến: báo cho người dùng, không để ứng dụng dừng đột ngột
+            messagebox.showerror("Lỗi hệ thống", f"Không thể nhập từ API: {loi}", parent=self)
+            return
+        finally:
+            self.configure(cursor="")
+
+        if kq["thong_bao"]:     # lỗi mạng, JSON sai cấu trúc, không ghi được file...
+            messagebox.showwarning("Không nhập được từ API", kq["thong_bao"], parent=self)
+        else:
+            messagebox.showinfo(
+                "Nhập từ API",
+                f"Đã thêm {kq['them']} công việc.\nBỏ qua {kq['trung']} việc đã nhập trước đó.\n"
+                f"Lỗi: {kq['loi']}.\n\nNguồn: dummyjson.com (đã lưu vào data/api_todos.json)",
+                parent=self
+            )
+        self.ve_lai()
     def them_cong_viec_tai_cot(self, ten_cot):
         if not self.du_an:
             return

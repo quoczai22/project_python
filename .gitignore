@@ -31,3 +31,5 @@ XUAT_CODE_DE_REVIEW.md
 # Bản sao lưu tự động của tầng lưu trữ JSON
 backup/
 *.json.tmp
+
+*.zip
