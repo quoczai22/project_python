@@ -164,5 +164,789 @@
       }
     ],
     "NgayTao": "2026-10-18"
+  },
+  {
+    "MaDuAn": "DA-003",
+    "TenDuAn": "Quản lý mượn sách thư viện",
+    "DanhSachCot": [
+      "Cần làm",
+      "Đang làm",
+      "Kiểm tra",
+      "Hoàn thành"
+    ],
+    "ThanhVienThamGia": [
+      "khoa",
+      "demo_an",
+      "demo_binh",
+      "demo_linh"
+    ],
+    "DanhSachCongViec": [
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0301",
+        "TieuDe": "Chuẩn hóa danh mục sách",
+        "MoTa": "Đối chiếu mã sách và số lượng còn trong kho.",
+        "NguoiPhuTrach": "khoa",
+        "NgayBatDau": "2026-11-04",
+        "NgayKetThuc": "2026-11-07",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Thấp",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0301",
+            "NguoiGui": "khoa",
+            "NoiDung": "Đã đối chiếu với danh sách hiện có và lưu kết quả kiểm tra.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0302",
+        "TieuDe": "Thiết kế màn hình tra cứu sách",
+        "MoTa": "Hiển thị tên sách, tác giả và số bản có thể mượn.",
+        "NguoiPhuTrach": "demo_an",
+        "NgayBatDau": "2026-11-03",
+        "NgayKetThuc": "2026-11-13",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0303",
+        "TieuDe": "Kiểm tra thẻ bạn đọc hết hạn",
+        "MoTa": "Thử tạo phiếu mượn bằng thẻ hết hạn và thẻ còn hạn.",
+        "NguoiPhuTrach": "demo_binh",
+        "NgayBatDau": "2026-11-02",
+        "NgayKetThuc": "2026-11-16",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0304",
+        "TieuDe": "Ghi quy trình gia hạn sách",
+        "MoTa": "Mô tả điều kiện gia hạn và cách xử lý yêu cầu trùng.",
+        "NguoiPhuTrach": "demo_linh",
+        "NgayBatDau": "2026-11-01",
+        "NgayKetThuc": "2026-11-19",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-0305",
+        "TieuDe": "Sửa lỗi một bản sách được mượn hai lần",
+        "MoTa": "Kiểm tra số bản còn lại trước khi ghi phiếu.",
+        "NguoiPhuTrach": "khoa",
+        "NgayBatDau": "2026-10-31",
+        "NgayKetThuc": "2026-11-18",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0305",
+            "NguoiGui": "khoa",
+            "NoiDung": "Đã tái hiện ca lỗi, đang kiểm tra lại sau khi sửa.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0306",
+        "TieuDe": "Tạo phiếu trả sách",
+        "MoTa": "Cập nhật ngày trả và số lượng sách có thể mượn.",
+        "NguoiPhuTrach": "demo_an",
+        "NgayBatDau": "2026-10-30",
+        "NgayKetThuc": "2026-11-11",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0307",
+        "TieuDe": "Bổ sung lọc theo thể loại",
+        "MoTa": "Kiểm tra thao tác lọc khi danh mục có nhiều thể loại.",
+        "NguoiPhuTrach": "demo_binh",
+        "NgayBatDau": "2026-10-29",
+        "NgayKetThuc": "2026-11-27",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0308",
+        "TieuDe": "Kiểm thử trả thiếu một cuốn",
+        "MoTa": "Xác nhận phần còn nợ vẫn gắn với phiếu mượn cũ.",
+        "NguoiPhuTrach": "demo_linh",
+        "NgayBatDau": "2026-10-28",
+        "NgayKetThuc": "2026-11-22",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Cao",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0308",
+            "NguoiGui": "demo_linh",
+            "NoiDung": "Đã thử ca thông thường, nhờ kiểm tra thêm ca biên trong mô tả.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0309",
+        "TieuDe": "Soạn nội dung nhắc trả sách",
+        "MoTa": "Đưa tên sách và ngày hẹn vào nội dung nhắc.",
+        "NguoiPhuTrach": "khoa",
+        "NgayBatDau": "2026-10-27",
+        "NgayKetThuc": "2026-11-14",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0310",
+        "TieuDe": "Rà soát tài khoản thủ thư",
+        "MoTa": "Thử thao tác sửa phiếu bằng tài khoản bạn đọc.",
+        "NguoiPhuTrach": "demo_an",
+        "NgayBatDau": "2026-10-26",
+        "NgayKetThuc": "2026-11-15",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0311",
+        "TieuDe": "Báo cáo sách luân chuyển nhiều",
+        "MoTa": "Tổng hợp lượt mượn theo mã sách trong kỳ.",
+        "NguoiPhuTrach": "demo_binh",
+        "NgayBatDau": "2026-10-25",
+        "NgayKetThuc": "2026-12-02",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-0312",
+        "TieuDe": "Chặn xóa sách còn phiếu mượn",
+        "MoTa": "Giữ nguyên phiếu đang mở và báo lý do cho thủ thư.",
+        "NguoiPhuTrach": "demo_linh",
+        "NgayBatDau": "2026-10-24",
+        "NgayKetThuc": "2026-11-29",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      }
+    ],
+    "NgayTao": "2026-10-22"
+  },
+  {
+    "MaDuAn": "DA-004",
+    "TenDuAn": "Tổ chức ngày hội câu lạc bộ",
+    "DanhSachCot": [
+      "Cần làm",
+      "Đang làm",
+      "Kiểm tra",
+      "Hoàn thành"
+    ],
+    "ThanhVienThamGia": [
+      "huy",
+      "demo_chi",
+      "demo_mai",
+      "demo_linh"
+    ],
+    "DanhSachCongViec": [
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0401",
+        "TieuDe": "Lập danh sách gian hàng",
+        "MoTa": "Ghi tên câu lạc bộ, vị trí và nhu cầu dùng điện.",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-11-04",
+        "NgayKetThuc": "2026-11-07",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0401",
+            "NguoiGui": "huy",
+            "NoiDung": "Đã đối chiếu với danh sách hiện có và lưu kết quả kiểm tra.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0402",
+        "TieuDe": "Dựng form đăng ký tình nguyện viên",
+        "MoTa": "Thêm lựa chọn ca trực và xác nhận sau khi gửi.",
+        "NguoiPhuTrach": "demo_chi",
+        "NgayBatDau": "2026-11-03",
+        "NgayKetThuc": "2026-11-13",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Cao",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0403",
+        "TieuDe": "Kiểm thử giới hạn số người mỗi ca",
+        "MoTa": "Thử đăng ký khi ca còn một chỗ và khi đã kín.",
+        "NguoiPhuTrach": "demo_mai",
+        "NgayBatDau": "2026-11-02",
+        "NgayKetThuc": "2026-11-16",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0404",
+        "TieuDe": "Soạn hướng dẫn check-in",
+        "MoTa": "Ghi quy trình đối chiếu danh sách tại cổng.",
+        "NguoiPhuTrach": "demo_linh",
+        "NgayBatDau": "2026-11-01",
+        "NgayKetThuc": "2026-11-19",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-0405",
+        "TieuDe": "Xử lý đăng ký trùng mã sinh viên",
+        "MoTa": "Một tài khoản chỉ giữ một đăng ký cho mỗi ca.",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-10-31",
+        "NgayKetThuc": "2026-11-18",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0405",
+            "NguoiGui": "huy",
+            "NoiDung": "Đã tái hiện ca lỗi, đang kiểm tra lại sau khi sửa.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0406",
+        "TieuDe": "Xuất danh sách trực theo giờ",
+        "MoTa": "Nhóm tình nguyện viên theo giờ bắt đầu.",
+        "NguoiPhuTrach": "demo_chi",
+        "NgayBatDau": "2026-10-30",
+        "NgayKetThuc": "2026-11-11",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0407",
+        "TieuDe": "Thiết kế sơ đồ khu gian hàng",
+        "MoTa": "Đánh dấu cửa ra, bàn hỗ trợ và lối đi.",
+        "NguoiPhuTrach": "demo_mai",
+        "NgayBatDau": "2026-10-29",
+        "NgayKetThuc": "2026-11-27",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Thấp",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0408",
+        "TieuDe": "Kiểm thử chuyển ca",
+        "MoTa": "Xác nhận chỗ cũ được trả lại sau khi chuyển ca.",
+        "NguoiPhuTrach": "demo_linh",
+        "NgayBatDau": "2026-10-28",
+        "NgayKetThuc": "2026-11-22",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Cao",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0408",
+            "NguoiGui": "demo_linh",
+            "NoiDung": "Đã thử ca thông thường, nhờ kiểm tra thêm ca biên trong mô tả.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0409",
+        "TieuDe": "Chuẩn bị nội dung thông báo",
+        "MoTa": "Đưa thời gian, địa điểm và đầu mối hỗ trợ vào thông báo.",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-10-27",
+        "NgayKetThuc": "2026-11-14",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0410",
+        "TieuDe": "Phân quyền điều phối gian hàng",
+        "MoTa": "Giới hạn thao tác sửa danh sách theo khu vực.",
+        "NguoiPhuTrach": "demo_chi",
+        "NgayBatDau": "2026-10-26",
+        "NgayKetThuc": "2026-11-15",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0411",
+        "TieuDe": "Tổng hợp số lượt tham dự",
+        "MoTa": "So sánh số lượt check-in với số người đăng ký.",
+        "NguoiPhuTrach": "demo_mai",
+        "NgayBatDau": "2026-10-25",
+        "NgayKetThuc": "2026-12-02",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Cao",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-0412",
+        "TieuDe": "Kiểm tra phương án khi mất mạng",
+        "MoTa": "Chuẩn bị danh sách check-in có thể mở ngoại tuyến.",
+        "NguoiPhuTrach": "demo_linh",
+        "NgayBatDau": "2026-10-24",
+        "NgayKetThuc": "2026-11-29",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      }
+    ],
+    "NgayTao": "2026-10-22"
+  },
+  {
+    "MaDuAn": "DA-005",
+    "TenDuAn": "Theo dõi thiết bị phòng máy",
+    "DanhSachCot": [
+      "Cần làm",
+      "Đang làm",
+      "Kiểm tra",
+      "Hoàn thành"
+    ],
+    "ThanhVienThamGia": [
+      "quoc",
+      "khoa",
+      "demo_dung",
+      "demo_binh"
+    ],
+    "DanhSachCongViec": [
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0501",
+        "TieuDe": "Nhập danh mục máy trạm",
+        "MoTa": "Gắn mã tài sản và phòng cho từng máy.",
+        "NguoiPhuTrach": "quoc",
+        "NgayBatDau": "2026-11-04",
+        "NgayKetThuc": "2026-11-07",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Thấp",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0501",
+            "NguoiGui": "quoc",
+            "NoiDung": "Đã đối chiếu với danh sách hiện có và lưu kết quả kiểm tra.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0502",
+        "TieuDe": "Thiết kế bảng tình trạng phòng",
+        "MoTa": "Hiển thị số máy sử dụng được và số máy đang sửa.",
+        "NguoiPhuTrach": "khoa",
+        "NgayBatDau": "2026-11-03",
+        "NgayKetThuc": "2026-11-13",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0503",
+        "TieuDe": "Kiểm thử lọc máy theo phòng",
+        "MoTa": "Thử với phòng trống và phòng có nhiều máy.",
+        "NguoiPhuTrach": "demo_dung",
+        "NgayBatDau": "2026-11-02",
+        "NgayKetThuc": "2026-11-16",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0504",
+        "TieuDe": "Soạn hướng dẫn báo hỏng",
+        "MoTa": "Ghi thông tin tối thiểu để nhân viên kiểm tra sự cố.",
+        "NguoiPhuTrach": "demo_binh",
+        "NgayBatDau": "2026-11-01",
+        "NgayKetThuc": "2026-11-19",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Thấp",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-0505",
+        "TieuDe": "Sửa lỗi mở hai phiếu cho cùng thiết bị",
+        "MoTa": "Kiểm tra phiếu chưa đóng trước khi tạo phiếu mới.",
+        "NguoiPhuTrach": "quoc",
+        "NgayBatDau": "2026-10-31",
+        "NgayKetThuc": "2026-11-18",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0505",
+            "NguoiGui": "quoc",
+            "NoiDung": "Đã tái hiện ca lỗi, đang kiểm tra lại sau khi sửa.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0506",
+        "TieuDe": "Ghi lịch bảo trì định kỳ",
+        "MoTa": "Phân bổ các phòng vào từng buổi ít có tiết học.",
+        "NguoiPhuTrach": "khoa",
+        "NgayBatDau": "2026-10-30",
+        "NgayKetThuc": "2026-11-11",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0507",
+        "TieuDe": "Thêm bộ lọc linh kiện cần thay",
+        "MoTa": "Hiển thị đúng thiết bị đang chờ linh kiện.",
+        "NguoiPhuTrach": "demo_dung",
+        "NgayBatDau": "2026-10-29",
+        "NgayKetThuc": "2026-11-27",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Thấp",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0508",
+        "TieuDe": "Kiểm thử điều chuyển máy giữa hai phòng",
+        "MoTa": "Đối chiếu danh mục phòng nguồn và phòng đích.",
+        "NguoiPhuTrach": "demo_binh",
+        "NgayBatDau": "2026-10-28",
+        "NgayKetThuc": "2026-11-22",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0508",
+            "NguoiGui": "demo_binh",
+            "NoiDung": "Đã thử ca thông thường, nhờ kiểm tra thêm ca biên trong mô tả.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0509",
+        "TieuDe": "Soạn biên bản bàn giao thiết bị",
+        "MoTa": "Thêm mã thiết bị, thời điểm bàn giao và người nhận.",
+        "NguoiPhuTrach": "quoc",
+        "NgayBatDau": "2026-10-27",
+        "NgayKetThuc": "2026-11-14",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0510",
+        "TieuDe": "Rà soát quyền đóng phiếu sửa",
+        "MoTa": "Thử dùng tài khoản sinh viên và nhân viên.",
+        "NguoiPhuTrach": "khoa",
+        "NgayBatDau": "2026-10-26",
+        "NgayKetThuc": "2026-11-15",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Thấp",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0511",
+        "TieuDe": "Tổng hợp sự cố theo tuần",
+        "MoTa": "Đếm số phiếu mới, số phiếu đã đóng và tồn đọng.",
+        "NguoiPhuTrach": "demo_dung",
+        "NgayBatDau": "2026-10-25",
+        "NgayKetThuc": "2026-12-02",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Cao",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-0512",
+        "TieuDe": "Khôi phục danh mục sau lỗi lưu",
+        "MoTa": "Kiểm tra danh sách máy trạm sau khi giả lập file hỏng.",
+        "NguoiPhuTrach": "demo_binh",
+        "NgayBatDau": "2026-10-24",
+        "NgayKetThuc": "2026-11-29",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      }
+    ],
+    "NgayTao": "2026-10-22"
+  },
+  {
+    "MaDuAn": "DA-006",
+    "TenDuAn": "Xây dựng cổng học liệu lớp",
+    "DanhSachCot": [
+      "Cần làm",
+      "Đang làm",
+      "Kiểm tra",
+      "Hoàn thành"
+    ],
+    "ThanhVienThamGia": [
+      "phu",
+      "demo_mai",
+      "demo_linh",
+      "demo_an"
+    ],
+    "DanhSachCongViec": [
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0601",
+        "TieuDe": "Chuẩn hóa danh mục môn học",
+        "MoTa": "Gom tài liệu theo môn và tuần học.",
+        "NguoiPhuTrach": "phu",
+        "NgayBatDau": "2026-11-04",
+        "NgayKetThuc": "2026-11-07",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0601",
+            "NguoiGui": "phu",
+            "NoiDung": "Đã đối chiếu với danh sách hiện có và lưu kết quả kiểm tra.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0602",
+        "TieuDe": "Thiết kế trang tìm tài liệu",
+        "MoTa": "Thêm ô tìm kiếm và bộ lọc theo môn học.",
+        "NguoiPhuTrach": "demo_mai",
+        "NgayBatDau": "2026-11-03",
+        "NgayKetThuc": "2026-11-13",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0603",
+        "TieuDe": "Kiểm thử giới hạn tệp đính kèm",
+        "MoTa": "Thử tệp hợp lệ và tệp vượt kích thước tối đa.",
+        "NguoiPhuTrach": "demo_linh",
+        "NgayBatDau": "2026-11-02",
+        "NgayKetThuc": "2026-11-16",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0604",
+        "TieuDe": "Viết hướng dẫn đóng góp tài liệu",
+        "MoTa": "Nêu quy tắc đặt tên và cách bổ sung nguồn.",
+        "NguoiPhuTrach": "demo_an",
+        "NgayBatDau": "2026-11-01",
+        "NgayKetThuc": "2026-11-19",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-0605",
+        "TieuDe": "Sửa đường dẫn tài liệu bị hỏng",
+        "MoTa": "Kiểm tra các đường dẫn báo lỗi trong danh mục môn.",
+        "NguoiPhuTrach": "phu",
+        "NgayBatDau": "2026-10-31",
+        "NgayKetThuc": "2026-11-18",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0605",
+            "NguoiGui": "phu",
+            "NoiDung": "Đã tái hiện ca lỗi, đang kiểm tra lại sau khi sửa.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0606",
+        "TieuDe": "Thêm metadata cho bài tập mẫu",
+        "MoTa": "Gắn tuần, môn và chủ đề cho từng bài.",
+        "NguoiPhuTrach": "demo_mai",
+        "NgayBatDau": "2026-10-30",
+        "NgayKetThuc": "2026-11-11",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0607",
+        "TieuDe": "Bổ sung màn hình duyệt nội dung",
+        "MoTa": "Hiển thị người gửi, ngày gửi và trạng thái.",
+        "NguoiPhuTrach": "demo_linh",
+        "NgayBatDau": "2026-10-29",
+        "NgayKetThuc": "2026-11-27",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Thấp",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0608",
+        "TieuDe": "Kiểm thử bỏ duyệt học liệu",
+        "MoTa": "Xác nhận tài liệu bị trả lại biến mất khỏi danh mục chung.",
+        "NguoiPhuTrach": "demo_an",
+        "NgayBatDau": "2026-10-28",
+        "NgayKetThuc": "2026-11-22",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-0608",
+            "NguoiGui": "demo_an",
+            "NoiDung": "Đã thử ca thông thường, nhờ kiểm tra thêm ca biên trong mô tả.",
+            "ThoiGian": "2026-11-15 14:00:00"
+          }
+        ]
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0609",
+        "TieuDe": "Soạn nội dung giới thiệu kho",
+        "MoTa": "Nêu cách tra cứu và gửi phản hồi về học liệu.",
+        "NguoiPhuTrach": "phu",
+        "NgayBatDau": "2026-10-27",
+        "NgayKetThuc": "2026-11-14",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0610",
+        "TieuDe": "Rà soát quyền biên tập",
+        "MoTa": "Hạn chế sửa nội dung đã duyệt theo vai trò.",
+        "NguoiPhuTrach": "demo_mai",
+        "NgayBatDau": "2026-10-26",
+        "NgayKetThuc": "2026-11-15",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Thấp",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-0611",
+        "TieuDe": "Tổng hợp học liệu theo môn",
+        "MoTa": "Đếm tài liệu đã duyệt và đang chờ theo từng môn.",
+        "NguoiPhuTrach": "demo_linh",
+        "NgayBatDau": "2026-10-25",
+        "NgayKetThuc": "2026-12-02",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-0612",
+        "TieuDe": "Rà soát thông tin cá nhân trong tệp",
+        "MoTa": "Kiểm tra tệp tải lên trước khi mở quyền xem chung.",
+        "NguoiPhuTrach": "demo_an",
+        "NgayBatDau": "2026-10-24",
+        "NgayKetThuc": "2026-11-29",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      }
+    ],
+    "NgayTao": "2026-10-22"
   }
 ]

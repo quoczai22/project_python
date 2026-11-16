@@ -34,6 +34,48 @@
       "ho_ten": "Hồng Phú",
       "email": "phu@kanban.vn",
       "vai_tro": "thanh_vien"
+    },
+    {
+      "ten_dang_nhap": "demo_an",
+      "mat_khau": "5fde6cebf1db479cd837353c2c137393$3151385388f456c3d5095f2461f9d1e2bd88f7263ab60f58060325b446c874c3",
+      "ho_ten": "An — phụ trách thư viện",
+      "email": "demo_an@example.test",
+      "vai_tro": "thanh_vien"
+    },
+    {
+      "ten_dang_nhap": "demo_binh",
+      "mat_khau": "68828cca1490a4dd7772863b32233424$56f68dc435dda240fe5378ce893c2a268625c81d09f853c7f106efe8a004701d",
+      "ho_ten": "Bình — kiểm thử nghiệp vụ",
+      "email": "demo_binh@example.test",
+      "vai_tro": "thanh_vien"
+    },
+    {
+      "ten_dang_nhap": "demo_chi",
+      "mat_khau": "216dabd3595f5515746a92edb1148da4$1c397dffb7380735517798359d88477df2ce942b7d4a7499ed16b5c05c7df552",
+      "ho_ten": "Chi — điều phối sự kiện",
+      "email": "demo_chi@example.test",
+      "vai_tro": "thanh_vien"
+    },
+    {
+      "ten_dang_nhap": "demo_dung",
+      "mat_khau": "ff6117c2684d4a3847f461e108c110be$a90d20c1f4c5bc996bf254dcb0160282ea2b099b2e3f32dea298e723df2175d2",
+      "ho_ten": "Dũng — phụ trách thiết bị",
+      "email": "demo_dung@example.test",
+      "vai_tro": "thanh_vien"
+    },
+    {
+      "ten_dang_nhap": "demo_linh",
+      "mat_khau": "3d9c60df9e6f5f96eb85baad112c0fa5$a1e6bb8729ceb782e1cbb6b9f09a7ca9ce9161872568233f905fccd7799b91b4",
+      "ho_ten": "Linh — thiết kế giao diện",
+      "email": "demo_linh@example.test",
+      "vai_tro": "thanh_vien"
+    },
+    {
+      "ten_dang_nhap": "demo_mai",
+      "mat_khau": "f7befc69395d4f45b9638cc79fd53d9a$379f214f40d225b6245debcdd71929c5fce8386dcd8848bcd747edd6d4760e88",
+      "ho_ten": "Mai — phụ trách nội dung",
+      "email": "demo_mai@example.test",
+      "vai_tro": "thanh_vien"
     }
   ]
 }
