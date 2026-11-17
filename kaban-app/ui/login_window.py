@@ -123,7 +123,7 @@ class LoginWindow(tk.Toplevel):
 
         self.ent_dn_ten = self._them_o_nhap(
             cha, "Tên đăng nhập",
-            placeholder="Nhập tên đăng nhập (VD: admin, quoc)", cao=42
+            placeholder="Nhập tên đăng nhập", cao=42
         )
         self.ent_dn_mk = self._them_o_nhap(
             cha, "Mật khẩu",
@@ -150,33 +150,7 @@ class LoginWindow(tk.Toplevel):
         )
         self.lbl_thong_bao.pack(fill="x", pady=(6, 0))
 
-        # Khu vực điền nhanh tài khoản mẫu để kiểm thử thuận tiện
-        khung_mau = ctk.CTkFrame(
-            cha, fg_color=theme.MAU_O_NHAP, corner_radius=0,
-            border_width=1, border_color=theme.MAU_VIEN
-        )
-        khung_mau.pack(fill="x", pady=(12, 0))
-
-        tk.Label(
-            khung_mau,
-            text="Chọn nhanh tài khoản mẫu (mật khẩu: 123456):",
-            bg=theme.MAU_O_NHAP, fg=theme.MAU_CHU_PHU, font=theme.FONT_NHO, anchor="w"
-        ).pack(fill="x", padx=12, pady=(8, 6))
-
-        hang_chip = tk.Frame(khung_mau, bg=theme.MAU_O_NHAP)
-        hang_chip.pack(fill="x", padx=12, pady=(0, 10))
-
-        for ten_tk, nhan in (("admin", "admin (QT)"), ("quoc", "quoc"),
-                             ("huy", "huy"), ("khoa", "khoa"), ("phu", "phu")):
-            ctk.CTkButton(
-                hang_chip, text=nhan,
-                command=lambda t=ten_tk: self._dien_nhanh(t),
-                width=86 if ten_tk == "admin" else 56, height=28, corner_radius=0,
-                fg_color=theme.MAU_THE, hover_color=theme.MAU_CHINH_NHAT,
-                border_width=1, border_color=theme.MAU_VIEN_THE,
-                text_color=theme.MAU_CHINH_DAM, font=theme.FONT_NHO_DAM
-            ).pack(side="left", padx=(0, 6))
-
+        # Phím Enter: từ ô tên đăng nhập sang ô mật khẩu, từ ô mật khẩu thì đăng nhập
         self.ent_dn_ten.bind("<Return>", lambda e: self.ent_dn_mk.focus_set())
         self.ent_dn_mk.bind("<Return>", lambda e: self._xu_ly_dang_nhap())
 
@@ -195,11 +169,11 @@ class LoginWindow(tk.Toplevel):
             placeholder="VD: minh_anh01", cao=34, khoang_cach=4
         )
         self.ent_dk_ho_ten = self._them_o_nhap(
-            cha, "Họ và tên", placeholder="VD: Nguyễn Văn An",
+            cha, "Họ và tên *", placeholder="VD: Nguyễn Văn An",
             cao=34, khoang_cach=4
         )
         self.ent_dk_email = self._them_o_nhap(
-            cha, "Email (tùy chọn)", placeholder="VD: an@kanban.vn",
+            cha, "Email *", placeholder="VD: an@kanban.vn",
             cao=34, khoang_cach=4
         )
         self.ent_dk_mk = self._them_o_nhap(
@@ -228,16 +202,6 @@ class LoginWindow(tk.Toplevel):
         self.ent_dk_mk2.bind("<Return>", lambda e: self._xu_ly_tao_tai_khoan())
 
     # ---------------------------------------------------------------- xử lý sự kiện
-    def _dien_nhanh(self, ten_dang_nhap: str):
-        theme.dat_gia_tri_entry(self.ent_dn_ten, ten_dang_nhap)
-        theme.dat_gia_tri_entry(self.ent_dn_mk, "123456")
-        if hasattr(self, "lbl_thong_bao"):
-            self.lbl_thong_bao.configure(
-                text=f"Đã điền mẫu tài khoản '{ten_dang_nhap}'.",
-                fg=theme.MAU_CHINH_DAM
-            )
-        self.ent_dn_mk.focus_set()
-
     def _doi_hien_mat_khau(self):
         self.ent_dn_mk.configure(show="" if self.var_hien_mk.get() else "•")
 
