@@ -3,7 +3,7 @@ import re
 import tkinter as tk
 from tkinter import ttk, messagebox
 import customtkinter as ctk
-
+from logger import logger
 from config import TRANG_THAI_HOP_LE
 from exceptions import (
     KanbanException, DuLieuKhongHopLeError, KhongCoQuyenError,
@@ -211,10 +211,9 @@ class TaoDuAnDialog(tk.Toplevel):
                 m = re.fullmatch(r"DA-(\d+)", d.ma_du_an)
                 if m:
                     so.append(int(m.group(1)))
-        except Exception:
-            pass
+        except KanbanException as loi:
+            logger.warning(f"Không đọc được danh sách dự án để sinh mã: {loi.thong_diep}")
         return f"DA-{(max(so) + 1 if so else 1):03d}"
-
     def _dat_loi(self, msg: str):
         self.lbl_loi.configure(text=msg)
 

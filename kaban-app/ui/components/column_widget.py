@@ -3,17 +3,17 @@ import tkinter as tk
 import weakref
 from tkinter import ttk
 import customtkinter as ctk
-
+from logger import logger
 from ui.styles import theme
 from ui.components.task_card import TaskCard
 
 _cac_cot = weakref.WeakSet()
 _cot_hover_hien_tai = None
+_da_dang_ky_cuon = False
 
 
 def _cuon_toan_cuc(event):
     """Tìm cột đang nằm dưới con trỏ chuột rồi cuộn cột đó với tốc độ mượt mà."""
-    global _cot_hover_hien_tai
     if _cot_hover_hien_tai and _cot_hover_hien_tai.winfo_exists():
         _cot_hover_hien_tai.cuon(event)
         return
@@ -21,6 +21,16 @@ def _cuon_toan_cuc(event):
         if cot.winfo_exists() and cot.chua_diem(event.x_root, event.y_root):
             cot.cuon(event)
             break
+
+
+def _dang_ky_cuon_toan_cuc(widget):
+    """Chỉ gắn sự kiện cuộn chuột toàn cục đúng một lần cho cả ứng dụng."""
+    global _da_dang_ky_cuon
+    if _da_dang_ky_cuon:
+        return
+    for su_kien in ("<MouseWheel>", "<Button-4>", "<Button-5>"):
+        widget.bind_all(su_kien, _cuon_toan_cuc, add="+")
+    _da_dang_ky_cuon = True
 
 
 GIOI_HAN_WIP = {
@@ -192,11 +202,16 @@ class ColumnWidget(ctk.CTkFrame):
             self.btn_trong_them = None
 
     def _cap_nhat_vung_cuon(self, _event=None):
-        """Cập nhật kích thước vùng cuộn và chỉ hiện scrollbar khi tràn."""
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        """Cập nhật vùng cuộn; cột ít thẻ thì không trượt được, chỉ hiện scrollbar khi tràn."""
+        bbox = self.canvas.bbox("all")
+        if not bbox:
+            return
+        cao_canvas = self.canvas.winfo_height()
+        # Vùng cuộn không bao giờ thấp hơn canvas, nên nội dung luôn dính mép trên
+        self.canvas.configure(scrollregion=(0, 0, bbox[2], max(bbox[3], cao_canvas)))
         can_cuon = (
-            self.ben_trong.winfo_reqheight() > self.canvas.winfo_height()
-            and self.canvas.winfo_height() > 60
+            self.ben_trong.winfo_reqheight() > cao_canvas
+            and cao_canvas > 60
         )
         if can_cuon:
             if not self.thanh_cuon.winfo_ismapped():
@@ -249,10 +264,7 @@ class ColumnWidget(ctk.CTkFrame):
 
         wip = GIOI_HAN_WIP.get(self.ten_cot, 0)
         vuot_wip = wip > 0 and len(danh_sach_cong_viec) > wip
-        so_can_chu_y = sum(
-            1 for cv in danh_sach_cong_viec
-            if not cv.is_hoan_thanh() and (cv.da_qua_han() or cv.muc_uu_tien == "Khẩn")
-        )
+        so_can_chu_y = sum(1 for cv in danh_sach_cong_viec if cv.can_chu_y())
         if vuot_wip and so_can_chu_y > 0:
             self.lbl_canh_bao_cot.configure(text=f"WIP • {so_can_chu_y} trễ")
             self.lbl_canh_bao_cot.pack(side="right", padx=(0, 4))
@@ -301,9 +313,7 @@ class ColumnWidget(ctk.CTkFrame):
         self.canvas.bind("<Leave>", lambda _e: self._set_hover(False), add="+")
         self.ben_trong.bind("<Enter>", lambda _e: self._set_hover(True), add="+")
         self.ben_trong.bind("<Leave>", lambda _e: self._set_hover(False), add="+")
-        self.canvas.bind_all("<MouseWheel>", _cuon_toan_cuc, add="+")
-        self.canvas.bind_all("<Button-4>", _cuon_toan_cuc, add="+")
-        self.canvas.bind_all("<Button-5>", _cuon_toan_cuc, add="+")
+        _dang_ky_cuon_toan_cuc(self.canvas)
 
     def _set_hover(self, bat):
         global _cot_hover_hien_tai
@@ -319,13 +329,14 @@ class ColumnWidget(ctk.CTkFrame):
         elif event.num == 5:
             buoc = 3
         elif getattr(event, "delta", 0):
-            buoc = -int(event.delta / 30)
+            # touchpad hay gửi delta nhỏ (<30) nên luôn cuộn ít nhất 1 nấc
+            buoc = -int(event.delta / 30) or (-1 if event.delta > 0 else 1)
         else:
-            buoc = -2 if getattr(event, "delta", 0) > 0 else 2
+            return
         try:
             self.canvas.yview_scroll(buoc, "units")
-        except Exception:
-            pass
+        except tk.TclError:
+            logger.debug("Canvas đã bị hủy khi đang cuộn")
 
 
 # Alias tương thích ngược

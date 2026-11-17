@@ -1,7 +1,7 @@
 """Thẻ công việc (TaskCard) nằm bên trong cột Kanban (tái sử dụng nhiều lần)."""
 import tkinter as tk
 import customtkinter as ctk
-
+from logger import logger
 from config import TRANG_THAI_HOP_LE
 from ui.styles import theme
 from utils.helpers import tao_chu_viet_tat
@@ -251,8 +251,9 @@ class TaskCard(ctk.CTkFrame):
             widget.bind("<MouseWheel>", self._xu_ly_cuon, add="+")
             widget.bind("<Button-4>", self._xu_ly_cuon, add="+")
             widget.bind("<Button-5>", self._xu_ly_cuon, add="+")
-        except Exception:
-            pass
+        except (tk.TclError, ValueError, NotImplementedError) as loi:
+            # Widget đã bị hủy, hoặc loại widget (CustomTkinter) không cho gắn thêm sự kiện
+            logger.debug(f"Bỏ qua gắn sự kiện cho {type(widget).__name__}: {loi}")
         for con in widget.winfo_children():
             self._gan_su_kien(con)
 

@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import ttk
 import customtkinter as ctk
-
+from logger import logger
 from ui.styles.fonts import (
     FONT_FAMILY, font_family, FONT_TIEU_DE, FONT_CHAO_MUNG,
     FONT_PHU_DE, FONT_CHUAN, FONT_DAM, FONT_NHO, FONT_NHO_DAM, FONT_KPI
@@ -166,8 +166,8 @@ def ap_dung_style():
     style = ttk.Style()
     try:
         style.theme_use("clam")
-    except Exception:
-        pass
+    except tk.TclError:
+        logger.warning("Không có theme 'clam', dùng theme mặc định của ttk")
 
     style.configure(
         "Treeview",
@@ -286,20 +286,20 @@ def tao_combobox(master, values=None, **kwargs):
 
 def dat_gia_tri_entry(entry, gia_tri: str):
     """Gán giá trị cho ô nhập Entry an toàn, hỗ trợ cả khi Entry đang ở state disabled."""
-    trang_thai_cu = None
+    trang_thai_cu = "normal"          # gán trước để không bị NameError nếu cget lỗi
     try:
-        trang_thai_cu = entry.cget("state")
-        if str(trang_thai_cu) == "disabled":
+        trang_thai_cu = str(entry.cget("state"))
+        if trang_thai_cu == "disabled":
             entry.configure(state="normal")
-    except Exception:
-        pass
+    except (tk.TclError, ValueError):   # CustomTkinter ném ValueError với thuộc tính không hỗ trợ
+        logger.debug("Ô nhập không hỗ trợ thuộc tính 'state'")
     entry.delete(0, tk.END)
     entry.insert(0, gia_tri or "")
-    if str(trang_thai_cu) == "disabled":
+    if trang_thai_cu == "disabled":
         try:
             entry.configure(state="disabled")
-        except Exception:
-            pass
+        except (tk.TclError, ValueError):
+            logger.debug("Không khôi phục được trạng thái disabled của ô nhập")
 
 def tao_badge(master, text, bg, fg, **kwargs):
     """Tạo một badge nhãn phẳng corner_radius=0."""

@@ -4,11 +4,12 @@ import tkinter as tk
 from datetime import date, datetime, timedelta
 from tkinter import ttk, messagebox
 import customtkinter as ctk
+from tkcalendar import DateEntry
 
 from config import NHAN_HOP_LE, MUC_UU_TIEN_HOP_LE
 from exceptions import (
     KanbanException, DuLieuKhongHopLeError, KhongCoQuyenError,
-    KhongTimThayError, LoiLuuTruError, XungDotDuLieuError
+    LoiLuuTruError, XungDotDuLieuError
 )
 from ui.styles import theme
 from utils.helpers import can_giua
@@ -57,8 +58,8 @@ class TaskDialog(tk.Toplevel):
         else:
             self.lbl_ma_cv.configure(text=self._ma_moi)
             self.lbl_loai_ma.configure(text="(Tự động cấp)")
-            theme.dat_gia_tri_entry(self.ent_bat_dau, self._ngay_bd_mac_dinh)
-            theme.dat_gia_tri_entry(self.ent_ket_thuc, self._ngay_kt_mac_dinh)
+            self._dat_ngay(self.ent_bat_dau, self._ngay_bd_mac_dinh)
+            self._dat_ngay(self.ent_ket_thuc, self._ngay_kt_mac_dinh)
             self._cap_nhat_goi_y_han()
 
         can_giua(self, 740, 780 if cong_viec else 620)
@@ -73,6 +74,13 @@ class TaskDialog(tk.Toplevel):
         lbl = tk.Label(cha, text=text, bg=theme.MAU_THE, fg=theme.MAU_CHU_NHAN, font=theme.FONT_DAM, anchor="w")
         lbl.pack(fill="x", pady=(0, 2))
         return lbl
+
+    def _tao_o_chon_ngay(self, cha):
+        """Tạo ô chọn ngày (DateEntry) chỉ cho chọn từ lịch, trả về chuỗi dạng YYYY-MM-DD."""
+        return DateEntry(
+            cha, date_pattern="yyyy-mm-dd", state="readonly", firstweekday="monday",
+            font=theme.FONT_CHUAN, selectbackground=theme.MAU_CHINH
+        )
 
     def _dung_giao_dien(self):
         khung_ngoai = tk.Frame(self, bg=theme.MAU_THE)
@@ -187,7 +195,7 @@ class TaskDialog(tk.Toplevel):
         self.cbb_nguoi = theme.tao_combobox(vung_nguoi, values=ds_tv, variable=self.var_nguoi, height=34)
         self.cbb_nguoi.pack(fill="x")
 
-        # Hàng 5: Ngày bắt đầu & Ngày kết thúc
+        # Hàng 5: Ngày bắt đầu & Ngày kết thúc (chọn bằng lịch DateEntry)
         hang5 = tk.Frame(khung, bg=theme.MAU_THE)
         hang5.pack(fill="x", pady=(0, 7))
         hang5.columnconfigure(0, weight=1, uniform="h5")
@@ -195,9 +203,9 @@ class TaskDialog(tk.Toplevel):
 
         f_bd = tk.Frame(hang5, bg=theme.MAU_THE)
         f_bd.grid(row=0, column=0, sticky="ew", padx=(0, 8))
-        self._nhan(f_bd, "Ngày bắt đầu (YYYY-MM-DD)")
-        self.ent_bat_dau = theme.tao_entry(f_bd, placeholder="YYYY-MM-DD", cao=34)
-        self.ent_bat_dau.pack(fill="x")
+        self._nhan(f_bd, "Ngày bắt đầu")
+        self.ent_bat_dau = self._tao_o_chon_ngay(f_bd)
+        self.ent_bat_dau.pack(fill="x", ipady=5)
 
         f_kt = tk.Frame(hang5, bg=theme.MAU_THE)
         f_kt.grid(row=0, column=1, sticky="ew")
@@ -208,9 +216,9 @@ class TaskDialog(tk.Toplevel):
             for so_ngay in (14, 7, 3):
                 ctk.CTkButton(dau_kt, text=f"+{so_ngay}d", command=lambda n=so_ngay: self._chon_nhanh_han(n), width=46, height=20, corner_radius=0, fg_color=theme.MAU_CHINH_NHAT, hover_color="#c6e6e0", border_width=0, text_color=theme.MAU_CHINH_DAM, bg_color=theme.MAU_THE, font=theme.FONT_NHO_DAM).pack(side="right", padx=(3, 0))
 
-        self.ent_ket_thuc = theme.tao_entry(f_kt, placeholder="YYYY-MM-DD", cao=34)
-        self.ent_ket_thuc.pack(fill="x")
-        self.ent_ket_thuc.bind("<KeyRelease>", self._cap_nhat_goi_y_han)
+        self.ent_ket_thuc = self._tao_o_chon_ngay(f_kt)
+        self.ent_ket_thuc.pack(fill="x", ipady=5)
+        self.ent_ket_thuc.bind("<<DateEntrySelected>>", self._cap_nhat_goi_y_han)
 
         self.lbl_dem_ngay = tk.Label(f_kt, text="", bg=theme.MAU_THE, font=theme.FONT_NHO, anchor="w")
         self.lbl_dem_ngay.pack(fill="x", pady=(2, 0))
@@ -221,6 +229,13 @@ class TaskDialog(tk.Toplevel):
 
         if self.cong_viec:
             self._dung_binh_luan(khung)
+
+    def _dat_ngay(self, o_chon_ngay, chuoi_ngay):
+        """Gán ngày 'YYYY-MM-DD' cho DateEntry; nếu dữ liệu cũ sai định dạng thì dùng hôm nay."""
+        try:
+            o_chon_ngay.set_date(datetime.strptime(str(chuoi_ngay), "%Y-%m-%d").date())
+        except (ValueError, TypeError):
+            o_chon_ngay.set_date(date.today())
 
     def _cap_nhat_goi_y_han(self, _event=None):
         val = self.ent_ket_thuc.get().strip()
@@ -240,8 +255,7 @@ class TaskDialog(tk.Toplevel):
             self.lbl_dem_ngay.configure(text="")
 
     def _chon_nhanh_han(self, so_ngay: int):
-        ngay_moi = (date.today() + timedelta(days=so_ngay)).isoformat()
-        theme.dat_gia_tri_entry(self.ent_ket_thuc, ngay_moi)
+        self.ent_ket_thuc.set_date(date.today() + timedelta(days=so_ngay))
         self._cap_nhat_goi_y_han()
 
     def _khi_tick_khan_cap(self):
@@ -263,8 +277,8 @@ class TaskDialog(tk.Toplevel):
         self.var_nhan.set(cv.nhan or NHAN_HOP_LE[0])
         self.var_uu_tien.set(cv.muc_uu_tien)
         self.var_trang_thai.set(cv.trang_thai)
-        theme.dat_gia_tri_entry(self.ent_bat_dau, cv.ngay_bat_dau)
-        theme.dat_gia_tri_entry(self.ent_ket_thuc, cv.ngay_ket_thuc)
+        self._dat_ngay(self.ent_bat_dau, cv.ngay_bat_dau)
+        self._dat_ngay(self.ent_ket_thuc, cv.ngay_ket_thuc)
         self._cap_nhat_goi_y_han()
         self.var_khan_cap.set(cv.muc_uu_tien == "Khẩn")
 
@@ -274,8 +288,10 @@ class TaskDialog(tk.Toplevel):
             self.chk_khan.configure(state="disabled")
 
         if not self.co_quyen_sua:
-            for w in (self.ent_tieu_de, self.ent_bat_dau, self.ent_ket_thuc):
-                w.configure(state="disabled", fg_color=theme.MAU_O_NHAP_KHOA, text_color=theme.MAU_CHU_PHU)
+            # Ô tiêu đề là widget CustomTkinter; DateEntry là widget ttk nên cấu hình riêng
+            self.ent_tieu_de.configure(state="disabled", fg_color=theme.MAU_O_NHAP_KHOA, text_color=theme.MAU_CHU_PHU)
+            self.ent_bat_dau.configure(state="disabled")
+            self.ent_ket_thuc.configure(state="disabled")
             self.txt_mo_ta.configure(state="disabled", fg_color=theme.MAU_O_NHAP_KHOA, text_color=theme.MAU_CHU_PHU)
             for cbb in (self.cbb_uu_tien, self.cbb_nhan, self.cbb_nguoi):
                 cbb.configure(state="disabled")
