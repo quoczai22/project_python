@@ -21,6 +21,134 @@
     "trang_thai_moi": "Hoàn thành"
   },
   {
+    "ten_dang_nhap": "khoa",
+    "thoi_gian": "2026-11-11T09:01:00",
+    "ma_du_an": "DA-003",
+    "ma_cong_viec": "CV-0301",
+    "trang_thai_cu": "Kiểm tra",
+    "trang_thai_moi": "Hoàn thành"
+  },
+  {
+    "ten_dang_nhap": "demo_an",
+    "thoi_gian": "2026-11-11T09:02:00",
+    "ma_du_an": "DA-003",
+    "ma_cong_viec": "CV-0302",
+    "trang_thai_cu": "Cần làm",
+    "trang_thai_moi": "Đang làm"
+  },
+  {
+    "ten_dang_nhap": "demo_binh",
+    "thoi_gian": "2026-11-11T09:03:00",
+    "ma_du_an": "DA-003",
+    "ma_cong_viec": "CV-0303",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Kiểm tra"
+  },
+  {
+    "ten_dang_nhap": "khoa",
+    "thoi_gian": "2026-11-11T09:05:00",
+    "ma_du_an": "DA-003",
+    "ma_cong_viec": "CV-0305",
+    "trang_thai_cu": "Cần làm",
+    "trang_thai_moi": "Đang làm"
+  },
+  {
+    "ten_dang_nhap": "huy",
+    "thoi_gian": "2026-11-12T09:01:00",
+    "ma_du_an": "DA-004",
+    "ma_cong_viec": "CV-0401",
+    "trang_thai_cu": "Cần làm",
+    "trang_thai_moi": "Đang làm"
+  },
+  {
+    "ten_dang_nhap": "demo_chi",
+    "thoi_gian": "2026-11-12T09:02:00",
+    "ma_du_an": "DA-004",
+    "ma_cong_viec": "CV-0402",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Kiểm tra"
+  },
+  {
+    "ten_dang_nhap": "demo_linh",
+    "thoi_gian": "2026-11-12T09:04:00",
+    "ma_du_an": "DA-004",
+    "ma_cong_viec": "CV-0404",
+    "trang_thai_cu": "Cần làm",
+    "trang_thai_moi": "Đang làm"
+  },
+  {
+    "ten_dang_nhap": "huy",
+    "thoi_gian": "2026-11-12T09:05:00",
+    "ma_du_an": "DA-004",
+    "ma_cong_viec": "CV-0405",
+    "trang_thai_cu": "Kiểm tra",
+    "trang_thai_moi": "Hoàn thành"
+  },
+  {
+    "ten_dang_nhap": "quoc",
+    "thoi_gian": "2026-11-13T09:01:00",
+    "ma_du_an": "DA-005",
+    "ma_cong_viec": "CV-0501",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Kiểm tra"
+  },
+  {
+    "ten_dang_nhap": "demo_dung",
+    "thoi_gian": "2026-11-13T09:03:00",
+    "ma_du_an": "DA-005",
+    "ma_cong_viec": "CV-0503",
+    "trang_thai_cu": "Cần làm",
+    "trang_thai_moi": "Đang làm"
+  },
+  {
+    "ten_dang_nhap": "demo_binh",
+    "thoi_gian": "2026-11-13T09:04:00",
+    "ma_du_an": "DA-005",
+    "ma_cong_viec": "CV-0504",
+    "trang_thai_cu": "Kiểm tra",
+    "trang_thai_moi": "Hoàn thành"
+  },
+  {
+    "ten_dang_nhap": "khoa",
+    "thoi_gian": "2026-11-13T09:06:00",
+    "ma_du_an": "DA-005",
+    "ma_cong_viec": "CV-0506",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Kiểm tra"
+  },
+  {
+    "ten_dang_nhap": "demo_mai",
+    "thoi_gian": "2026-11-14T09:02:00",
+    "ma_du_an": "DA-006",
+    "ma_cong_viec": "CV-0602",
+    "trang_thai_cu": "Cần làm",
+    "trang_thai_moi": "Đang làm"
+  },
+  {
+    "ten_dang_nhap": "demo_linh",
+    "thoi_gian": "2026-11-14T09:03:00",
+    "ma_du_an": "DA-006",
+    "ma_cong_viec": "CV-0603",
+    "trang_thai_cu": "Kiểm tra",
+    "trang_thai_moi": "Hoàn thành"
+  },
+  {
+    "ten_dang_nhap": "phu",
+    "thoi_gian": "2026-11-14T09:05:00",
+    "ma_du_an": "DA-006",
+    "ma_cong_viec": "CV-0605",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Kiểm tra"
+  },
+  {
+    "ten_dang_nhap": "demo_mai",
+    "thoi_gian": "2026-11-14T09:06:00",
+    "ma_du_an": "DA-006",
+    "ma_cong_viec": "CV-0606",
+    "trang_thai_cu": "Kiểm tra",
+    "trang_thai_moi": "Hoàn thành"
+  },
+  {
     "ten_dang_nhap": "admin",
     "thoi_gian": "2026-11-14T15:34:01.818671",
     "ma_cong_viec": "CV-001",
