@@ -179,7 +179,8 @@ class MainWindow(tk.Toplevel):
     def _dang_ky_phim_tat(self):
         for phím, fn in [
             ("<Control-n>", self.them_cong_viec), ("<Control-f>", self.topbar.entry_tim.focus_set),
-            ("<F5>", self.ve_lai), ("<Delete>", self.xoa_dang_chon),
+            ("<Control-b>", self.sidebar.chuyen_thu_phong), ("<F5>", self.ve_lai),
+            ("<Delete>", self.xoa_dang_chon),
             ("<Alt-Right>", lambda: self.chuyen_nhanh_tiep_theo(self.cv_dang_chon) if self.cv_dang_chon else None),
             ("<Control-Shift-S>", self.mo_thong_ke)
         ]:

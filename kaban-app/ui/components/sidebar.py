@@ -41,6 +41,29 @@ class SidebarComponent(tk.Frame):
 
     def _dung_giao_dien(self):
         """Khởi tạo toàn bộ giao diện thanh sidebar và thanh kéo giãn."""
+        # Khung thanh mini hiển thị khi thu gọn sidebar
+        self.khung_thu_gon = tk.Frame(self, bg="#ffffff", width=44)
+        self.btn_mo_sidebar = ctk.CTkButton(
+            self.khung_thu_gon, text=">>", command=self.chuyen_thu_phong,
+            width=30, height=26, corner_radius=0,
+            fg_color="#e9e8f4", hover_color="#d2d1df",
+            border_width=1, border_color="#d2d1df",
+            text_color="#6d669b", font=theme.FONT_NHO_DAM
+        )
+        self.btn_mo_sidebar.pack(side="top", pady=(10, 8))
+
+        the_logo_mini = tk.Frame(
+            self.khung_thu_gon, bg="#e9e8f4", width=28, height=28,
+            highlightthickness=1, highlightbackground="#d2d1df"
+        )
+        the_logo_mini.pack(side="top", pady=(0, 10))
+        the_logo_mini.pack_propagate(False)
+        ctk.CTkLabel(
+            the_logo_mini, text="|||", text_color="#6d669b",
+            font=theme.FONT_DAM, bg_color="#e9e8f4"
+        ).place(relx=0.5, rely=0.5, anchor="center")
+
+        # Khung nội dung đầy đủ của sidebar
         self.noi_dung = tk.Frame(self, bg="#ffffff")
         self.noi_dung.pack(fill="both", expand=True)
 
@@ -240,16 +263,17 @@ class SidebarComponent(tk.Frame):
     def chuyen_thu_phong(self):
         """Bật/tắt trạng thái thu gọn Sidebar."""
         if not self._sidebar_da_thu:
-            self._chieu_rong_cu = max(self.winfo_width(), 160)
-            self.configure(width=48)
+            self._chieu_rong_cu = max(self.winfo_width(), 218)
             self.noi_dung.pack_forget()
-            self.btn_thu_sidebar.configure(text=">>")
+            self.configure(width=44)
+            self.khung_thu_gon.pack(fill="both", expand=True)
             self._sidebar_da_thu = True
         else:
+            self.khung_thu_gon.pack_forget()
             self.configure(width=self._chieu_rong_cu)
             self.noi_dung.pack(fill="both", expand=True)
-            self.btn_thu_sidebar.configure(text="<<")
             self._sidebar_da_thu = False
+            self._tinh_chinh_nhan_du_an()
 
     def cap_nhat_loc_nhanh(self, ma_loc_hien_tai):
         """Đánh dấu nút bộ lọc nhanh đang chọn."""
