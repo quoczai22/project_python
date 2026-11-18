@@ -36,7 +36,7 @@
         "NguoiPhuTrach": "khoa",
         "NgayBatDau": "2026-10-08",
         "NgayKetThuc": "2026-10-15",
-        "TrangThai": "Hoàn thành",
+        "TrangThai": "Cần làm",
         "MucUuTien": "Cao",
         "Nhan": "Backend",
         "DanhSachBinhLuan": []
@@ -46,13 +46,20 @@
         "MaCongViec": "CV-003",
         "TieuDe": "Dựng cửa sổ đăng nhập",
         "MoTa": "",
-        "NguoiPhuTrach": "huy",
+        "NguoiPhuTrach": "khoa",
         "NgayBatDau": "2026-10-14",
-        "NgayKetThuc": "2026-10-23",
-        "TrangThai": "Đang làm",
+        "NgayKetThuc": "2026-11-21",
+        "TrangThai": "Hoàn thành",
         "MucUuTien": "Trung bình",
-        "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-032557",
+            "NguoiGui": "admin",
+            "NoiDung": "hi",
+            "ThoiGian": "2026-11-18 08:23:52"
+          }
+        ]
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -114,7 +121,7 @@
         "NguoiPhuTrach": "phu",
         "NgayBatDau": "2026-10-11",
         "NgayKetThuc": "2026-10-20",
-        "TrangThai": "Kiểm tra",
+        "TrangThai": "Đang làm",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
         "DanhSachBinhLuan": []
@@ -613,7 +620,7 @@
         "MoTa": "Thử với phòng trống và phòng có nhiều máy.",
         "NguoiPhuTrach": "demo_dung",
         "NgayBatDau": "2026-11-02",
-        "NgayKetThuc": "2026-11-16",
+        "NgayKetThuc": "2026-11-25",
         "TrangThai": "Đang làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
@@ -796,7 +803,7 @@
         "MoTa": "Thêm ô tìm kiếm và bộ lọc theo môn học.",
         "NguoiPhuTrach": "demo_mai",
         "NgayBatDau": "2026-11-03",
-        "NgayKetThuc": "2026-11-13",
+        "NgayKetThuc": "2026-12-02",
         "TrangThai": "Đang làm",
         "MucUuTien": "Cao",
         "Nhan": "Giao diện",
@@ -870,8 +877,8 @@
         "NgayBatDau": "2026-10-29",
         "NgayKetThuc": "2026-11-27",
         "TrangThai": "Đang làm",
-        "MucUuTien": "Thấp",
-        "Nhan": "Giao diện",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Backend",
         "DanhSachBinhLuan": []
       },
       {
@@ -940,10 +947,75 @@
         "MoTa": "Kiểm tra tệp tải lên trước khi mở quyền xem chung.",
         "NguoiPhuTrach": "demo_an",
         "NgayBatDau": "2026-10-24",
-        "NgayKetThuc": "2026-11-29",
+        "NgayKetThuc": "2026-12-02",
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Khẩn",
         "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-613",
+        "TieuDe": "Go on a long drive with no music",
+        "MoTa": "Nhập từ DummyJSON API [API#94]",
+        "NguoiPhuTrach": "admin",
+        "NgayBatDau": "2026-11-18",
+        "NgayKetThuc": "2026-11-23",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-614",
+        "TieuDe": "Learn the NATO phonetic alphabet",
+        "MoTa": "Nhập từ DummyJSON API [API#95]",
+        "NguoiPhuTrach": "admin",
+        "NgayBatDau": "2026-11-18",
+        "NgayKetThuc": "2026-11-28",
+        "TrangThai": "Hoàn thành",
+        "MucUuTien": "Thấp",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-615",
+        "TieuDe": "Have a jam session with friends",
+        "MoTa": "Nhập từ DummyJSON API [API#96]",
+        "NguoiPhuTrach": "admin",
+        "NgayBatDau": "2026-11-18",
+        "NgayKetThuc": "2026-11-29",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-616",
+        "TieuDe": "Hold a video game tournament with some friends",
+        "MoTa": "Nhập từ DummyJSON API [API#97]",
+        "NguoiPhuTrach": "admin",
+        "NgayBatDau": "2026-11-18",
+        "NgayKetThuc": "2026-11-22",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Lỗi",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-617",
+        "TieuDe": "Catch up on world news",
+        "MoTa": "Nhập từ DummyJSON API [API#98]",
+        "NguoiPhuTrach": "admin",
+        "NgayBatDau": "2026-11-18",
+        "NgayKetThuc": "2026-12-01",
+        "TrangThai": "Cần làm",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Kiểm thử",
         "DanhSachBinhLuan": []
       }
     ],

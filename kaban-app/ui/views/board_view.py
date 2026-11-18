@@ -105,7 +105,7 @@ class BoardView(tk.Frame):
         )
         for k, t, w, a in cac_cot_ds:
             self.tree_ds.heading(k, text=t)
-            self.tree_ds.column(k, width=w, anchor=a)
+            self.tree_ds.column(k, width=w, anchor=a, stretch=(k == "tieu_de"))
 
         cuon_doc_ds = ttk.Scrollbar(self.khung_danh_sach, orient="vertical", command=self.tree_ds.yview)
         cuon_ngang_ds = ttk.Scrollbar(self.khung_danh_sach, orient="horizontal", command=self.tree_ds.xview)
@@ -158,6 +158,10 @@ class BoardView(tk.Frame):
 
     def _dong_bo_kich_thuoc_kanban(self, chieu_rong=None, chieu_cao=None):
         """Đồng bộ chiều rộng các cột phủ đều 2 bên Canvas và kích hoạt cuộn ngang khi hẹp."""
+        if getattr(self, "che_do_xem", "Bảng Kanban") != "Bảng Kanban":
+            if self.thanh_cuon_ngang.winfo_ismapped():
+                self.thanh_cuon_ngang.pack_forget()
+            return
         cw = chieu_rong or self.canvas_kanban.winfo_width()
         ch = chieu_cao or self.canvas_kanban.winfo_height()
         if cw <= 1:

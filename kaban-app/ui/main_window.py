@@ -346,8 +346,7 @@ class MainWindow(tk.Toplevel):
         try:
             kq = nhap_cong_viec_tu_api(self.ql, self.du_an, so)
         except Exception as loi:
-            messagebox.showerror("Lỗi hệ thống", f"Không thể nhập từ API: {loi}", parent=self)
-            return
+            messagebox.showerror("Lỗi hệ thống", f"Không thể nhập từ API: {loi}", parent=self); return
         finally:
             self.configure(cursor="")
         if kq.get("thong_bao"):
@@ -356,10 +355,10 @@ class MainWindow(tk.Toplevel):
             msg = f"Đã thêm {kq['them']} việc. Bỏ qua {kq['trung']} việc trùng. Lỗi: {kq['loi']}."
             messagebox.showinfo("Nhập từ API", msg, parent=self)
         self.ve_lai()
+
     def them_cong_viec_tai_cot(self, ten_cot):
-        if not self.du_an:
-            return
-        TaskDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai, trang_thai_mac_dinh=ten_cot)
+        if self.du_an:
+            TaskDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai, trang_thai_mac_dinh=ten_cot)
 
     def sua_dang_chon(self):
         if self.cv_dang_chon:
@@ -376,11 +375,9 @@ class MainWindow(tk.Toplevel):
         try:
             self.ql.xoa_cong_viec(self.du_an, self.cv_dang_chon.ma_cong_viec)
         except (KhongCoQuyenError, LoiLuuTruError, KanbanException) as loi:
-            messagebox.showerror("Lỗi", loi.thong_diep, parent=self)
-            return
+            messagebox.showerror("Lỗi", loi.thong_diep, parent=self); return
         except Exception as e:
-            messagebox.showerror("Lỗi hệ thống", f"Không thể xóa công việc: {e}", parent=self)
-            return
+            messagebox.showerror("Lỗi hệ thống", f"Không thể xóa công việc: {e}", parent=self); return
         self.cv_dang_chon = None
         self.ve_lai()
 
@@ -388,14 +385,11 @@ class MainWindow(tk.Toplevel):
         try:
             self.ql.chuyen_trang_thai(self.du_an, cv.ma_cong_viec, cot_dich)
         except (DuLieuKhongHopLeError, KhongTimThayError) as loi:
-            messagebox.showwarning("Không hợp lệ", loi.thong_diep, parent=self)
-            return
+            messagebox.showwarning("Không hợp lệ", loi.thong_diep, parent=self); return
         except (KhongCoQuyenError, LoiLuuTruError, KanbanException) as loi:
-            messagebox.showerror("Lỗi", loi.thong_diep, parent=self)
-            return
+            messagebox.showerror("Lỗi", loi.thong_diep, parent=self); return
         except Exception as e:
-            messagebox.showerror("Lỗi hệ thống", f"Không thể chuyển trạng thái: {e}", parent=self)
-            return
+            messagebox.showerror("Lỗi hệ thống", f"Không thể chuyển trạng thái: {e}", parent=self); return
         self.ve_lai()
 
     def chuyen_nhanh_tiep_theo(self, cv):
@@ -406,22 +400,25 @@ class MainWindow(tk.Toplevel):
                 self.chuyen_cot(cv, ds_cot[idx + 1])
 
     def khi_keo(self, cv, event):
-        dich = self._cot_duoi_chuot(event)
-        for ten, cot in self.cac_cot.items():
-            cot.to_sang(ten == dich and ten != cv.trang_thai)
+        try:
+            dich = self._cot_duoi_chuot(event)
+            for ten, cot in self.cac_cot.items():
+                cot.to_sang(ten == dich and ten != cv.trang_thai)
+        except Exception:
+            pass
 
     def khi_tha(self, cv, event):
-        for cot in self.cac_cot.values():
-            cot.to_sang(False)
-        dich = self._cot_duoi_chuot(event)
-        if dich and dich != cv.trang_thai:
-            self.after(10, lambda: self.chuyen_cot(cv, dich))
+        try:
+            for cot in self.cac_cot.values():
+                cot.to_sang(False)
+            dich = self._cot_duoi_chuot(event)
+            if dich and dich != cv.trang_thai:
+                self.after(10, lambda: self.chuyen_cot(cv, dich))
+        except Exception:
+            pass
 
     def _cot_duoi_chuot(self, event):
-        for ten, cot in self.cac_cot.items():
-            if cot.chua_diem(event.x_root, event.y_root):
-                return ten
-        return None
+        return next((ten for ten, cot in self.cac_cot.items() if cot.chua_diem(event.x_root, event.y_root)), None)
 
     def _khi_chon_dong_ds(self, _event=None):
         sel = self.tree_ds.selection()
@@ -433,8 +430,7 @@ class MainWindow(tk.Toplevel):
         if row_id:
             self.tree_ds.selection_set(row_id)
             self._khi_chon_dong_ds()
-            if self.cv_dang_chon:
-                self.hien_menu(self.cv_dang_chon, event)
+            if self.cv_dang_chon: self.hien_menu(self.cv_dang_chon, event)
 
     def tao_du_an(self):
         TaoDuAnDialog(self, self.ql, khi_xong=lambda d: self._nap_du_an(chon_ma=d.ma_du_an))

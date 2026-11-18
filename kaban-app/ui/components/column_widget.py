@@ -290,19 +290,46 @@ class ColumnWidget(ctk.CTkFrame):
 
     def to_sang(self, bat):
         """Tô sáng cột khi kéo thả thẻ công việc vào."""
+        try:
+            if not self.winfo_exists():
+                return
+        except Exception:
+            return
         mau = theme.MAU_COT_SANG if bat else theme.MAU_COT
         vien = theme.MAU_CHINH if bat else theme.MAU_VIEN_COT
         mau_trong = mau if bat else "#e8eff5"
-        self.configure(fg_color=mau, border_color=vien, border_width=2 if bat else 1)
-        self.khung_trong.configure(fg_color=mau_trong)
+        try:
+            self.configure(fg_color=mau, border_color=vien, border_width=2 if bat else 1)
+        except Exception:
+            pass
+        try:
+            self.khung_trong.configure(fg_color=mau_trong)
+        except Exception:
+            pass
         if self.btn_them_duoi is not None:
-            self.btn_them_duoi.configure(bg_color=mau)
-        for w in (self.vung, self.canvas, self.ben_trong):
-            w.configure(bg=mau)
+            try:
+                self.btn_them_duoi.configure(bg_color=mau)
+            except Exception:
+                pass
+        # Chỉ cập nhật canvas và vung, không cập nhật ben_trong vì CustomTkinter
+        # sẽ đệ quy configure lên tất cả TaskCard con gây ra lỗi TclError khi thẻ bị hủy
+        for w in (self.vung, self.canvas):
+            try:
+                if w.winfo_exists():
+                    w.configure(bg=mau)
+            except Exception:
+                pass
         for w_trong in (self.lbl_trong, self.lbl_trong_goi_y):
-            w_trong.configure(bg=mau_trong)
+            try:
+                if w_trong.winfo_exists():
+                    w_trong.configure(bg=mau_trong)
+            except Exception:
+                pass
         if self.btn_trong_them is not None:
-            self.btn_trong_them.configure(bg_color=mau_trong)
+            try:
+                self.btn_trong_them.configure(bg_color=mau_trong)
+            except Exception:
+                pass
 
     def _bat_cuon_chuot(self):
         """Kích hoạt sự kiện lắng nghe cuộn chuột trên cột."""

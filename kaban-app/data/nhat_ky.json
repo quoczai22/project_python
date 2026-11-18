@@ -161,5 +161,26 @@
     "ma_cong_viec": "CV-001",
     "trang_thai_cu": "Đang làm",
     "trang_thai_moi": "Cần làm"
+  },
+  {
+    "ten_dang_nhap": "admin",
+    "thoi_gian": "2026-11-18T08:26:20.488140",
+    "ma_cong_viec": "CV-003",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Hoàn thành"
+  },
+  {
+    "ten_dang_nhap": "admin",
+    "thoi_gian": "2026-11-18T08:26:28.217742",
+    "ma_cong_viec": "CV-002",
+    "trang_thai_cu": "Hoàn thành",
+    "trang_thai_moi": "Cần làm"
+  },
+  {
+    "ten_dang_nhap": "admin",
+    "thoi_gian": "2026-11-18T08:27:36.394527",
+    "ma_cong_viec": "CV-008",
+    "trang_thai_cu": "Kiểm tra",
+    "trang_thai_moi": "Đang làm"
   }
 ]
