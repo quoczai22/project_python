@@ -236,6 +236,10 @@ class TaskCard(ctk.CTkFrame):
         else:
             self.configure(border_color=self._vien_mac_dinh(), border_width=1)
 
+    def chon(self, duoc_chon: bool):
+        """Đặt trạng thái chọn cho thẻ (alias tương thích ngược)."""
+        self.dat_chon(duoc_chon)
+
     # ---------------------------------------------------------------- sự kiện
     def _gan_su_kien(self, widget):
         """Gắn sự kiện cho thẻ và toàn bộ widget con để tương tác mượt."""
@@ -269,7 +273,10 @@ class TaskCard(ctk.CTkFrame):
         self._diem_bam = (event.x_root, event.y_root)
         self._dang_keo = False
         if self.khi_chon:
-            self.khi_chon(self.cong_viec)
+            try:
+                self.khi_chon(self.cong_viec, self)
+            except TypeError:
+                self.khi_chon(self.cong_viec)
 
     def _xu_ly_keo(self, event):
         if self._diem_bam is None:

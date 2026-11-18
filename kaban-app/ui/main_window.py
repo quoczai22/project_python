@@ -56,38 +56,24 @@ class MainWindow(tk.Toplevel):
 
     def _khoi_tao_bien_trang_thai(self):
         """Khởi tạo các biến theo dõi để liên kết component và tương thích ngược."""
-        self.var_du_an = tk.StringVar(value="(Chưa có dự án)")
-        self.var_tim_kiem, self.var_uu_tien = tk.StringVar(), tk.StringVar(value=TAT_CA)
-        self.var_nhan, self.var_thanh_vien = tk.StringVar(value=TAT_CA), tk.StringVar(value=TAT_CA)
-        self.var_loc_nhanh = tk.StringVar(value="tat_ca")
+        self.var_du_an, self.var_tim_kiem, self.var_loc_nhanh = tk.StringVar(value="(Chưa có dự án)"), tk.StringVar(), tk.StringVar(value="tat_ca")
+        self.var_uu_tien, self.var_nhan, self.var_thanh_vien = tk.StringVar(value=TAT_CA), tk.StringVar(value=TAT_CA), tk.StringVar(value=TAT_CA)
         self.ten_nguoi_map = {nd.ten_dang_nhap: nd.ho_ten for nd in self.ql.lay_danh_sach_nguoi_dung()}
 
     def _dung_thanh_menu(self):
         """Tạo menu bar chuẩn phía trên cửa sổ."""
         self.menubar = tk.Menu(self)
         self.configure(menu=self.menubar)
-
-        m_ht = tk.Menu(self.menubar, tearoff=0)
-        m_ht.add_command(label="Đổi mật khẩu...", command=self.doi_mat_khau)
-        m_ht.add_command(label="Đăng xuất", command=self.dang_xuat)
-        m_ht.add_separator()
-        m_ht.add_command(label="Thoát", command=self.destroy)
-        self.menubar.add_cascade(label="Hệ thống", menu=m_ht)
-
-        m_da = tk.Menu(self.menubar, tearoff=0)
-        m_da.add_command(label="Tạo dự án mới", command=self.tao_du_an)
-        m_da.add_command(label="Quản lý thành viên", command=self.quan_ly_thanh_vien)
-        m_da.add_command(label="Xuất báo cáo tiến độ ra file...", command=self.xuat_bao_cao)
-        m_da.add_separator()
-        m_da.add_command(label="Xóa dự án hiện tại", command=self.xoa_du_an_hien_tai)
-        self.menubar.add_cascade(label="Dự án", menu=m_da)
-
-        m_cv = tk.Menu(self.menubar, tearoff=0)
-        m_cv.add_command(label="Thêm công việc...", command=self.them_cong_viec)
-        m_cv.add_command(label="Nhập công việc từ API...", command=self.nhap_tu_api)
-        m_cv.add_separator()
-        m_cv.add_command(label="Làm mới (F5)", command=self.ve_lai)
-        self.menubar.add_cascade(label="Công việc", menu=m_cv)
+        for nhan, cac_muc in [
+            ("Hệ thống", [("Đổi mật khẩu...", self.doi_mat_khau), ("Đăng xuất", self.dang_xuat), None, ("Thoát", self.destroy)]),
+            ("Dự án", [("Tạo dự án mới", self.tao_du_an), ("Quản lý thành viên", self.quan_ly_thanh_vien),
+                       ("Xuất báo cáo tiến độ ra file...", self.xuat_bao_cao), None, ("Xóa dự án hiện tại", self.xoa_du_an_hien_tai)]),
+            ("Công việc", [("Thêm công việc...", self.them_cong_viec), ("Nhập công việc từ API...", self.nhap_tu_api), None, ("Làm mới (F5)", self.ve_lai)]),
+        ]:
+            m = tk.Menu(self.menubar, tearoff=0)
+            for item in cac_muc:
+                m.add_separator() if item is None else m.add_command(label=item[0], command=item[1])
+            self.menubar.add_cascade(label=nhan, menu=m)
 
     def _dung_bo_cuc_chinh(self):
         """Dựng khung Sidebar (trái) + Khung Làm việc (phải) với Topbar & BoardView."""
@@ -149,15 +135,10 @@ class MainWindow(tk.Toplevel):
         )
         self.board_view.pack(fill="both", expand=True)
 
-        self.cac_cot = self.board_view.cot_widgets
-        self.cot_kanban = self.cac_cot
-        self.drawer_hoat_dong = self.board_view.drawer_hoat_dong
-        self.tree_ds = self.board_view.tree_ds
-        self.khung_kpi = self.board_view.khung_kpi
-        self.lbl_kpi_tong = self.board_view.lbl_kpis["tong"]
-        self.lbl_kpi_dang_lam = self.board_view.lbl_kpis["dang_lam"]
-        self.lbl_kpi_xong = self.board_view.lbl_kpis["xong"]
-        self.lbl_kpi_khan = self.board_view.lbl_kpis["khan"]
+        self.cac_cot = self.cot_kanban = self.board_view.cot_widgets
+        self.drawer_hoat_dong, self.tree_ds, self.khung_kpi = self.board_view.drawer_hoat_dong, self.board_view.tree_ds, self.board_view.khung_kpi
+        self.lbl_kpi_tong, self.lbl_kpi_dang_lam = self.board_view.lbl_kpis["tong"], self.board_view.lbl_kpis["dang_lam"]
+        self.lbl_kpi_xong, self.lbl_kpi_khan = self.board_view.lbl_kpis["xong"], self.board_view.lbl_kpis["khan"]
 
         # Gắn sự kiện danh sách treeview
         self.tree_ds.bind("<<TreeviewSelect>>", self._khi_chon_dong_ds)
@@ -166,23 +147,18 @@ class MainWindow(tk.Toplevel):
 
     def _gan_su_kien_splitter(self):
         """Kéo chuột để co giãn chiều rộng Sidebar mượt mà."""
-        self._splitter_keo = False
-        self._splitter_x_dau = 0
-        self._sidebar_w_dau = 218
+        self._splitter_keo, self._splitter_x_dau, self._sidebar_w_dau = False, 0, 218
 
         def _bam(e):
-            self._splitter_keo = True
-            self._splitter_x_dau = e.x_root
+            self._splitter_keo, self._splitter_x_dau = True, e.x_root
             self._sidebar_w_dau = self.sidebar.winfo_width()
             self.splitter.configure(bg="#6d669b")
 
         def _re(e):
-            if not self._splitter_keo:
-                return
-            delta = e.x_root - self._splitter_x_dau
-            w_moi = max(160, min(380, self._sidebar_w_dau + delta))
-            self.sidebar.configure(width=w_moi)
-            self.sidebar._tinh_chinh_nhan_du_an()
+            if self._splitter_keo:
+                w = max(160, min(380, self._sidebar_w_dau + (e.x_root - self._splitter_x_dau)))
+                self.sidebar.configure(width=w)
+                self.sidebar._tinh_chinh_nhan_du_an()
 
         def _tha(_e):
             self._splitter_keo = False
@@ -201,12 +177,13 @@ class MainWindow(tk.Toplevel):
         self.menu_phai.add_command(label="Xóa công việc", command=self.xoa_dang_chon)
 
     def _dang_ky_phim_tat(self):
-        self.bind("<Control-n>", lambda _e: self.them_cong_viec())
-        self.bind("<Control-f>", lambda _e: self.topbar.entry_tim.focus_set())
-        self.bind("<F5>", lambda _e: self.ve_lai())
-        self.bind("<Delete>", lambda _e: self.xoa_dang_chon())
-        self.bind("<Alt-Right>", lambda _e: self.chuyen_nhanh_tiep_theo(self.cv_dang_chon) if self.cv_dang_chon else None)
-        self.bind("<Control-Shift-S>", lambda _e: self.mo_thong_ke())
+        for phím, fn in [
+            ("<Control-n>", self.them_cong_viec), ("<Control-f>", self.topbar.entry_tim.focus_set),
+            ("<F5>", self.ve_lai), ("<Delete>", self.xoa_dang_chon),
+            ("<Alt-Right>", lambda: self.chuyen_nhanh_tiep_theo(self.cv_dang_chon) if self.cv_dang_chon else None),
+            ("<Control-Shift-S>", self.mo_thong_ke)
+        ]:
+            self.bind(phím, lambda _e, f=fn: f())
 
     def _nap_du_an(self, chon_ma=None):
         """Tải danh sách dự án và vẽ lại giao diện."""
@@ -251,37 +228,30 @@ class MainWindow(tk.Toplevel):
     def _cap_nhat_trang_thai_nut_du_an(self):
         co_da = self.du_an is not None
         la_qt = bool(self.ql.nguoi_dung_hien_tai and self.ql.nguoi_dung_hien_tai.vai_tro == "quan_tri")
-        self.btn_them_cv.configure(state="normal" if co_da else "disabled")
-        self.btn_thong_ke.configure(state="normal" if co_da else "disabled")
-        self.btn_thanh_vien.configure(state="normal" if (co_da and la_qt) else "disabled")
-        self.btn_xoa_da.configure(state="normal" if (co_da and la_qt) else "disabled")
+        st_da, st_qt = "normal" if co_da else "disabled", "normal" if (co_da and la_qt) else "disabled"
+        for btn in (self.btn_them_cv, self.btn_thong_ke):
+            btn.configure(state=st_da)
+        for btn in (self.btn_thanh_vien, self.btn_xoa_da):
+            btn.configure(state=st_qt)
 
     def _cong_viec_sau_loc(self):
         if not self.du_an:
             return []
-        ql, da = self.ql, self.du_an
+        ql, da, nd = self.ql, self.du_an, self.ql.nguoi_dung_hien_tai
         kq = ql.tim_kiem_cong_viec(da, self.topbar.var_tim_kiem.get())
-
         che_do = self.var_loc_nhanh.get()
         if che_do == "cua_toi":
-            nd = self.ql.nguoi_dung_hien_tai
-            kq = [cv for cv in kq if cv.nguoi_phu_trach == (nd.ten_dang_nhap if nd else "")]
+            kq = [c for c in kq if c.nguoi_phu_trach == (nd.ten_dang_nhap if nd else "")]
         elif che_do == "khan_cap":
-            kq = [cv for cv in kq if cv.can_chu_y()]
+            kq = [c for c in kq if c.can_chu_y()]
         elif che_do == "hoan_thanh":
-            kq = [cv for cv in kq if cv.is_hoan_thanh()]
-
-        ut = self.topbar.var_uu_tien.get()
+            kq = [c for c in kq if c.is_hoan_thanh()]
+        ut, tv_str = self.topbar.var_uu_tien.get(), self.topbar.var_thanh_vien.get()
         if ut != TAT_CA:
-            ds_ut = {cv.ma_cong_viec for cv in ql.loc_theo_muc_uu_tien(da, ut)}
-            kq = [cv for cv in kq if cv.ma_cong_viec in ds_ut]
-
-        tv_str = self.topbar.var_thanh_vien.get()
+            kq = [c for c in kq if c.ma_cong_viec in {x.ma_cong_viec for x in ql.loc_theo_muc_uu_tien(da, ut)}]
         if tv_str != TAT_CA:
             tv_ma = tv_str.split(" - ")[0].strip()
-            ds_tv = {cv.ma_cong_viec for cv in ql.loc_theo_thanh_vien(da, tv_ma)}
-            kq = [cv for cv in kq if cv.ma_cong_viec in ds_tv]
-
+            kq = [c for c in kq if c.ma_cong_viec in {x.ma_cong_viec for x in ql.loc_theo_thanh_vien(da, tv_ma)}]
         return kq
 
     def ve_lai(self):
@@ -290,26 +260,19 @@ class MainWindow(tk.Toplevel):
             self.board_view.cap_nhat_kpi(0, 0, 0, 0)
             self.topbar.cap_nhat_tien_do(0, 0)
             return
-
         cv_hien_thi = self._cong_viec_sau_loc()
         for ten, cot in self.cac_cot.items():
             cot.hien_thi([cv for cv in cv_hien_thi if cv.trang_thai == ten])
-
         tong = len(self.du_an.cong_viec)
         xong = sum(1 for c in self.du_an.cong_viec if c.is_hoan_thanh())
         dang_lam = sum(1 for c in self.du_an.cong_viec if c.trang_thai in TRANG_THAI_DANG_XU_LY)
-        khan     = sum(1 for c in self.du_an.cong_viec if c.can_chu_y())
+        khan = sum(1 for c in self.du_an.cong_viec if c.can_chu_y())
         self.board_view.cap_nhat_kpi(tong, dang_lam, xong, khan)
         self.topbar.cap_nhat_tien_do(tong, xong)
         self._cap_nhat_tree_danh_sach(cv_hien_thi)
-
         if self.drawer_hoat_dong.winfo_ismapped():
-            ds_nk = self.ql.lay_nhat_ky()
-            self.board_view.cap_nhat_hoat_dong(ds_nk)
-
-        self.lbl_trang_thai.configure(
-            text=f"Dự án '{self.du_an.ten_du_an}': {len(cv_hien_thi)}/{tong} công việc."
-        )
+            self.board_view.cap_nhat_hoat_dong(self.ql.lay_nhat_ky())
+        self.lbl_trang_thai.configure(text=f"Dự án '{self.du_an.ten_du_an}': {len(cv_hien_thi)}/{tong} công việc.")
 
     def _cap_nhat_tree_danh_sach(self, ds_cv):
         self.tree_ds.delete(*self.tree_ds.get_children())
@@ -331,14 +294,25 @@ class MainWindow(tk.Toplevel):
             ds_nk = self.ql.lay_nhat_ky()
             self.board_view.cap_nhat_hoat_dong(ds_nk)
 
-    def chon_the(self, cv, card):
+    def chon_the(self, cv, card=None):
         for c in self.cac_cot.values():
             for t in c.cac_the.values():
-                t.chon(False)
+                if hasattr(t, "chon"):
+                    t.chon(False)
+                elif hasattr(t, "dat_chon"):
+                    t.dat_chon(False)
         self.cv_dang_chon = cv
+        if card is None and cv:
+            for c in self.cac_cot.values():
+                if cv.ma_cong_viec in c.cac_the:
+                    card = c.cac_the[cv.ma_cong_viec]
+                    break
         self.the_dang_chon = card
         if card:
-            card.chon(True)
+            if hasattr(card, "chon"):
+                card.chon(True)
+            elif hasattr(card, "dat_chon"):
+                card.dat_chon(True)
 
     def mo_the(self, cv):
         self.cv_dang_chon = cv
@@ -349,47 +323,37 @@ class MainWindow(tk.Toplevel):
         self.menu_chuyen.delete(0, "end")
         for cot in self.du_an.danh_sach_cot:
             if cot != cv.trang_thai:
-                self.menu_chuyen.add_command(
-                    label=cot, command=lambda c=cot: self.chuyen_cot(cv, c)
-                )
+                self.menu_chuyen.add_command(label=cot, command=lambda c=cot: self.chuyen_cot(cv, c))
         self.menu_phai.tk_popup(event.x_root, event.y_root)
 
     def them_cong_viec(self):
-        if not self.du_an:
-            return
-        TaskDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai)
+        if self.du_an:
+            TaskDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai)
+
     def nhap_tu_api(self):
         """Lấy công việc mẫu từ API công khai, làm sạch, lưu JSON rồi thêm vào dự án đang mở."""
         if not self.du_an:
             messagebox.showinfo("Chưa có dự án", "Hãy chọn hoặc tạo dự án trước khi nhập từ API.", parent=self)
             return
-        so = simpledialog.askinteger(
-            "Nhập từ API", f"Số công việc muốn nhập (1–{SO_VIEC_API_TOI_DA}):",
-            parent=self, minvalue=1, maxvalue=SO_VIEC_API_TOI_DA, initialvalue=5
-        )
-        if so is None:          # người dùng bấm Cancel
+        so = simpledialog.askinteger("Nhập từ API", f"Số công việc muốn nhập (1–{SO_VIEC_API_TOI_DA}):",
+                                     parent=self, minvalue=1, maxvalue=SO_VIEC_API_TOI_DA, initialvalue=5)
+        if so is None:
             return
-
         self.lbl_trang_thai.configure(text="Đang tải dữ liệu từ API...")
         self.configure(cursor="watch")
         self.update_idletasks()
         try:
             kq = nhap_cong_viec_tu_api(self.ql, self.du_an, so)
-        except Exception as loi:   # lỗi ngoài dự kiến: báo cho người dùng, không để ứng dụng dừng đột ngột
+        except Exception as loi:
             messagebox.showerror("Lỗi hệ thống", f"Không thể nhập từ API: {loi}", parent=self)
             return
         finally:
             self.configure(cursor="")
-
-        if kq["thong_bao"]:     # lỗi mạng, JSON sai cấu trúc, không ghi được file...
+        if kq.get("thong_bao"):
             messagebox.showwarning("Không nhập được từ API", kq["thong_bao"], parent=self)
         else:
-            messagebox.showinfo(
-                "Nhập từ API",
-                f"Đã thêm {kq['them']} công việc.\nBỏ qua {kq['trung']} việc đã nhập trước đó.\n"
-                f"Lỗi: {kq['loi']}.\n\nNguồn: dummyjson.com (đã lưu vào data/api_todos.json)",
-                parent=self
-            )
+            msg = f"Đã thêm {kq['them']} việc. Bỏ qua {kq['trung']} việc trùng. Lỗi: {kq['loi']}."
+            messagebox.showinfo("Nhập từ API", msg, parent=self)
         self.ve_lai()
     def them_cong_viec_tai_cot(self, ten_cot):
         if not self.du_an:
@@ -410,14 +374,8 @@ class MainWindow(tk.Toplevel):
             return
         try:
             self.ql.xoa_cong_viec(self.du_an, self.cv_dang_chon.ma_cong_viec)
-        except KhongCoQuyenError as loi:
-            messagebox.showerror("Từ chối quyền", loi.thong_diep, parent=self)
-            return
-        except LoiLuuTruError as loi:
-            messagebox.showerror("Lỗi lưu trữ", loi.thong_diep, parent=self)
-            return
-        except KanbanException as loi:
-            messagebox.showerror("Lỗi xóa việc", loi.thong_diep, parent=self)
+        except (KhongCoQuyenError, LoiLuuTruError, KanbanException) as loi:
+            messagebox.showerror("Lỗi", loi.thong_diep, parent=self)
             return
         except Exception as e:
             messagebox.showerror("Lỗi hệ thống", f"Không thể xóa công việc: {e}", parent=self)
@@ -428,17 +386,11 @@ class MainWindow(tk.Toplevel):
     def chuyen_cot(self, cv, cot_dich):
         try:
             self.ql.chuyen_trang_thai(self.du_an, cv.ma_cong_viec, cot_dich)
-        except KhongCoQuyenError as loi:
-            messagebox.showerror("Từ chối quyền", loi.thong_diep, parent=self)
-            return
         except (DuLieuKhongHopLeError, KhongTimThayError) as loi:
             messagebox.showwarning("Không hợp lệ", loi.thong_diep, parent=self)
             return
-        except LoiLuuTruError as loi:
-            messagebox.showerror("Lỗi lưu trữ", loi.thong_diep, parent=self)
-            return
-        except KanbanException as loi:
-            messagebox.showerror("Lỗi chuyển cột", loi.thong_diep, parent=self)
+        except (KhongCoQuyenError, LoiLuuTruError, KanbanException) as loi:
+            messagebox.showerror("Lỗi", loi.thong_diep, parent=self)
             return
         except Exception as e:
             messagebox.showerror("Lỗi hệ thống", f"Không thể chuyển trạng thái: {e}", parent=self)
@@ -500,14 +452,8 @@ class MainWindow(tk.Toplevel):
             return
         try:
             self.ql.xoa_du_an(self.du_an.ma_du_an)
-        except KhongCoQuyenError as loi:
-            messagebox.showerror("Từ chối quyền", loi.thong_diep, parent=self)
-            return
-        except LoiLuuTruError as loi:
-            messagebox.showerror("Lỗi lưu trữ", loi.thong_diep, parent=self)
-            return
-        except KanbanException as loi:
-            messagebox.showerror("Lỗi xóa dự án", loi.thong_diep, parent=self)
+        except (KhongCoQuyenError, LoiLuuTruError, KanbanException) as loi:
+            messagebox.showerror("Lỗi", loi.thong_diep, parent=self)
             return
         except Exception as e:
             messagebox.showerror("Lỗi hệ thống", f"Không thể xóa dự án: {e}", parent=self)
@@ -525,13 +471,9 @@ class MainWindow(tk.Toplevel):
             return
         from tkinter import filedialog
         from services.thong_ke import xuat_bao_cao_file
-        ten_mac_dinh = f"BaoCao_{self.du_an.ma_du_an}.txt"
         duong_dan = filedialog.asksaveasfilename(
-            parent=self,
-            title="Lưu báo cáo tiến độ",
-            initialfile=ten_mac_dinh,
-            defaultextension=".txt",
-            filetypes=[("Text File (*.txt)", "*.txt"), ("CSV File (*.csv)", "*.csv"), ("All Files (*.*)", "*.*")]
+            parent=self, title="Lưu báo cáo tiến độ", initialfile=f"BaoCao_{self.du_an.ma_du_an}.txt",
+            defaultextension=".txt", filetypes=[("Text File (*.txt)", "*.txt"), ("CSV File (*.csv)", "*.csv"), ("All Files (*.*)", "*.*")]
         )
         if not duong_dan:
             return
