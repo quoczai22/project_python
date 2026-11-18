@@ -34,7 +34,7 @@ class TaskDialog(tk.Toplevel):
         tieu_de_cs = f"Chi tiết công việc - {cong_viec.ma_cong_viec}" if cong_viec else "Thêm công việc mới"
         self.title(tieu_de_cs)
         self.configure(bg=theme.MAU_THE)
-        self.minsize(640, 580)
+        self.minsize(720, 680 if cong_viec else 580)
         self.transient(master)
         self.protocol("WM_DELETE_WINDOW", self._dong)
 
@@ -62,7 +62,7 @@ class TaskDialog(tk.Toplevel):
             self._dat_ngay(self.ent_ket_thuc, self._ngay_kt_mac_dinh)
             self._cap_nhat_goi_y_han()
 
-        can_giua(self, 740, 780 if cong_viec else 620)
+        can_giua(self, 760, 830 if cong_viec else 620)
         if self.co_quyen_sua:
             self.ent_tieu_de.focus_set()
         self.bind("<Escape>", lambda _e: self._dong())
@@ -399,29 +399,33 @@ class TaskDialog(tk.Toplevel):
 
     def _dung_binh_luan(self, khung):
         kv = ctk.CTkFrame(khung, fg_color=theme.MAU_O_NHAP, corner_radius=0, border_width=1, border_color=theme.MAU_VIEN)
-        kv.pack(fill="both", expand=True, pady=(2, 2))
+        kv.pack(fill="both", expand=True, pady=(4, 2))
 
         dau_bl = tk.Frame(kv, bg=theme.MAU_O_NHAP)
-        dau_bl.pack(fill="x", padx=12, pady=(8, 4))
+        dau_bl.pack(side="top", fill="x", padx=12, pady=(8, 4))
         self.lbl_dem_bl = tk.Label(dau_bl, text="Bình luận trao đổi", bg=theme.MAU_O_NHAP, fg=theme.MAU_CHU_NHAN, font=theme.FONT_DAM)
         self.lbl_dem_bl.pack(side="left")
 
         theme.tao_nut_nguy_hiem(dau_bl, text="Xóa bình luận chọn", command=self.xoa_binh_luan, width=160, height=28, corner_radius=0, font=theme.FONT_NHO).pack(side="right")
 
+        # Đặt hàng nhập và gửi bình luận ở đáy với chiều cao to, thoáng, không bị co ép
+        hang_gui = tk.Frame(kv, bg=theme.MAU_O_NHAP)
+        hang_gui.pack(side="bottom", fill="x", padx=12, pady=(8, 10))
+        self.ent_bl = theme.tao_entry(
+            hang_gui, placeholder="Nhập nội dung bình luận trao đổi...", cao=38, fg_color="white", font=theme.FONT_CHUAN
+        )
+        self.ent_bl.pack(side="left", fill="x", expand=True, padx=(0, 8))
+        self.ent_bl.bind("<Return>", lambda _e: self.gui_binh_luan())
+        theme.tao_nut_chinh(hang_gui, text="Gửi", command=self.gui_binh_luan, width=88, height=38, font=theme.FONT_DAM).pack(side="right")
+
+        # Khung danh sách bình luận chiếm phần không gian ở giữa
         khung_ds = tk.Frame(kv, bg=theme.MAU_O_NHAP)
-        khung_ds.pack(fill="both", expand=True, padx=12)
-        self.lst_bl = tk.Listbox(khung_ds, height=3, font=theme.FONT_NHO, activestyle="none", bg="white", fg=theme.MAU_CHU, bd=1, relief="solid", highlightthickness=0, selectbackground=theme.MAU_CHINH_NHAT, selectforeground=theme.MAU_CHINH_DAM)
+        khung_ds.pack(side="top", fill="both", expand=True, padx=12, pady=(0, 2))
+        self.lst_bl = tk.Listbox(khung_ds, height=4, font=theme.FONT_NHO, activestyle="none", bg="white", fg=theme.MAU_CHU, bd=1, relief="solid", highlightthickness=0, selectbackground=theme.MAU_CHINH_NHAT, selectforeground=theme.MAU_CHINH_DAM)
         thanh = ttk.Scrollbar(khung_ds, orient="vertical", command=self.lst_bl.yview)
         self.lst_bl.configure(yscrollcommand=thanh.set)
         self.lst_bl.pack(side="left", fill="both", expand=True)
         thanh.pack(side="right", fill="y")
-
-        hang_gui = tk.Frame(kv, bg=theme.MAU_O_NHAP)
-        hang_gui.pack(fill="x", padx=12, pady=(5, 8))
-        self.ent_bl = theme.tao_entry(hang_gui, placeholder="Nhập nội dung bình luận...", cao=32, fg_color="white")
-        self.ent_bl.pack(side="left", fill="x", expand=True, padx=(0, 8))
-        self.ent_bl.bind("<Return>", lambda _e: self.gui_binh_luan())
-        theme.tao_nut_chinh(hang_gui, text="Gửi", command=self.gui_binh_luan, width=76, height=32).pack(side="right")
 
         self._nap_binh_luan()
 
