@@ -1,5 +1,6 @@
 from datetime import datetime
 import re
+import uuid
 from exceptions import DuLieuKhongHopLeError
 
 
@@ -13,7 +14,8 @@ class BinhLuan:
     """
 
     def __init__(self, nguoi_gui: str, noi_dung: str, ma_binh_luan: str = None, thoi_gian: str = None):
-        self.ma_binh_luan = ma_binh_luan or f"BL-{int(datetime.now().timestamp() * 1000) % 1000000:06d}"
+        # Mã ngẫu nhiên để bình luận tạo trên nhiều máy cùng lúc không bị trùng khi đồng bộ realtime
+        self.ma_binh_luan = ma_binh_luan or f"BL-{uuid.uuid4().hex[:12]}"
         self.nguoi_gui = nguoi_gui
         self.noi_dung = noi_dung
         self.thoi_gian = thoi_gian or datetime.now().strftime("%Y-%m-%d %H:%M:%S")

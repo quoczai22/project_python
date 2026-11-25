@@ -31,6 +31,7 @@ class QuanLyKanban:
 
         # Khởi tạo các sub-services chuyên trách
         self.xac_thuc = XacThucService()
+        self.chat = None  # ChatClient (WebSocket) nếu chạy với --chat, None = ngoại tuyến
         self.du_an_service = DuAnService(self.bo_luu_tru, self.xac_thuc)
         self.cong_viec_service = CongViecService(self.du_an_service, self.xac_thuc, self.bo_luu_tru)
         self.quy_trinh = QuyTrinhService(self.du_an_service, self.xac_thuc, self.bo_luu_tru)
@@ -261,6 +262,12 @@ class QuanLyKanban:
     # ==================== QUẢN LÝ BÌNH LUẬN ====================
     def them_binh_luan_cong_viec(self, du_an: DuAn, ma_cong_viec: str, noi_dung: str):
         return self.cong_viec_service.them_binh_luan_cong_viec(du_an, ma_cong_viec, noi_dung)
+
+    def ap_dung_binh_luan_tu_xa(self, du_an: DuAn, ma_cong_viec: str, du_lieu_bl: dict):
+        return self.cong_viec_service.ap_dung_binh_luan_tu_xa(du_an, ma_cong_viec, du_lieu_bl)
+
+    def ap_dung_xoa_binh_luan_tu_xa(self, du_an: DuAn, ma_cong_viec: str, ma_binh_luan: str):
+        return self.cong_viec_service.ap_dung_xoa_binh_luan_tu_xa(du_an, ma_cong_viec, ma_binh_luan)
 
     def xoa_binh_luan_cong_viec(self, du_an: DuAn, ma_cong_viec: str, ma_binh_luan: str):
         return self.cong_viec_service.xoa_binh_luan_cong_viec(du_an, ma_cong_viec, ma_binh_luan)

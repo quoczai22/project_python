@@ -2,9 +2,14 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import customtkinter as ctk
+import queue
 
 from ui.styles import theme
 from exceptions import KhongCoQuyenError, LoiLuuTruError, KanbanException
+from logger import logger
+from services.chat_protocol import tao_phong
+
+CHU_KY_DOC_TIN_MS = 300   # giao diện đọc tin realtime mỗi 300 ms
 
 
 class CommentBoxComponent(ctk.CTkFrame):
@@ -26,8 +31,13 @@ class CommentBoxComponent(ctk.CTkFrame):
         self.khi_thay_doi = khi_thay_doi
         self.bao_loi_cb = bao_loi_cb
         self._da_thay_doi = False
+        self._chat = getattr(ql, "chat", None)
+        self._phong = None
+        self._hang_doi_tin = None
+        self._id_after = None
 
         self._dung_giao_dien()
+        self._bat_dau_realtime()
 
     def _dung_giao_dien(self):
         dau_bl = tk.Frame(self, bg=theme.MAU_O_NHAP)
@@ -38,6 +48,9 @@ class CommentBoxComponent(ctk.CTkFrame):
             bg=theme.MAU_O_NHAP, fg=theme.MAU_CHU_NHAN, font=theme.FONT_DAM
         )
         self.lbl_dem_bl.pack(side="left")
+
+        self.lbl_ket_noi = tk.Label(dau_bl, text="", bg=theme.MAU_O_NHAP, font=theme.FONT_NHO)
+        self.lbl_ket_noi.pack(side="left", padx=(10, 0))
 
         theme.tao_nut_nguy_hiem(
             dau_bl, text="Xóa bình luận chọn", command=self.xoa_binh_luan,
@@ -101,7 +114,7 @@ class CommentBoxComponent(ctk.CTkFrame):
             self._bao_loi("Bình luận không được vượt quá 500 ký tự.")
             return
         try:
-            self.ql.them_binh_luan_cong_viec(self.du_an, self.cong_viec.ma_cong_viec, noi_dung)
+            bl = self.ql.them_binh_luan_cong_viec(self.du_an, self.cong_viec.ma_cong_viec, noi_dung)
         except (KhongCoQuyenError, LoiLuuTruError, KanbanException) as loi:
             self._bao_loi(loi.thong_diep)
             return
@@ -109,6 +122,7 @@ class CommentBoxComponent(ctk.CTkFrame):
             self._bao_loi(f"Lỗi hệ thống: {loi}")
             return
         self._da_thay_doi = True
+        self._phat({"loai": "binh_luan", "binh_luan": bl.to_dict()})
         theme.dat_gia_tri_entry(self.ent_bl, "")
         self.nap_binh_luan()
         if self.khi_thay_doi:
@@ -134,9 +148,77 @@ class CommentBoxComponent(ctk.CTkFrame):
             self._bao_loi(f"Lỗi hệ thống: {loi}")
             return
         self._da_thay_doi = True
+        self._phat({"loai": "xoa_binh_luan", "ma_binh_luan": bl.ma_binh_luan,
+                    "nguoi": getattr(self.ql.nguoi_dung_hien_tai, "ten_dang_nhap", "")})
         self.nap_binh_luan()
         if self.khi_thay_doi:
             self.khi_thay_doi()
+
+    # ==================== BÌNH LUẬN THỜI GIAN THỰC (WebSocket) ====================
+    def _bat_dau_realtime(self):
+        if self._chat is None:
+            self.lbl_ket_noi.configure(text="○ Ngoại tuyến", fg=theme.MAU_CHU_PHU)
+            return
+        nguoi = getattr(self.ql.nguoi_dung_hien_tai, "ten_dang_nhap", "")
+        try:
+            self._phong = tao_phong(self.du_an.ma_du_an, self.cong_viec.ma_cong_viec)
+        except ValueError as loi:
+            logger.warning(f"Không mở được kênh bình luận realtime: {loi}")
+            self._chat = None
+            self.lbl_ket_noi.configure(text="○ Ngoại tuyến", fg=theme.MAU_CHU_PHU)
+            return
+        self._hang_doi_tin = self._chat.vao_phong(self._phong, nguoi)
+        self._doc_tin()
+
+    def _phat(self, tin):
+        if self._chat is not None and self._phong:
+            self._chat.gui(dict(tin, phong=self._phong))
+
+    def _doc_tin(self):
+        """Chạy trên luồng giao diện: lấy tin từ hàng đợi và cập nhật danh sách."""
+        co_thay_doi = False
+        try:
+            while True:
+                tin = self._hang_doi_tin.get_nowait()
+                co_thay_doi |= self._ap_dung_tin(tin)
+        except queue.Empty:
+            pass
+        if co_thay_doi:
+            self._da_thay_doi = True
+            self.nap_binh_luan()
+            if self.khi_thay_doi:
+                self.khi_thay_doi()
+        if self._chat.da_ket_noi:
+            self.lbl_ket_noi.configure(text="● Trực tuyến", fg=theme.MAU_HOAN_THANH)
+        else:
+            self.lbl_ket_noi.configure(text="○ Đang kết nối lại...", fg=theme.MAU_CANH_BAO)
+        self._id_after = self.after(CHU_KY_DOC_TIN_MS, self._doc_tin)
+
+    def _ap_dung_tin(self, tin) -> bool:
+        ma_cv = self.cong_viec.ma_cong_viec
+        try:
+            if tin["loai"] == "binh_luan":
+                return self.ql.ap_dung_binh_luan_tu_xa(self.du_an, ma_cv, tin["binh_luan"]) is not None
+            if tin["loai"] == "xoa_binh_luan":
+                return self.ql.ap_dung_xoa_binh_luan_tu_xa(self.du_an, ma_cv, tin["ma_binh_luan"])
+            if tin["loai"] == "lich_su":
+                ket_qua = [self.ql.ap_dung_binh_luan_tu_xa(self.du_an, ma_cv, bl) for bl in tin["danh_sach"]]
+                return any(kq is not None for kq in ket_qua)
+        except KanbanException as loi:
+            logger.error(f"Không áp dụng được bình luận realtime: {loi.thong_diep}")
+        return False
+
+    def destroy(self):
+        if self._id_after is not None:
+            try:
+                self.after_cancel(self._id_after)
+            except tk.TclError:
+                pass
+            self._id_after = None
+        if self._chat is not None and self._hang_doi_tin is not None:
+            self._chat.roi_phong(self._phong, self._hang_doi_tin)
+            self._hang_doi_tin = None
+        super().destroy()
 
     @property
     def da_thay_doi(self):
