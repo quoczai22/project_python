@@ -26,6 +26,10 @@ Tài khoản mẫu khi chưa có file dữ liệu: `admin / 123456` và `khoa / 
 - `services/`: nghiệp vụ, lưu JSON/backup, API và nhật ký.
 - `ui/`: giao diện Kanban, các dialog và thống kê.
 - `tests/`: kiểm thử tự động. Dùng `python -m unittest discover -s tests` để xem số ca và kết quả hiện tại.
-- `data/`: dữ liệu cục bộ. File `*.jsonl` là nhật ký vận hành, không đưa lên Git.
+- `data/`: dữ liệu cục bộ:
+  - `data/du_an.json`: dữ liệu dự án và công việc.
+  - `data/du_lieu_moc.json`: tài khoản người dùng (mật khẩu đã băm SHA-256 + salt) và yêu cầu sửa thông tin.
+  - `data/nhat_ky.jsonl`: nhật ký hoạt động nối thêm (append-only, không đưa lên Git).
+  - `data/viec_chua_hoan_thanh.jsonl`: lưu trữ nối thêm bản đầy đủ các công việc bị hủy hoặc đánh dấu Chưa hoàn thành (append-only, không đưa lên Git).
 
 API cần kết nối Internet. Mọi luồng API có timeout và hiển thị lỗi khi nguồn không khả dụng; dữ liệu dự án vẫn dùng được ngoại tuyến.

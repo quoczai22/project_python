@@ -21,7 +21,8 @@ class TopbarComponent(tk.Frame):
                  khi_them_viec=None, khi_bat_tat_hoat_dong=None,
                  khi_mo_thong_ke=None, khi_ql_thanh_vien=None,
                  khi_xoa_du_an=None, khi_thay_doi_loc=None,
-                 khi_dat_lai_loc=None, khi_doi_che_do=None):
+                 khi_dat_lai_loc=None, khi_doi_che_do=None,
+                 khi_tim_toan_bo=None):
         super().__init__(master, bg=theme.MAU_NEN)
 
         self.khi_them_viec = khi_them_viec
@@ -32,6 +33,7 @@ class TopbarComponent(tk.Frame):
         self.khi_thay_doi_loc = khi_thay_doi_loc
         self.khi_dat_lai_loc = khi_dat_lai_loc
         self.khi_doi_che_do = khi_doi_che_do
+        self.khi_tim_toan_bo = khi_tim_toan_bo
 
         self.var_tim_kiem = tk.StringVar()
         self.var_uu_tien = tk.StringVar(value=TAT_CA)
@@ -168,6 +170,16 @@ class TopbarComponent(tk.Frame):
             text_color="#64748b", font=theme.FONT_NHO_DAM
         )
         self.btn_dat_lai.grid(row=0, column=3)
+
+        self.btn_tim_toan_bo = ctk.CTkButton(
+            hang_loc, text="Tìm mọi dự án",
+            command=lambda: self.khi_tim_toan_bo() if self.khi_tim_toan_bo else None,
+            width=108, height=34, corner_radius=0,
+            fg_color="#ffffff", hover_color="#f1f5f9",
+            border_width=1, border_color="#cbd5e1",
+            text_color="#0f172a", font=theme.FONT_NHO_DAM
+        )
+        self.btn_tim_toan_bo.grid(row=0, column=4, padx=(6, 0))
 
         # 3. Tab chế độ xem và thanh tiến độ
         khung_tab = tk.Frame(self, bg=theme.MAU_NEN, padx=16)

@@ -294,6 +294,26 @@ class QuanLyKanban:
     def tim_kiem_cong_viec(self, du_an: DuAn, tu_khoa: str):
         return self.cong_viec_service.tim_kiem_cong_viec(du_an, tu_khoa)
 
+    def tim_kiem_toan_bo(self, tu_khoa: str):
+        """Tìm kiếm công việc qua mọi dự án mà người dùng hiện tại có quyền xem.
+
+        Trả về list tuple ``(du_an, cong_viec)`` khớp mã, tiêu đề, mô tả hoặc người phụ trách.
+        """
+        if self.nguoi_dung_hien_tai is None:
+            return []
+        kw = str(tu_khoa or "").strip().lower()
+        ket_qua = []
+        for da in self.lay_danh_sach_du_an():
+            if not self.kiem_tra_quyen_du_an(da):
+                continue
+            for cv in da.cong_viec:
+                if not kw or any(
+                    kw in str(val or "").lower()
+                    for val in (cv.ma_cong_viec, cv.tieu_de, cv.mo_ta, cv.nguoi_phu_trach)
+                ):
+                    ket_qua.append((da, cv))
+        return ket_qua
+
     def loc_theo_thanh_vien(self, du_an: DuAn, ten_dang_nhap: str):
         return self.cong_viec_service.loc_theo_thanh_vien(du_an, ten_dang_nhap)
 

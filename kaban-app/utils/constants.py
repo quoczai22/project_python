@@ -30,6 +30,3 @@ THU_MUC_DATA = os.path.join(THU_MUC_GOC, "data")
 THU_MUC_ASSETS = os.path.join(THU_MUC_GOC, "assets")
 THU_MUC_ICONS = os.path.join(THU_MUC_ASSETS, "icons")
 THU_MUC_FONTS = os.path.join(THU_MUC_ASSETS, "fonts")
-
-FILE_KANBAN_DATA = os.path.join(THU_MUC_DATA, "kanban_data.json")
-FILE_DEFAULT_DATA = os.path.join(THU_MUC_DATA, "default_data.json")

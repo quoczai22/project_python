@@ -18,7 +18,9 @@ from ui.dialogs.task_dialog import TaskDialog
 from ui.dialogs.column_dialog import TaoDuAnDialog, ThanhVienDuAnDialog
 from ui.dialogs.confirm_dialog import xac_nhan
 from ui.dialogs.doi_mat_khau_dialog import DoiMatKhauDialog
-from ui.dialogs.thong_tin_ca_nhan_dialog import ThongTinCaNhanDialog, DuyetSuaThongTinDialog
+from ui.dialogs.thong_tin_ca_nhan_dialog import (
+    ThongTinCaNhanDialog, DuyetSuaThongTinDialog, TimKiemToanBoDialog
+)
 from ui.dialogs.quy_trinh_dialog import (
     QuyTrinhDialog, yeu_cau_mo_lai_popup, yeu_cau_gia_han_popup,
     danh_dau_chua_hoan_thanh_popup, nhap_tu_api_popup, xuat_bao_cao_popup
@@ -59,6 +61,12 @@ class MainWindow(tk.Toplevel):
         if self.du_an:
             QuyTrinhDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai)
 
+    def mo_tim_kiem_toan_bo(self):
+        def mo_kq(da, cv):
+            self._nap_du_an(chon_ma=da.ma_du_an)
+            self.mo_the(cv)
+        TimKiemToanBoDialog(self, self.ql, khi_mo_ket_qua=mo_kq, tu_khoa_dau=self.topbar.var_tim_kiem.get())
+
     def yeu_cau_mo_lai_dang_chon(self):
         yeu_cau_mo_lai_popup(self, self.ql, self.du_an, self.cv_dang_chon)
 
@@ -73,7 +81,8 @@ class MainWindow(tk.Toplevel):
             "doi_mat_khau": self.doi_mat_khau, "dang_xuat": self.dang_xuat, "thoat": self.destroy,
             "tao_du_an": self.tao_du_an, "quan_ly_thanh_vien": self.quan_ly_thanh_vien,
             "xuat_bao_cao": self.xuat_bao_cao, "xoa_du_an": self.xoa_du_an_hien_tai,
-            "them_cong_viec": self.them_cong_viec, "nhap_tu_api": self.nhap_tu_api, "mo_thong_ke": self.mo_thong_ke,
+            "them_cong_viec": self.them_cong_viec, "tim_toan_bo": self.mo_tim_kiem_toan_bo,
+            "nhap_tu_api": self.nhap_tu_api, "mo_thong_ke": self.mo_thong_ke,
             "quy_trinh": self.mo_quy_trinh
         })
         self.configure(menu=self.menubar)
@@ -113,7 +122,8 @@ class MainWindow(tk.Toplevel):
             self.khung_phai, khi_them_viec=self.them_cong_viec,
             khi_bat_tat_hoat_dong=self.bat_tat_hoat_dong, khi_mo_thong_ke=self.mo_thong_ke,
             khi_ql_thanh_vien=self.quan_ly_thanh_vien, khi_xoa_du_an=self.xoa_du_an_hien_tai,
-            khi_thay_doi_loc=self.ve_lai, khi_dat_lai_loc=self.ve_lai, khi_doi_che_do=self._doi_che_do_xem
+            khi_thay_doi_loc=self.ve_lai, khi_dat_lai_loc=self.ve_lai,
+            khi_doi_che_do=self._doi_che_do_xem, khi_tim_toan_bo=self.mo_tim_kiem_toan_bo
         )
         self.topbar.pack(fill="x")
 

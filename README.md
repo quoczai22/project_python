@@ -101,7 +101,7 @@ project_python/
     ├── exceptions.py           # Phân cấp ngoại lệ tùy chỉnh
     ├── logger.py               # Cấu hình ghi log ứng dụng
     ├── requirements.txt        # Danh sách thư viện Python
-    ├── data/                   # File dữ liệu JSON và thư mục backup
+    ├── data/                   # Dữ liệu cục bộ: du_an.json (dự án + công việc), du_lieu_moc.json (người dùng), nhat_ky.jsonl (nhật ký append-only), viec_chua_hoan_thanh.jsonl (việc hủy / chưa hoàn thành append-only) và backup/
     ├── models/                 # Các thực thể dữ liệu (Dự án, Công việc, Người dùng)
     ├── services/               # Nghiệp vụ (Xác thực, Lưu trữ, Thống kê, API)
     ├── ui/                     # Giao diện người dùng

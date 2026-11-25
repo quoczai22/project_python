@@ -378,6 +378,26 @@ class TestQuyTrinh(unittest.TestCase):
         self.assertEqual((m1["hanh_dong"], m1["MaCongViec"], m1["ma_du_an"]), ("huy", "CV-040", "DA-999"))
         self.assertEqual((m2["hanh_dong"], m2["MaCongViec"], m2["ma_du_an"]), ("chua_hoan_thanh", "CV-041", "DA-999"))
 
+    def test_tim_kiem_toan_bo_theo_quyen_du_an(self):
+        da2 = self.ql.tao_du_an("DA-888", "Dự án mật")
+        self.tao(ma="CV-050", nguoi="worker")
+        self.ql.tao_cong_viec(da2, {
+            "ma_cong_viec": "CV-051", "tieu_de": "Việc thử bí mật", "nguoi_phu_trach": "admin",
+            "ngay_bat_dau": date.today().isoformat(),
+            "ngay_ket_thuc": (date.today() + timedelta(days=5)).isoformat(),
+            "trang_thai": "Cần làm", "muc_uu_tien": "Cao", "nhan": "Backend",
+        })
+
+        # Admin thấy ở cả 2 dự án
+        kq_admin = self.ql.tim_kiem_toan_bo("Việc thử")
+        self.assertEqual({(d.ma_du_an, c.ma_cong_viec) for d, c in kq_admin},
+                         {("DA-999", "CV-050"), ("DA-888", "CV-051")})
+
+        # Thành viên chỉ thấy ở dự án mình tham gia (không thấy DA-888)
+        self.ql.dang_nhap("worker", "123456")
+        kq_worker = self.ql.tim_kiem_toan_bo("Việc thử")
+        self.assertEqual([(d.ma_du_an, c.ma_cong_viec) for d, c in kq_worker], [("DA-999", "CV-050")])
+
     def test_khong_gia_han_viec_da_huy(self):
         cv = self.tao()  # hạn chót hôm qua -> quá hạn
         self.ql.huy_cong_viec(self.da, cv.ma_cong_viec, "Không còn cần")

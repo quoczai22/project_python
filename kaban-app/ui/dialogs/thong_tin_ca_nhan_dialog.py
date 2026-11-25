@@ -152,3 +152,72 @@ class DuyetSuaThongTinDialog(tk.Toplevel):
         self._nap()
         if self.khi_xong:
             self.khi_xong()
+
+
+class TimKiemToanBoDialog(tk.Toplevel):
+    """Tìm kiếm công việc qua mọi dự án người dùng có quyền xem; chọn kết quả để mở ngay."""
+
+    def __init__(self, master, ql, khi_mo_ket_qua=None, tu_khoa_dau=""):
+        super().__init__(master)
+        self.ql, self.khi_mo_ket_qua = ql, khi_mo_ket_qua
+        self._ket_qua = {}
+        self.title("Tìm kiếm công việc qua mọi dự án")
+        self.configure(bg=theme.MAU_THE)
+        self.transient(master)
+
+        hang_tim = tk.Frame(self, bg=theme.MAU_THE, padx=14, pady=12)
+        hang_tim.pack(fill="x")
+        self.var_kw = tk.StringVar(value=tu_khoa_dau)
+        ent = tk.Entry(hang_tim, textvariable=self.var_kw, font=theme.FONT_CHUAN)
+        ent.pack(side="left", fill="x", expand=True, ipady=4, padx=(0, 8))
+        ent.bind("<KeyRelease>", lambda _e: self._tim())
+        ent.bind("<Return>", lambda _e: self._tim())
+        theme.tao_nut_chinh(hang_tim, text="Tìm kiếm", command=self._tim, width=96, height=32).pack(side="left")
+
+        cac_cot = (
+            ("du_an", "Dự án", 150),
+            ("ma", "Mã CV", 80),
+            ("tieu_de", "Tiêu đề", 260),
+            ("trang_thai", "Trạng thái", 115),
+            ("nguoi", "Phụ trách", 110),
+        )
+        self.tree = ttk.Treeview(self, columns=[c[0] for c in cac_cot], show="headings", selectmode="browse")
+        for k, t, w in cac_cot:
+            self.tree.heading(k, text=t)
+            self.tree.column(k, width=w, anchor="w")
+        self.tree.pack(fill="both", expand=True, padx=14, pady=(0, 8))
+        self.tree.bind("<Double-1>", lambda _e: self._mo())
+
+        hang_nut = tk.Frame(self, bg=theme.MAU_THE, padx=14, pady=10)
+        hang_nut.pack(fill="x")
+        self.lbl_kq = tk.Label(hang_nut, text="0 kết quả", bg=theme.MAU_THE, fg=theme.MAU_CHU_PHU, font=theme.FONT_NHO)
+        self.lbl_kq.pack(side="left")
+        theme.tao_nut_phu(hang_nut, text="Đóng", command=self.destroy, width=85, height=32).pack(side="right")
+        theme.tao_nut_chinh(hang_nut, text="Mở công việc", command=self._mo, width=120, height=32).pack(side="right", padx=(0, 8))
+
+        self._tim()
+        can_giua(self, 780, 460)
+        ent.focus_set()
+        self.wait_visibility()
+        self.grab_set()
+
+    def _tim(self):
+        self.tree.delete(*self.tree.get_children())
+        self._ket_qua.clear()
+        ds = self.ql.tim_kiem_toan_bo(self.var_kw.get())
+        for idx, (da, cv) in enumerate(ds):
+            iid = str(idx)
+            self._ket_qua[iid] = (da, cv)
+            self.tree.insert("", "end", iid=iid, values=(
+                f"{da.ma_du_an} - {da.ten_du_an}", cv.ma_cong_viec, cv.tieu_de, cv.trang_thai, cv.nguoi_phu_trach
+            ))
+        self.lbl_kq.configure(text=f"{len(ds)} kết quả")
+
+    def _mo(self):
+        chon = self.tree.selection()
+        if not chon or chon[0] not in self._ket_qua:
+            return
+        da, cv = self._ket_qua[chon[0]]
+        self.destroy()
+        if self.khi_mo_ket_qua:
+            self.khi_mo_ket_qua(da, cv)
