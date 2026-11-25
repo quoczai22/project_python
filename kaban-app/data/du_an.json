@@ -62,19 +62,6 @@
         ]
       },
       {
-        "LoaiCongViec": "CongViecThuong",
-        "MaCongViec": "CV-004",
-        "TieuDe": "Dựng bảng Kanban theo cột",
-        "MoTa": "Mỗi cột là một Frame, mỗi thẻ là một TaskCard.",
-        "NguoiPhuTrach": "huy",
-        "NgayBatDau": "2026-10-16",
-        "NgayKetThuc": "2026-10-26",
-        "TrangThai": "Đang làm",
-        "MucUuTien": "Cao",
-        "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
-      },
-      {
         "LoaiCongViec": "CongViecKhan",
         "MaCongViec": "CV-005",
         "TieuDe": "Sửa lỗi mất dữ liệu khi lưu",
@@ -111,6 +98,19 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
+        "DanhSachBinhLuan": []
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-004",
+        "TieuDe": "Dựng bảng Kanban theo cột",
+        "MoTa": "Mỗi cột là một Frame, mỗi thẻ là một TaskCard.",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-10-16",
+        "NgayKetThuc": "2026-10-26",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Cao",
+        "Nhan": "Giao diện",
         "DanhSachBinhLuan": []
       },
       {

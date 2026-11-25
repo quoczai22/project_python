@@ -10,6 +10,7 @@ from exceptions import (
 from ui.styles import theme
 from ui.components.sidebar import SidebarComponent
 from ui.components.topbar import TopbarComponent, TAT_CA
+from ui.components.menu_bar import AppMenuBar
 from ui.views.board_view import BoardView
 from ui.views.stats_view import StatsView
 from ui.dialogs.task_dialog import TaskDialog
@@ -51,19 +52,14 @@ class MainWindow(tk.Toplevel):
         self.ten_nguoi_map = {nd.ten_dang_nhap: nd.ho_ten for nd in self.ql.lay_danh_sach_nguoi_dung()}
 
     def _dung_thanh_menu(self):
-        """Tạo menu bar chuẩn phía trên cửa sổ."""
-        self.menubar = tk.Menu(self)
+        """Tạo menu bar chuẩn phía trên cửa sổ thông qua AppMenuBar component."""
+        self.menubar = AppMenuBar(self, {
+            "doi_mat_khau": self.doi_mat_khau, "dang_xuat": self.dang_xuat, "thoat": self.destroy,
+            "tao_du_an": self.tao_du_an, "quan_ly_thanh_vien": self.quan_ly_thanh_vien,
+            "xuat_bao_cao": self.xuat_bao_cao, "xoa_du_an": self.xoa_du_an_hien_tai,
+            "them_cong_viec": self.them_cong_viec, "nhap_tu_api": self.nhap_tu_api, "mo_thong_ke": self.mo_thong_ke
+        })
         self.configure(menu=self.menubar)
-        for nhan, cac_muc in [
-            ("Hệ thống", [("Đổi mật khẩu...", self.doi_mat_khau), ("Đăng xuất", self.dang_xuat), None, ("Thoát", self.destroy)]),
-            ("Dự án", [("Tạo dự án mới", self.tao_du_an), ("Quản lý thành viên", self.quan_ly_thanh_vien),
-                       ("Xuất báo cáo tiến độ ra file...", self.xuat_bao_cao), None, ("Xóa dự án hiện tại", self.xoa_du_an_hien_tai)]),
-            ("Công việc", [("Thêm công việc...", self.them_cong_viec), ("Nhập công việc từ API...", self.nhap_tu_api), None, ("Làm mới (F5)", self.ve_lai)]),
-        ]:
-            m = tk.Menu(self.menubar, tearoff=0)
-            for item in cac_muc:
-                m.add_separator() if item is None else m.add_command(label=item[0], command=item[1])
-            self.menubar.add_cascade(label=nhan, menu=m)
 
     def _dung_bo_cuc_chinh(self):
         """Dựng khung Sidebar (trái) + Khung Làm việc (phải) với Topbar & BoardView."""

@@ -1,13 +1,15 @@
-"""ui.components: Các thành phần giao diện nhỏ, tái sử dụng trong ứng dụng Kanban."""
-from ui.components.task_card import TaskCard
-from ui.components.column_widget import ColumnWidget, CotKanban
 from ui.components.sidebar import SidebarComponent
 from ui.components.topbar import TopbarComponent
+from ui.components.column_widget import ColumnWidget
+from ui.components.task_card import TaskCard
+from ui.components.comment_box import CommentBoxComponent
+from ui.components.menu_bar import AppMenuBar
 
 __all__ = [
-    "TaskCard",
-    "ColumnWidget",
-    "CotKanban",
     "SidebarComponent",
     "TopbarComponent",
+    "ColumnWidget",
+    "TaskCard",
+    "CommentBoxComponent",
+    "AppMenuBar",
 ]
