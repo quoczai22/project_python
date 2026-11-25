@@ -51,8 +51,8 @@ class TaskDialog(tk.Toplevel):
                 ds_tv.append(cong_viec.nguoi_phu_trach)
         self.ds_nguoi_co_the_gan = ds_tv
         tt_dau = trang_thai_mac_dinh if trang_thai_mac_dinh in du_an.danh_sach_cot else du_an.danh_sach_cot[0]
-        if not cong_viec and nd.vai_tro != "quan_tri":
-            tt_dau = "Cần làm"
+        if not cong_viec:
+            tt_dau = "Cần làm"  # Việc mới luôn bắt đầu ở "Cần làm"
 
         self.var_nguoi = tk.StringVar(value=ds_tv[0] if ds_tv else "")
         self.var_nhan = tk.StringVar(value=NHAN_HOP_LE[0])
@@ -368,11 +368,14 @@ class TaskDialog(tk.Toplevel):
             self._bao_loi("Tiêu đề công việc phải có độ dài từ 2 đến 150 ký tự.", popup=True)
             self.ent_tieu_de.focus_set()
             return
+        if not self.cong_viec and self.var_trang_thai.get() != "Cần làm":
+            self._bao_loi(
+                f"Công việc mới chỉ được tạo ở trạng thái 'Cần làm' (đang chọn '{self.var_trang_thai.get()}'). "
+                "Hãy chọn lại 'Cần làm', sau đó chuyển cột sau khi tạo.", popup=True)
+            self.cbb_trang_thai.focus_set()
+            return
         if not nguoi:
             self._bao_loi("Người phụ trách không được để trống.", popup=True)
-            return
-        if nguoi not in self.du_an.thanh_vien_tham_gia:
-            self._bao_loi(f"Người phụ trách '{nguoi}' chưa tham gia dự án này.", popup=True)
             return
 
         bat_dau = self.ent_bat_dau.get().strip()

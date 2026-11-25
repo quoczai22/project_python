@@ -157,12 +157,18 @@ class XacThucService:
     def _kiem_tra_ho_ten_email(ho_ten, email, danh_sach, bo_qua_ten):
         ho_ten_s = str(ho_ten or "").strip()
         email_s = str(email or "").strip()
-        if email_s and not re.fullmatch(MAU_EMAIL, email_s):
+        if not ho_ten_s:
+            raise DuLieuKhongHopLeError(
+                "Họ tên không được để trống", truong_loi="ho_ten", gia_tri=ho_ten_s)
+        if not email_s:
+            raise DuLieuKhongHopLeError(
+                "Email không được để trống", truong_loi="email", gia_tri=email_s)
+        if not re.fullmatch(MAU_EMAIL, email_s):
             raise DuLieuKhongHopLeError(
                 f"Email '{email_s}' không đúng định dạng",
                 truong_loi="email", gia_tri=email_s
             )
-        if email_s and any(
+        if any(
             tv.ten_dang_nhap.lower() != bo_qua_ten.lower()
             and (tv.email or "").lower() == email_s.lower()
             for tv in danh_sach

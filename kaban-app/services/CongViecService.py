@@ -10,6 +10,9 @@ from exceptions import (
 )
 from logger import logger
 
+# Trạng thái không được đặt trực tiếp khi tạo mới hoặc sửa: phải đi qua QuyTrinhService (có lý do, nhật ký).
+TRANG_THAI_CHI_QUA_QUY_TRINH = ("Chưa hoàn thành", "Đã hủy")
+
 
 class CongViecService:
     """
@@ -49,14 +52,22 @@ class CongViecService:
         trang_thai = du_lieu.get("trang_thai", du_lieu.get("TrangThai", "Cần làm"))
         muc_uu_tien = du_lieu.get("muc_uu_tien", du_lieu.get("MucUuTien", "Trung bình"))
         nhan = du_lieu.get("nhan", du_lieu.get("Nhan", "Backend"))
+        if trang_thai in TRANG_THAI_CHI_QUA_QUY_TRINH:
+            raise DuLieuKhongHopLeError(
+                f"Không thể tạo việc mới ở trạng thái '{trang_thai}'; trạng thái này chỉ được đặt qua quy trình "
+                "(đánh dấu Chưa hoàn thành / hủy công việc, kèm lý do)",
+                truong_loi="trang_thai", gia_tri=trang_thai)
         nguoi_tao = self.xac_thuc_service.nguoi_dung_hien_tai
         if nguoi_tao.vai_tro == "thanh_vien" and nguoi_phu_trach != nguoi_tao.ten_dang_nhap:
             raise KhongCoQuyenError("Thành viên chỉ được tạo việc cho chính mình")
         if (nguoi_tao.vai_tro == "truong_nhom" and nguoi_phu_trach != nguoi_tao.ten_dang_nhap
                 and nguoi_phu_trach not in du_an.nhom.get(nguoi_tao.ten_dang_nhap, [])):
             raise KhongCoQuyenError("Leader chỉ được tạo việc cho nhóm mình")
-        if nguoi_tao.vai_tro != "quan_tri" and trang_thai != "Cần làm":
-            raise DuLieuKhongHopLeError("Việc mới chờ duyệt phải bắt đầu ở cột Cần làm")
+        if trang_thai != "Cần làm":
+            raise DuLieuKhongHopLeError(
+                f"Công việc mới chỉ được tạo ở trạng thái 'Cần làm' (đang chọn '{trang_thai}'). "
+                "Hãy tạo ở 'Cần làm' rồi kéo/chuyển sang cột khác.",
+                truong_loi="trang_thai", gia_tri=trang_thai)
         self._kiem_tra_nguoi_phu_trach(du_an, nguoi_phu_trach)
 
         if la_cong_viec_khan or muc_uu_tien == "Khẩn":
@@ -110,6 +121,18 @@ class CongViecService:
             )
 
         self.xac_thuc_service.kiem_tra_quyen_cong_viec(cv, bat_loi=True, du_an=du_an)
+        if not isinstance(du_lieu_moi, dict):
+            raise DuLieuKhongHopLeError("Dữ liệu cập nhật công việc phải là dictionary")
+        # Trạng thái chỉ đổi qua chuyen_trang_thai() hoặc các hàm trong QuyTrinhService,
+        # nếu không sẽ lách được bước duyệt Hoàn thành và việc ghi lý do Chưa hoàn thành.
+        du_lieu_moi = dict(du_lieu_moi)
+        for khoa in ("trang_thai", "TrangThai"):
+            if khoa in du_lieu_moi:
+                if du_lieu_moi[khoa] != cv.trang_thai:
+                    raise KhongCoQuyenError(
+                        "Không được đổi trạng thái qua chức năng sửa công việc; "
+                        "hãy kéo thả cột hoặc dùng chức năng quy trình tương ứng")
+                del du_lieu_moi[khoa]
         nd = self.xac_thuc_service.nguoi_dung_hien_tai
         moi = du_lieu_moi.get("nguoi_phu_trach", du_lieu_moi.get("NguoiPhuTrach", cv.nguoi_phu_trach))
         if nd.vai_tro == "thanh_vien" and moi != nd.ten_dang_nhap:

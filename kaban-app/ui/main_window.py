@@ -15,6 +15,7 @@ from ui.components.task_order import chen_cong_viec
 from ui.views.board_view import BoardView
 from ui.views.stats_view import StatsView
 from ui.dialogs.task_dialog import TaskDialog
+from ui.dialogs.chat_dialog import ChatDialog
 from ui.dialogs.column_dialog import TaoDuAnDialog, ThanhVienDuAnDialog
 from ui.dialogs.confirm_dialog import xac_nhan
 from ui.dialogs.doi_mat_khau_dialog import DoiMatKhauDialog
@@ -56,6 +57,12 @@ class MainWindow(tk.Toplevel):
         self.var_du_an, self.var_tim_kiem, self.var_loc_nhanh = tk.StringVar(value="(Chưa có dự án)"), tk.StringVar(), tk.StringVar(value="tat_ca")
         self.var_uu_tien, self.var_nhan, self.var_thanh_vien = tk.StringVar(value=TAT_CA), tk.StringVar(value=TAT_CA), tk.StringVar(value=TAT_CA)
         self.ten_nguoi_map = {nd.ten_dang_nhap: nd.ho_ten for nd in self.ql.lay_danh_sach_nguoi_dung()}
+
+    def mo_chat(self):
+        ChatDialog(self, self.ql, khi_xong=self._cap_nhat_nut_chat)
+
+    def _cap_nhat_nut_chat(self):
+        self.topbar.dat_trang_thai_chat(getattr(self.ql, "chat", None) is not None)
 
     def mo_quy_trinh(self):
         if self.du_an:
@@ -123,9 +130,11 @@ class MainWindow(tk.Toplevel):
             khi_bat_tat_hoat_dong=self.bat_tat_hoat_dong, khi_mo_thong_ke=self.mo_thong_ke,
             khi_ql_thanh_vien=self.quan_ly_thanh_vien, khi_xoa_du_an=self.xoa_du_an_hien_tai,
             khi_thay_doi_loc=self.ve_lai, khi_dat_lai_loc=self.ve_lai,
-            khi_doi_che_do=self._doi_che_do_xem, khi_tim_toan_bo=self.mo_tim_kiem_toan_bo
+            khi_doi_che_do=self._doi_che_do_xem, khi_tim_toan_bo=self.mo_tim_kiem_toan_bo,
+            khi_bat_chat=self.mo_chat
         )
         self.topbar.pack(fill="x")
+        self._cap_nhat_nut_chat()
 
         # Ánh xạ thuộc tính tương thích ngược
         self.btn_them_cv, self.lbl_ten_da = self.topbar.btn_them_cv, self.topbar.lbl_ten_da

@@ -433,6 +433,61 @@ class TestQuyTrinh(unittest.TestCase):
         with self.assertRaises(KhongCoQuyenError):
             self.ql.duyet_gia_han(self.da, cv.ma_cong_viec)
 
+    # ---- Chặn đổi trạng thái / tạo sai trạng thái ở tầng nghiệp vụ ----
+    def test_sua_cong_viec_khong_doi_duoc_trang_thai(self):
+        cv = self.tao(han=(date.today() + timedelta(days=5)).isoformat())  # admin tạo nên đã duyệt
+        for nguoi in ("admin", "worker"):
+            self.ql.dang_nhap(nguoi, "123456")
+            for ten_truong in ("trang_thai", "TrangThai"):
+                for tt in ("Hoàn thành", "Chưa hoàn thành", "Đã hủy", "Đang làm"):
+                    with self.assertRaises(KhongCoQuyenError, msg=f"{nguoi}/{ten_truong}/{tt}"):
+                        self.ql.cap_nhat_cong_viec(self.da, cv.ma_cong_viec, {ten_truong: tt})
+        self.assertEqual(cv.trang_thai, "Cần làm")
+        self.assertEqual(cv.ly_do_chua_hoan_thanh, "")
+
+    def test_sua_cong_viec_giu_nguyen_trang_thai_van_duoc(self):
+        cv = self.tao(han=(date.today() + timedelta(days=5)).isoformat())  # admin tạo nên đã duyệt
+        self.ql.cap_nhat_cong_viec(self.da, cv.ma_cong_viec,
+                                   {"tieu_de": "Tiêu đề mới", "trang_thai": "Cần làm"})
+        self.assertEqual((cv.tieu_de, cv.trang_thai), ("Tiêu đề mới", "Cần làm"))
+
+    def test_tao_cong_viec_khong_nhan_chua_hoan_thanh_hoac_da_huy(self):
+        for tt in ("Chưa hoàn thành", "Đã hủy"):
+            with self.assertRaises(DuLieuKhongHopLeError):
+                self.ql.tao_cong_viec(self.da, {
+                    "ma_cong_viec": "CV-077", "tieu_de": "Việc sai trạng thái",
+                    "nguoi_phu_trach": "worker",
+                    "ngay_bat_dau": date.today().isoformat(),
+                    "ngay_ket_thuc": (date.today() + timedelta(days=3)).isoformat(),
+                    "trang_thai": tt, "muc_uu_tien": "Thấp", "nhan": "Backend"})
+            self.assertIsNone(self.da.tim_cong_viec_theo_ma("CV-077"))
+    def test_tao_cong_viec_chi_o_can_lam_ke_ca_quan_tri(self):
+        # Quản trị viên cũng không được tạo việc mới ở cột khác "Cần làm"
+        for tt in ("Đang làm", "Kiểm tra", "Hoàn thành"):
+            with self.assertRaises(DuLieuKhongHopLeError):
+                self.ql.tao_cong_viec(self.da, {
+                    "ma_cong_viec": "CV-078", "tieu_de": "Việc sai cột",
+                    "nguoi_phu_trach": "worker",
+                    "ngay_bat_dau": date.today().isoformat(),
+                    "ngay_ket_thuc": (date.today() + timedelta(days=3)).isoformat(),
+                    "trang_thai": tt, "muc_uu_tien": "Thấp", "nhan": "Backend"})
+            self.assertIsNone(self.da.tim_cong_viec_theo_ma("CV-078"))
+    def test_khong_xoa_trang_ho_ten_email(self):
+        # Admin sửa trực tiếp
+        for ho_ten, email in (("", "worker@test.vn"), ("   ", "worker@test.vn"),
+                              ("Worker", ""), ("Worker", "   ")):
+            with self.assertRaises(DuLieuKhongHopLeError):
+                self.ql.sua_thong_tin_nguoi_dung("worker", ho_ten, email)
+        ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self.assertEqual((ds["worker"].ho_ten, ds["worker"].email), ("Worker", "worker@test.vn"))
+        # Thành viên gửi yêu cầu rỗng -> bị chặn, không tạo yêu cầu chờ duyệt
+        self.ql.dang_nhap("worker", "123456")
+        for ho_ten, email in (("", "worker@test.vn"), ("Worker", "")):
+            with self.assertRaises(DuLieuKhongHopLeError):
+                self.ql.yeu_cau_sua_thong_tin(ho_ten, email)
+        self.ql.dang_nhap("admin", "123456")
+        self.assertEqual(self.ql.lay_danh_sach_yeu_cau_sua_thong_tin(), [])
+
 
 if __name__ == "__main__":
     unittest.main()

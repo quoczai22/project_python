@@ -46,7 +46,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -69,7 +74,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -99,7 +109,12 @@
         "TrangThaiTruocHuy": "Hoàn thành",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -122,30 +137,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
-      },
-      {
-        "LoaiCongViec": "CongViecThuong",
-        "MaCongViec": "CV-006",
-        "TieuDe": "Viết unit test cho rollback",
-        "MoTa": "",
-        "NguoiPhuTrach": "quoc",
-        "NgayBatDau": "2026-10-21",
-        "NgayKetThuc": "2026-10-31",
-        "TrangThai": "Cần làm",
-        "MucUuTien": "Trung bình",
-        "Nhan": "Kiểm thử",
-        "DanhSachBinhLuan": [],
-        "TrangThaiDuyet": "da_duyet",
-        "NguoiTao": "",
-        "LichSuGiaHan": [],
-        "LyDoHuy": "",
-        "NguoiHuy": "",
-        "ThoiGianHuy": "",
-        "TrangThaiTruocHuy": "",
-        "YeuCauMoLai": null,
-        "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -168,30 +165,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
-      },
-      {
-        "LoaiCongViec": "CongViecThuong",
-        "MaCongViec": "CV-004",
-        "TieuDe": "Dựng bảng Kanban theo cột",
-        "MoTa": "Mỗi cột là một Frame, mỗi thẻ là một TaskCard.",
-        "NguoiPhuTrach": "huy",
-        "NgayBatDau": "2026-10-16",
-        "NgayKetThuc": "2026-10-26",
-        "TrangThai": "Đang làm",
-        "MucUuTien": "Cao",
-        "Nhan": "Giao diện",
-        "DanhSachBinhLuan": [],
-        "TrangThaiDuyet": "da_duyet",
-        "NguoiTao": "",
-        "LichSuGiaHan": [],
-        "LyDoHuy": "",
-        "NguoiHuy": "",
-        "ThoiGianHuy": "",
-        "TrangThaiTruocHuy": "",
-        "YeuCauMoLai": null,
-        "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -201,7 +180,7 @@
         "NguoiPhuTrach": "phu",
         "NgayBatDau": "2026-10-11",
         "NgayKetThuc": "2026-10-20",
-        "TrangThai": "Đang làm",
+        "TrangThai": "Hoàn thành",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
         "DanhSachBinhLuan": [],
@@ -214,7 +193,159 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": true,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-010",
+        "TieuDe": "kh",
+        "MoTa": "",
+        "NguoiPhuTrach": "quoc",
+        "NgayBatDau": "2026-11-25",
+        "NgayKetThuc": "2026-12-02",
+        "TrangThai": "Đã hủy",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "admin",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "test",
+        "NguoiHuy": "admin",
+        "ThoiGianHuy": "2026-11-25T16:33:15.589359",
+        "TrangThaiTruocHuy": "Hoàn thành",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-011",
+        "TieuDe": "test",
+        "MoTa": "test",
+        "NguoiPhuTrach": "quoc",
+        "NgayBatDau": "2026-11-25",
+        "NgayKetThuc": "2026-12-02",
+        "TrangThai": "Đã hủy",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Backend",
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "admin",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "test",
+        "NguoiHuy": "admin",
+        "ThoiGianHuy": "2026-11-25T16:35:40.284894",
+        "TrangThaiTruocHuy": "Hoàn thành",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-006",
+        "TieuDe": "Viết unit test cho rollback",
+        "MoTa": "",
+        "NguoiPhuTrach": "quoc",
+        "NgayBatDau": "2026-10-21",
+        "NgayKetThuc": "2026-10-31",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Trung bình",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
+      },
+      {
+        "LoaiCongViec": "CongViecThuong",
+        "MaCongViec": "CV-004",
+        "TieuDe": "Dựng bảng Kanban theo cột",
+        "MoTa": "Mỗi cột là một Frame, mỗi thẻ là một TaskCard.",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-10-16",
+        "NgayKetThuc": "2026-10-26",
+        "TrangThai": "Kiểm tra",
+        "MucUuTien": "Cao",
+        "Nhan": "Giao diện",
+        "DanhSachBinhLuan": [
+          {
+            "MaBinhLuan": "BL-bf7e6a8f0c1d",
+            "NguoiGui": "huy",
+            "NoiDung": "test chat",
+            "ThoiGian": "2026-11-25 17:24:19"
+          }
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
+      },
+      {
+        "LoaiCongViec": "CongViecKhan",
+        "MaCongViec": "CV-009",
+        "TieuDe": "Test trên bản final",
+        "MoTa": "",
+        "NguoiPhuTrach": "huy",
+        "NgayBatDau": "2026-11-25",
+        "NgayKetThuc": "2026-12-02",
+        "TrangThai": "Đang làm",
+        "MucUuTien": "Khẩn",
+        "Nhan": "Kiểm thử",
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "admin",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       }
     ],
     "NgayTao": "2026-10-07",
@@ -258,7 +389,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -281,7 +417,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       }
     ],
     "NgayTao": "2026-10-18",
@@ -332,7 +473,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -355,7 +501,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -378,7 +529,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -401,7 +557,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -431,7 +592,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -454,7 +620,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -477,7 +648,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -507,7 +683,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -530,7 +711,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -553,7 +739,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -576,7 +767,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -599,7 +795,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       }
     ],
     "NgayTao": "2026-10-22",
@@ -650,7 +851,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -673,7 +879,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -696,7 +907,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -719,7 +935,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -749,7 +970,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -772,7 +998,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -795,7 +1026,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -825,7 +1061,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -848,7 +1089,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -871,7 +1117,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -894,7 +1145,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -917,7 +1173,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       }
     ],
     "NgayTao": "2026-10-22",
@@ -968,7 +1229,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -991,7 +1257,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1014,7 +1285,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1037,7 +1313,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -1067,7 +1348,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1090,7 +1376,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1113,7 +1404,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1143,7 +1439,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1166,7 +1467,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1189,7 +1495,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1212,7 +1523,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -1235,7 +1551,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       }
     ],
     "NgayTao": "2026-10-22",
@@ -1286,7 +1607,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1309,7 +1635,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1332,7 +1663,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1355,7 +1691,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -1385,7 +1726,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1408,7 +1754,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1431,7 +1782,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1461,7 +1817,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1484,7 +1845,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1507,7 +1873,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1530,7 +1901,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -1553,7 +1929,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1576,7 +1957,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1599,7 +1985,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1622,7 +2013,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1645,7 +2041,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1668,7 +2069,12 @@
         "TrangThaiTruocHuy": "",
         "YeuCauMoLai": null,
         "YeuCauGiaHan": null,
-        "HoanThanhTre": false
+        "HoanThanhTre": false,
+        "LyDoTuChoiHoanThanh": "",
+        "LyDoChuaHoanThanh": "",
+        "NguoiDanhDau": "",
+        "ThoiGianDanhDau": "",
+        "TrangThaiTruoc": ""
       }
     ],
     "NgayTao": "2026-10-22",

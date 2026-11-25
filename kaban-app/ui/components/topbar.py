@@ -22,7 +22,7 @@ class TopbarComponent(tk.Frame):
                  khi_mo_thong_ke=None, khi_ql_thanh_vien=None,
                  khi_xoa_du_an=None, khi_thay_doi_loc=None,
                  khi_dat_lai_loc=None, khi_doi_che_do=None,
-                 khi_tim_toan_bo=None):
+                 khi_tim_toan_bo=None, khi_bat_chat=None):
         super().__init__(master, bg=theme.MAU_NEN)
 
         self.khi_them_viec = khi_them_viec
@@ -34,6 +34,7 @@ class TopbarComponent(tk.Frame):
         self.khi_dat_lai_loc = khi_dat_lai_loc
         self.khi_doi_che_do = khi_doi_che_do
         self.khi_tim_toan_bo = khi_tim_toan_bo
+        self.khi_bat_chat = khi_bat_chat
 
         self.var_tim_kiem = tk.StringVar()
         self.var_uu_tien = tk.StringVar(value=TAT_CA)
@@ -79,6 +80,16 @@ class TopbarComponent(tk.Frame):
             text_color="#0f172a", font=theme.FONT_NHO_DAM
         )
         self.btn_thong_ke.pack(side="left", padx=(0, 6))
+
+        self.btn_chat = ctk.CTkButton(
+            cum_nut, text="Chat",
+            command=self._khi_bam_chat,
+            width=80, height=32, corner_radius=0,
+            fg_color="#ffffff", hover_color="#f1f5f9",
+            border_width=1, border_color="#cbd5e1",
+            text_color="#0f172a", font=theme.FONT_NHO_DAM
+        )
+        self.btn_chat.pack(side="left", padx=(0, 6))
 
         self.btn_thanh_vien = ctk.CTkButton(
             cum_nut, text="Thành viên",
@@ -231,6 +242,17 @@ class TopbarComponent(tk.Frame):
     def _khi_bam_thong_ke(self):
         if self.khi_mo_thong_ke:
             self.khi_mo_thong_ke()
+
+    def _khi_bam_chat(self):
+        if self.khi_bat_chat:
+            self.khi_bat_chat()
+
+    def dat_trang_thai_chat(self, dang_bat: bool):
+        """Đổi chữ/màu nút Chat: bật = '● Chat' xanh, tắt = 'Chat'."""
+        if dang_bat:
+            self.btn_chat.configure(text="● Chat", text_color=theme.MAU_HOAN_THANH)
+        else:
+            self.btn_chat.configure(text="Chat", text_color="#0f172a")
 
     def _khi_bam_thanh_vien(self):
         if self.khi_ql_thanh_vien:

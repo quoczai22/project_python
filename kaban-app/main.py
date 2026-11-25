@@ -122,10 +122,11 @@ def main():
     if "--cli" in sys.argv:
         chay_che_do_cli(ql)
     else:
-        client = ket_noi_chat(ql, lay_dia_chi_chat())
+        ket_noi_chat(ql, lay_dia_chi_chat())
         try:
             chay_giao_dien(ql)
         finally:
+            client = getattr(ql, "chat", None)   # gồm cả client bật từ nút Chat trong ứng dụng
             if client is not None:
                 client.dung()
 

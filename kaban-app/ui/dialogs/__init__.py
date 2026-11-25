@@ -11,6 +11,7 @@ from ui.dialogs.task_dialog import TaskDialog, CongViecDialog
 from ui.dialogs.doi_mat_khau_dialog import DoiMatKhauDialog
 from ui.dialogs.quy_trinh_dialog import QuyTrinhDialog
 from ui.dialogs.api_preview_dialog import ApiPreviewDialog
+from ui.dialogs.chat_dialog import ChatDialog
 
 __all__ = [
     "ConfirmDialog",
@@ -24,5 +25,6 @@ __all__ = [
     "DoiMatKhauDialog",
     "QuyTrinhDialog",
     "ApiPreviewDialog",
+    "ChatDialog",
     "TEN_VAI_TRO",
 ]

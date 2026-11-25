@@ -309,5 +309,93 @@
     "ten_dang_nhap": "admin",
     "thanh_vien": "huy",
     "thoi_gian": "2026-11-25T10:35:57.588681"
+  },
+  {
+    "ten_dang_nhap": "huy",
+    "thoi_gian": "2026-11-25T16:17:14.906739",
+    "ma_cong_viec": "CV-004",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Kiểm tra",
+    "hoan_thanh_tre": false
+  },
+  {
+    "ten_dang_nhap": "admin",
+    "thoi_gian": "2026-11-25T16:24:40.700137",
+    "ma_cong_viec": "CV-008",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Hoàn thành",
+    "hoan_thanh_tre": true
+  },
+  {
+    "ten_dang_nhap": "huy",
+    "thoi_gian": "2026-11-25T16:26:20.582160",
+    "ma_cong_viec": "CV-004",
+    "trang_thai_cu": "Kiểm tra",
+    "trang_thai_moi": "Đang làm",
+    "hoan_thanh_tre": false
+  },
+  {
+    "hanh_dong": "huy_cong_viec",
+    "ma_du_an": "DA-001",
+    "ma_cong_viec": "CV-010",
+    "ten_dang_nhap": "admin",
+    "chi_tiet": "test",
+    "thoi_gian": "2026-11-25T16:33:15.605320"
+  },
+  {
+    "hanh_dong": "huy_cong_viec",
+    "ma_du_an": "DA-001",
+    "ma_cong_viec": "CV-011",
+    "ten_dang_nhap": "admin",
+    "chi_tiet": "test",
+    "thoi_gian": "2026-11-25T16:35:40.300284"
+  },
+  {
+    "ten_dang_nhap": "quoc",
+    "thoi_gian": "2026-11-25T17:01:56.796951",
+    "ma_cong_viec": "CV-006",
+    "trang_thai_cu": "Cần làm",
+    "trang_thai_moi": "Kiểm tra",
+    "hoan_thanh_tre": false
+  },
+  {
+    "ten_dang_nhap": "admin",
+    "thoi_gian": "2026-11-25T17:18:47.285354",
+    "ma_cong_viec": "CV-009",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Kiểm tra",
+    "hoan_thanh_tre": false
+  },
+  {
+    "ten_dang_nhap": "huy",
+    "thoi_gian": "2026-11-25T17:24:29.938666",
+    "ma_cong_viec": "CV-004",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Kiểm tra",
+    "hoan_thanh_tre": false
+  },
+  {
+    "ten_dang_nhap": "huy",
+    "thoi_gian": "2026-11-25T17:24:36.456410",
+    "ma_cong_viec": "CV-009",
+    "trang_thai_cu": "Kiểm tra",
+    "trang_thai_moi": "Đang làm",
+    "hoan_thanh_tre": false
+  },
+  {
+    "ten_dang_nhap": "huy",
+    "thoi_gian": "2026-11-25T17:26:12.243833",
+    "ma_cong_viec": "CV-009",
+    "trang_thai_cu": "Đang làm",
+    "trang_thai_moi": "Kiểm tra",
+    "hoan_thanh_tre": false
+  },
+  {
+    "ten_dang_nhap": "huy",
+    "thoi_gian": "2026-11-25T17:26:28.982279",
+    "ma_cong_viec": "CV-009",
+    "trang_thai_cu": "Kiểm tra",
+    "trang_thai_moi": "Đang làm",
+    "hoan_thanh_tre": false
   }
 ]
