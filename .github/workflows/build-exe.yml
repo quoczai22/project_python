@@ -1,0 +1,107 @@
+name: Build Windows Executable (EXE)
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows EXE
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: 'kaban-app/requirements.txt'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r kaban-app/requirements.txt
+          pip install pyinstaller
+
+      - name: Run unit tests
+        run: |
+          cd kaban-app
+          python -m unittest discover tests -v
+          cd ..
+
+      - name: Build Executable with PyInstaller
+        run: |
+          cd kaban-app
+          python -m PyInstaller --noconsole --name "KanbanApp" --onefile --clean --noconfirm `
+            --collect-all customtkinter `
+            --collect-all tkcalendar `
+            --collect-all babel `
+            --add-data "assets;assets" `
+            --add-data "data;data" `
+            main.py
+          cd ..
+
+      - name: Verify build output
+        run: |
+          if (Test-Path "kaban-app/dist/KanbanApp.exe") {
+            $file = Get-Item "kaban-app/dist/KanbanApp.exe"
+            $sizeMB = [math]::Round($file.Length / 1MB, 2)
+            Write-Host "Build thanh cong: $($file.FullName) ($sizeMB MB)"
+          } else {
+            Write-Error "Khong tim thay file kaban-app/dist/KanbanApp.exe sau khi build!"
+            exit 1
+          }
+
+      - name: Prepare Release Package
+        run: |
+          New-Item -ItemType Directory -Path "dist_package" -Force
+          Copy-Item "kaban-app/dist/KanbanApp.exe" -Destination "dist_package/KanbanApp.exe"
+          if (Test-Path "deliverables/KanbanApp_Windows/KanbanApp/HUONG_DAN_CHAY.txt") {
+            Copy-Item "deliverables/KanbanApp_Windows/KanbanApp/HUONG_DAN_CHAY.txt" -Destination "dist_package/HUONG_DAN_CHAY.txt"
+          }
+          Compress-Archive -Path "dist_package/*" -DestinationPath "KanbanApp_Windows_x64.zip" -Force
+
+      - name: Upload Standalone EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: KanbanApp-EXE
+          path: kaban-app/dist/KanbanApp.exe
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload Release Zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: KanbanApp-Windows-x64
+          path: KanbanApp_Windows_x64.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            kaban-app/dist/KanbanApp.exe
+            KanbanApp_Windows_x64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
