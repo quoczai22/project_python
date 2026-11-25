@@ -11,6 +11,7 @@ from ui.styles import theme
 from ui.components.sidebar import SidebarComponent
 from ui.components.topbar import TopbarComponent, TAT_CA
 from ui.components.menu_bar import AppMenuBar
+from ui.components.task_order import chen_cong_viec
 from ui.views.board_view import BoardView
 from ui.views.stats_view import StatsView
 from ui.dialogs.task_dialog import TaskDialog
@@ -367,7 +368,10 @@ class MainWindow(tk.Toplevel):
         try:
             self.ql.chuyen_trang_thai(self.du_an, cv.ma_cong_viec, cot_dich)
             if vi_tri is not None and self.du_an:
-                self._chen_cv_vi_tri(cv, cot_dich, vi_tri)
+                try: self._chen_cv_vi_tri(cv, cot_dich, vi_tri)
+                except LoiLuuTruError as loi:
+                    self.ve_lai()
+                    messagebox.showwarning("Thứ tự chưa lưu", f"Đã chuyển cột, nhưng {loi.thong_diep}", parent=self); return
         except (DuLieuKhongHopLeError, KhongTimThayError) as loi:
             messagebox.showwarning("Không hợp lệ", loi.thong_diep, parent=self); return
         except (KhongCoQuyenError, LoiLuuTruError, KanbanException) as loi:
@@ -376,14 +380,14 @@ class MainWindow(tk.Toplevel):
             messagebox.showerror("Lỗi hệ thống", f"Không thể chuyển trạng thái: {e}", parent=self); return
         self.ve_lai()
 
-    def _chen_cv_vi_tri(self, cv, cot, vi_tri):
-        ds = self.du_an.danh_sach_cong_viec
-        if cv in ds: ds.remove(cv)
-        cac_cv = [c for c in ds if c.trang_thai == cot]
-        if vi_tri is not None and vi_tri < len(cac_cv): ds.insert(ds.index(cac_cv[vi_tri]), cv)
-        else: ds.append(cv)
-        try: self.ql.du_an_service.luu_du_lieu()
-        except Exception: pass
+    def _chen_cv_vi_tri(self, cv, cot, vi_tri, cung_cot=False):
+        chen_cong_viec(self.du_an, cv, cot, vi_tri, self.ql.du_an_service.luu_du_lieu, cung_cot)
+
+    def _sap_xep_trong_cot(self, cv, cot, vi_tri):
+        try: self._chen_cv_vi_tri(cv, cot, vi_tri, cung_cot=True)
+        except LoiLuuTruError as loi:
+            messagebox.showerror("Lỗi lưu thứ tự", loi.thong_diep, parent=self)
+        self.ve_lai()
 
     def chuyen_nhanh_tiep_theo(self, cv):
         ds_cot = self.du_an.danh_sach_cot
@@ -408,7 +412,7 @@ class MainWindow(tk.Toplevel):
             if dich != cv.trang_thai:
                 self.after(10, lambda: self.chuyen_cot(cv, dich, vt))
             else:
-                self.after(10, lambda: (self._chen_cv_vi_tri(cv, dich, vt), self.ve_lai()))
+                self.after(10, lambda: self._sap_xep_trong_cot(cv, dich, vt))
         except Exception: pass
 
     def _cot_duoi_chuot(self, event):
