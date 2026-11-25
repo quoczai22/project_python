@@ -200,6 +200,41 @@ class TestQuyTrinh(unittest.TestCase):
         self.assertEqual(cv.nguoi_huy, "")
         self.assertEqual(cv.thoi_gian_huy, "")
 
+    def test_khong_gia_han_viec_da_huy(self):
+        cv = self.tao()  # hạn chót hôm qua -> quá hạn
+        self.ql.huy_cong_viec(self.da, cv.ma_cong_viec, "Không còn cần")
+        self.ql.dang_nhap("worker", "123456")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.yeu_cau_gia_han(self.da, cv.ma_cong_viec,
+                                    (date.today() + timedelta(days=5)).isoformat(), "Xin thêm thời gian")
+        self.assertIsNone(cv.yeu_cau_gia_han)
+
+    def test_khong_giao_viec_cho_nguoi_ngoai_du_an(self):
+        self.ql.dang_ky("outsider", "123456", "Outsider", "outsider@test.vn")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.tao(ma="CV-002", nguoi="outsider")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.tao(ma="CV-003", nguoi="khong_ton_tai")
+        cv = self.tao(ma="CV-004", nguoi="worker")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.cap_nhat_cong_viec(self.da, cv.ma_cong_viec, {"nguoi_phu_trach": "outsider"})
+        self.assertEqual(cv.nguoi_phu_trach, "worker")
+        # Quản trị viên vẫn được nhận việc dù không nằm trong danh sách thành viên
+        self.tao(ma="CV-005", nguoi="admin")
+
+    def test_huy_viec_xoa_yeu_cau_dang_cho(self):
+        cv = self.tao()
+        self.ql.dang_nhap("worker", "123456")
+        self.ql.yeu_cau_gia_han(self.da, cv.ma_cong_viec,
+                                (date.today() + timedelta(days=5)).isoformat(), "Cần thêm thời gian")
+        self.ql.dang_nhap("admin", "123456")
+        self.ql.huy_cong_viec(self.da, cv.ma_cong_viec, "Không còn cần")
+        self.ql.khoi_phuc_cong_viec(self.da, cv.ma_cong_viec)
+        self.assertIsNone(cv.yeu_cau_gia_han)
+        self.assertIsNone(cv.yeu_cau_mo_lai)
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.duyet_gia_han(self.da, cv.ma_cong_viec)
+
 
 if __name__ == "__main__":
     unittest.main()
