@@ -39,6 +39,7 @@ class TaskCard(ctk.CTkFrame):
         self._dang_chon = False
         self._diem_bam = None
         self._dang_keo = False
+        self._drag_proxy = None
         self._nen_hien_tai = theme.MAU_THE
 
         self._dung_giao_dien()
@@ -284,18 +285,94 @@ class TaskCard(ctk.CTkFrame):
         if not self._dang_keo:
             dx = event.x_root - self._diem_bam[0]
             dy = event.y_root - self._diem_bam[1]
-            if dx * dx + dy * dy < 36:
+            if dx * dx + dy * dy < 25:
                 return
             self._dang_keo = True
+            self._tao_drag_proxy(event)
+        else:
+            self._cap_nhat_drag_proxy(event)
         if self.khi_keo:
             self.khi_keo(self.cong_viec, event)
 
     def _xu_ly_tha(self, event):
         if self._dang_keo:
             self._dang_keo = False
+            self._xoa_drag_proxy()
             if self.khi_tha:
                 self.khi_tha(self.cong_viec, event)
         self._diem_bam = None
+
+    def _tao_drag_proxy(self, event):
+        """Tạo thẻ nổi bán trong suốt hiển thị thông tin thẻ di chuyển theo chuột."""
+        self._xoa_drag_proxy()
+        try:
+            self.configure(fg_color="#f1f5f9", border_color=theme.MAU_CHINH)
+            proxy = tk.Toplevel(self)
+            proxy.overrideredirect(True)
+            proxy.attributes("-topmost", True)
+            try:
+                proxy.attributes("-alpha", 0.92)
+            except Exception:
+                pass
+            khung = tk.Frame(
+                proxy, bg="#ffffff",
+                highlightthickness=2, highlightbackground=theme.MAU_CHINH,
+                padx=10, pady=7
+            )
+            khung.pack(fill="both", expand=True)
+
+            hang1 = tk.Frame(khung, bg="#ffffff")
+            hang1.pack(fill="x")
+            lbl_ma = tk.Label(
+                hang1, text=f"❖ {self.cong_viec.ma_cong_viec}",
+                bg="#e9e8f4", fg="#6d669b",
+                font=theme.FONT_NHO_DAM, padx=6, pady=2
+            )
+            lbl_ma.pack(side="left")
+
+            lbl_ut = tk.Label(
+                hang1, text=self.cong_viec.muc_uu_tien,
+                bg=theme.MAU_NEN_BADGE_UU_TIEN.get(self.cong_viec.muc_uu_tien, "#f1f5f9"),
+                fg=theme.MAU_CHU_BADGE_UU_TIEN.get(self.cong_viec.muc_uu_tien, "#1e1b33"),
+                font=theme.FONT_NHO_DAM, padx=6, pady=2
+            )
+            lbl_ut.pack(side="right", padx=(8, 0))
+
+            tieu_de = self.cong_viec.tieu_de
+            if len(tieu_de) > 30:
+                tieu_de = tieu_de[:28].rstrip() + "..."
+            lbl_td = tk.Label(
+                khung, text=tieu_de, bg="#ffffff", fg="#0f172a",
+                font=theme.FONT_DAM, anchor="w"
+            )
+            lbl_td.pack(fill="x", pady=(4, 0))
+
+            proxy.geometry(f"+{event.x_root + 15}+{event.y_root + 15}")
+            self._drag_proxy = proxy
+        except Exception:
+            self._drag_proxy = None
+
+    def _cap_nhat_drag_proxy(self, event):
+        if getattr(self, "_drag_proxy", None):
+            try:
+                if self._drag_proxy.winfo_exists():
+                    self._drag_proxy.geometry(f"+{event.x_root + 15}+{event.y_root + 15}")
+            except Exception:
+                pass
+
+    def _xoa_drag_proxy(self):
+        proxy = getattr(self, "_drag_proxy", None)
+        if proxy:
+            try:
+                if proxy.winfo_exists():
+                    proxy.destroy()
+            except Exception:
+                pass
+            self._drag_proxy = None
+        try:
+            self.configure(fg_color=self._nen_hien_tai, border_color=self._vien_mac_dinh())
+        except Exception:
+            pass
 
     def _xu_ly_double_click(self, event):
         if self.khi_mo:

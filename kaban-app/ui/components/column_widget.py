@@ -89,6 +89,7 @@ class ColumnWidget(ctk.CTkFrame):
         nen_so = info_pastel["nen_so"]
 
         # Header cột
+        self._vien_header_goc = vien_header
         self.khung_dau = ctk.CTkFrame(
             self, fg_color=nen_header, corner_radius=0,
             border_width=1, border_color=vien_header
@@ -284,9 +285,26 @@ class ColumnWidget(ctk.CTkFrame):
         self.canvas.yview_moveto(0)
 
     def chua_diem(self, x_root, y_root):
-        """Kiểm tra xem tọa độ màn hình có nằm trong cột không."""
-        x, y = self.winfo_rootx(), self.winfo_rooty()
-        return x <= x_root < x + self.winfo_width() and y <= y_root < y + self.winfo_height()
+        """Kiểm tra xem tọa độ màn hình có nằm trong dải cột không."""
+        try:
+            x, y = self.winfo_rootx(), self.winfo_rooty()
+            w, h = self.winfo_width(), self.winfo_height()
+            return (x <= x_root < x + w) and (y - 30 <= y_root <= y + h + 200)
+        except Exception:
+            return False
+
+    def vi_tri_tha(self, y_root):
+        """Xác định vị trí thả (thứ tự 0..N) tương ứng với tọa độ Y của chuột."""
+        danh_sach = list(self.cac_the.values())
+        for idx, the in enumerate(danh_sach):
+            try:
+                if the.winfo_exists():
+                    mid_y = the.winfo_rooty() + the.winfo_height() // 2
+                    if y_root < mid_y:
+                        return idx
+            except Exception:
+                continue
+        return len(danh_sach)
 
     def to_sang(self, bat):
         """Tô sáng cột khi kéo thả thẻ công việc vào."""
@@ -300,6 +318,8 @@ class ColumnWidget(ctk.CTkFrame):
         mau_trong = mau if bat else "#e8eff5"
         try:
             self.configure(fg_color=mau, border_color=vien, border_width=2 if bat else 1)
+            vien_hdr = vien if bat else getattr(self, "_vien_header_goc", vien)
+            self.khung_dau.configure(border_color=vien_hdr, border_width=2 if bat else 1)
         except Exception:
             pass
         try:

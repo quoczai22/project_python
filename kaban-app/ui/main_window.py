@@ -33,25 +33,15 @@ class MainWindow(tk.Toplevel):
         self.ql = ql
         self.khi_dang_xuat_cb = khi_dang_xuat
 
-        self.ds_du_an = []
-        self.du_an = None
-        self.cv_dang_chon = None
-        self.the_dang_chon = None
-        self._the_ma = None
+        self.ds_du_an, self.du_an = [], None
+        self.cv_dang_chon, self.the_dang_chon, self._the_ma = None, None, None
         self._sap_xep_dao = {}
 
-        self.title("Kanban Board — Quản lý công việc")
-        self.geometry("1280x800")
-        self.minsize(1050, 650)
-        self.configure(bg=theme.MAU_NEN)
+        self.title("Kanban Board — Quản lý công việc"); self.geometry("1280x800")
+        self.minsize(1050, 650); self.configure(bg=theme.MAU_NEN)
 
-        self._khoi_tao_bien_trang_thai()
-        self._dung_thanh_menu()
-        self._dung_bo_cuc_chinh()
-        self._tao_menu_chuot_phai()
-        self._dang_ky_phim_tat()
-
-        self._nap_du_an()
+        self._khoi_tao_bien_trang_thai(); self._dung_thanh_menu(); self._dung_bo_cuc_chinh()
+        self._tao_menu_chuot_phai(); self._dang_ky_phim_tat(); self._nap_du_an()
         self.protocol("WM_DELETE_WINDOW", self._khi_dong_cua_so)
 
     def _khoi_tao_bien_trang_thai(self):
@@ -115,11 +105,10 @@ class MainWindow(tk.Toplevel):
         self.topbar.pack(fill="x")
 
         # Ánh xạ thuộc tính tương thích ngược
-        self.btn_them_cv = self.topbar.btn_them_cv
+        self.btn_them_cv, self.lbl_ten_da = self.topbar.btn_them_cv, self.topbar.lbl_ten_da
         self.btn_hoat_dong, self.btn_thong_ke = self.topbar.btn_hoat_dong, self.topbar.btn_thong_ke
         self.btn_thanh_vien, self.btn_xoa_da = self.topbar.btn_thanh_vien, self.topbar.btn_xoa_da
         self.btn_dat_lai = self.btn_xoa_loc = self.topbar.btn_dat_lai
-        self.lbl_ten_da = self.topbar.lbl_ten_da
         self.cbb_du_an = ttk.Combobox(self, textvariable=self.var_du_an, state="readonly")
         self.cbb_tv, self.cbb_uu_tien = self.topbar.cbb_tv, self.topbar.cbb_uu_tien
         self.ent_tim = self.entry_tim = self.topbar.entry_tim
@@ -229,11 +218,8 @@ class MainWindow(tk.Toplevel):
     def _cap_nhat_trang_thai_nut_du_an(self):
         co_da = self.du_an is not None
         la_qt = bool(self.ql.nguoi_dung_hien_tai and self.ql.nguoi_dung_hien_tai.vai_tro == "quan_tri")
-        st_da, st_qt = "normal" if co_da else "disabled", "normal" if (co_da and la_qt) else "disabled"
-        for btn in (self.btn_them_cv, self.btn_thong_ke):
-            btn.configure(state=st_da)
-        for btn in (self.btn_thanh_vien, self.btn_xoa_da):
-            btn.configure(state=st_qt)
+        for btn in (self.btn_them_cv, self.btn_thong_ke): btn.configure(state="normal" if co_da else "disabled")
+        for btn in (self.btn_thanh_vien, self.btn_xoa_da): btn.configure(state="normal" if (co_da and la_qt) else "disabled")
 
     def _cong_viec_sau_loc(self):
         if not self.du_an:
@@ -381,9 +367,11 @@ class MainWindow(tk.Toplevel):
         self.cv_dang_chon = None
         self.ve_lai()
 
-    def chuyen_cot(self, cv, cot_dich):
+    def chuyen_cot(self, cv, cot_dich, vi_tri=None):
         try:
             self.ql.chuyen_trang_thai(self.du_an, cv.ma_cong_viec, cot_dich)
+            if vi_tri is not None and self.du_an:
+                self._chen_cv_vi_tri(cv, cot_dich, vi_tri)
         except (DuLieuKhongHopLeError, KhongTimThayError) as loi:
             messagebox.showwarning("Không hợp lệ", loi.thong_diep, parent=self); return
         except (KhongCoQuyenError, LoiLuuTruError, KanbanException) as loi:
@@ -392,33 +380,43 @@ class MainWindow(tk.Toplevel):
             messagebox.showerror("Lỗi hệ thống", f"Không thể chuyển trạng thái: {e}", parent=self); return
         self.ve_lai()
 
+    def _chen_cv_vi_tri(self, cv, cot, vi_tri):
+        ds = self.du_an.danh_sach_cong_viec
+        if cv in ds: ds.remove(cv)
+        cac_cv = [c for c in ds if c.trang_thai == cot]
+        if vi_tri is not None and vi_tri < len(cac_cv): ds.insert(ds.index(cac_cv[vi_tri]), cv)
+        else: ds.append(cv)
+        try: self.ql.du_an_service.luu_du_lieu()
+        except Exception: pass
+
     def chuyen_nhanh_tiep_theo(self, cv):
         ds_cot = self.du_an.danh_sach_cot
         if cv.trang_thai in ds_cot:
             idx = ds_cot.index(cv.trang_thai)
-            if idx < len(ds_cot) - 1:
-                self.chuyen_cot(cv, ds_cot[idx + 1])
+            if idx < len(ds_cot) - 1: self.chuyen_cot(cv, ds_cot[idx + 1])
 
     def khi_keo(self, cv, event):
         try:
             dich = self._cot_duoi_chuot(event)
             for ten, cot in self.cac_cot.items():
-                cot.to_sang(ten == dich and ten != cv.trang_thai)
-        except Exception:
-            pass
+                cot.to_sang(ten == dich)
+        except Exception: pass
 
     def khi_tha(self, cv, event):
         try:
-            for cot in self.cac_cot.values():
-                cot.to_sang(False)
+            for cot in self.cac_cot.values(): cot.to_sang(False)
             dich = self._cot_duoi_chuot(event)
-            if dich and dich != cv.trang_thai:
-                self.after(10, lambda: self.chuyen_cot(cv, dich))
-        except Exception:
-            pass
+            if not dich or not self.du_an: return
+            cot_w = self.cac_cot.get(dich)
+            vt = cot_w.vi_tri_tha(event.y_root) if cot_w else None
+            if dich != cv.trang_thai:
+                self.after(10, lambda: self.chuyen_cot(cv, dich, vt))
+            else:
+                self.after(10, lambda: (self._chen_cv_vi_tri(cv, dich, vt), self.ve_lai()))
+        except Exception: pass
 
     def _cot_duoi_chuot(self, event):
-        return next((ten for ten, cot in self.cac_cot.items() if cot.chua_diem(event.x_root, event.y_root)), None)
+        return next((t for t, c in self.cac_cot.items() if c.chua_diem(event.x_root, event.y_root)), None)
 
     def _khi_chon_dong_ds(self, _event=None):
         sel = self.tree_ds.selection()
