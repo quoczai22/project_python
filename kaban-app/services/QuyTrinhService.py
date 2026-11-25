@@ -89,6 +89,8 @@ class QuyTrinhService:
             ngay = date.fromisoformat(han_moi)
         except (TypeError, ValueError):
             raise DuLieuKhongHopLeError("Hạn mới phải có dạng YYYY-MM-DD")
+        if cv.trang_thai == "Đã hủy":
+            raise DuLieuKhongHopLeError("Không được gia hạn việc đã hủy")
         if (nd.ten_dang_nhap != cv.nguoi_phu_trach or not cv.da_qua_han() or
                 ngay <= date.today() or not ly_do.strip() or len(cv.lich_su_gia_han) >= 3):
             raise DuLieuKhongHopLeError("Gia hạn yêu cầu việc quá hạn, ngày tương lai, lý do và tối đa 3 lần")
@@ -127,6 +129,9 @@ class QuyTrinhService:
         cv.trang_thai = "Đã hủy"
         cv.ly_do_huy, cv.nguoi_huy = ly_do.strip(), nd.ten_dang_nhap
         cv.thoi_gian_huy = datetime.now().isoformat()
+        # Hủy việc thì các yêu cầu đang chờ duyệt cũng hết hiệu lực
+        cv.yeu_cau_mo_lai = None
+        cv.yeu_cau_gia_han = None
         return self._luu(du_an, cv, old, "huy_cong_viec", ly_do)
 
     def khoi_phuc_cong_viec(self, du_an, ma_cong_viec):

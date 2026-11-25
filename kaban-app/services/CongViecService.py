@@ -22,6 +22,17 @@ class CongViecService:
         self.xac_thuc_service = xac_thuc_service
         self.bo_luu_tru = bo_luu_tru
 
+    def _kiem_tra_nguoi_phu_trach(self, du_an: DuAn, nguoi_phu_trach):
+        """Người phụ trách phải là thành viên dự án (hoặc tài khoản quản trị viên)."""
+        if nguoi_phu_trach in du_an.thanh_vien_tham_gia:
+            return
+        la_quan_tri = any(tv.ten_dang_nhap == nguoi_phu_trach and tv.vai_tro == "quan_tri"
+                          for tv in self.bo_luu_tru.doc_danh_sach_thanh_vien())
+        if not la_quan_tri:
+            raise DuLieuKhongHopLeError(
+                f"Người phụ trách '{nguoi_phu_trach}' không thuộc dự án '{du_an.ma_du_an}'",
+                truong_loi="nguoi_phu_trach", gia_tri=nguoi_phu_trach)
+
     def tao_cong_viec(self, du_an: DuAn, du_lieu: dict, la_cong_viec_khan: bool = False):
         """Tạo mới công việc kèm kiểm tra quyền, validation và Rollback nếu lưu lỗi."""
         self.xac_thuc_service.kiem_tra_quyen_du_an(du_an, bat_loi=True)
@@ -46,6 +57,7 @@ class CongViecService:
             raise KhongCoQuyenError("Leader chỉ được tạo việc cho nhóm mình")
         if nguoi_tao.vai_tro != "quan_tri" and trang_thai != "Cần làm":
             raise DuLieuKhongHopLeError("Việc mới chờ duyệt phải bắt đầu ở cột Cần làm")
+        self._kiem_tra_nguoi_phu_trach(du_an, nguoi_phu_trach)
 
         if la_cong_viec_khan or muc_uu_tien == "Khẩn":
             cv = CongViecKhan(
@@ -109,6 +121,8 @@ class CongViecService:
             raise KhongCoQuyenError("Việc quá hạn phải xin gia hạn")
         if cv.trang_thai == "Đã hủy":
             raise KhongCoQuyenError("Không được sửa việc đã hủy")
+        if moi != cv.nguoi_phu_trach:
+            self._kiem_tra_nguoi_phu_trach(du_an, moi)
 
         snapshot_cu = cv.to_dict()
         cv.cap_nhat_cong_viec(du_lieu_moi)
