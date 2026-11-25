@@ -16,7 +16,7 @@ TEN_FILE_DU_LIEU_MOC = os.path.join(THU_MUC_DATA, "du_lieu_moc.json")
 TEN_FILE_NHAT_KY = os.path.join(THU_MUC_DATA, "nhat_ky.json")
 
 # Danh sách chọn trong Combobox và dùng để kiểm tra dữ liệu công việc.
-TRANG_THAI_HOP_LE = ("Cần làm", "Đang làm", "Kiểm tra", "Hoàn thành", "Đã hủy")
+TRANG_THAI_HOP_LE = ("Cần làm", "Đang làm", "Kiểm tra", "Hoàn thành", "Chưa hoàn thành", "Đã hủy")
 MUC_UU_TIEN_HOP_LE = ("Thấp", "Trung bình", "Cao", "Khẩn")
 NHAN_HOP_LE = ("Backend", "Giao diện", "Lỗi", "Tài liệu", "Kiểm thử")
 

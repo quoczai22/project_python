@@ -235,6 +235,9 @@ class QuanLyKanban:
     def huy_cong_viec(self, du_an, ma_cong_viec, ly_do):
         return self.quy_trinh.huy_cong_viec(du_an, ma_cong_viec, ly_do)
 
+    def danh_dau_chua_hoan_thanh(self, du_an, ma_cong_viec, ly_do):
+        return self.quy_trinh.danh_dau_chua_hoan_thanh(du_an, ma_cong_viec, ly_do)
+
     def khoi_phuc_cong_viec(self, du_an, ma_cong_viec):
         return self.quy_trinh.khoi_phuc_cong_viec(du_an, ma_cong_viec)
 

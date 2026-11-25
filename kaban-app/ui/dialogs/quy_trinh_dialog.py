@@ -127,6 +127,22 @@ def yeu_cau_gia_han_popup(parent, ql, du_an, cv):
         messagebox.showinfo("Đã gửi", "Yêu cầu gia hạn đang chờ duyệt", parent=parent)
 
 
+def danh_dau_chua_hoan_thanh_popup(parent, ql, du_an, cv, ve_lai_cb=None):
+    """Mở hộp thoại đánh dấu công việc quá hạn là Chưa hoàn thành."""
+    if not du_an or not cv:
+        return
+    ly_do = simpledialog.askstring("Chưa hoàn thành", "Lý do đánh dấu Chưa hoàn thành:", parent=parent)
+    if ly_do is None:
+        return
+    try:
+        ql.danh_dau_chua_hoan_thanh(du_an, cv.ma_cong_viec, ly_do)
+    except KanbanException as err:
+        messagebox.showerror("Không thực hiện được", err.thong_diep, parent=parent)
+    else:
+        if ve_lai_cb:
+            ve_lai_cb()
+
+
 class QuyTrinhDialog(tk.Toplevel):
     def __init__(self, master, ql, du_an, khi_xong=None):
         super().__init__(master)

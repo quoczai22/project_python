@@ -252,6 +252,74 @@ class TestQuyTrinh(unittest.TestCase):
         self.ql.duyet_hoan_thanh(self.da, cv_lead.ma_cong_viec)
         self.assertEqual(cv_lead.trang_thai, "Hoàn thành")
 
+    def test_chua_hoan_thanh_va_ban_giao_gia_han_va_du_lieu_cu(self):
+        # Chặn khi chưa quá hạn
+        cv_con_han = self.tao(ma="CV-020", nguoi="worker", han=(date.today() + timedelta(days=5)).isoformat())
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.danh_dau_chua_hoan_thanh(self.da, cv_con_han.ma_cong_viec, "Quá tải")
+
+        # Quá hạn: chặn thành viên, chặn thiếu lý do
+        cv = self.tao(ma="CV-021", nguoi="worker")
+        cv.trang_thai = "Đang làm"
+        self.ql.dang_nhap("worker", "123456")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.danh_dau_chua_hoan_thanh(self.da, cv.ma_cong_viec, "Không làm kịp")
+        self.ql.dang_nhap("lead", "123456")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.danh_dau_chua_hoan_thanh(self.da, cv.ma_cong_viec, "  ")
+
+        # Leader đánh dấu Chưa hoàn thành thành công; chặn kéo thả trực tiếp ra/vào
+        self.ql.danh_dau_chua_hoan_thanh(self.da, cv.ma_cong_viec, "Nhân sự nghỉ phép")
+        self.assertEqual(cv.trang_thai, "Chưa hoàn thành")
+        self.assertEqual(cv.trang_thai_truoc, "Đang làm")
+        self.assertEqual(cv.nguoi_danh_dau, "lead")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.chuyen_trang_thai(self.da, cv.ma_cong_viec, "Đang làm")
+
+        # Bàn giao sang worker2 + gia hạn -> trả về trạng thái trước ("Đang làm")
+        self.ql.dang_nhap("admin", "123456")
+        self.ql.dang_ky("worker2", "123456", "Worker 2", "w2@test.vn")
+        self.ql.them_thanh_vien_du_an(self.da, "worker2")
+        self.ql.gan_thanh_vien_nhom(self.da, "lead", "worker2")
+        self.ql.dang_nhap("lead", "123456")
+        self.ql.cap_nhat_cong_viec(self.da, cv.ma_cong_viec, {"nguoi_phu_trach": "worker2"})
+        self.ql.dang_nhap("worker2", "123456")
+        han_moi = (date.today() + timedelta(days=4)).isoformat()
+        self.ql.yeu_cau_gia_han(self.da, cv.ma_cong_viec, han_moi, "Nhận bàn giao làm tiếp")
+        self.ql.dang_nhap("lead", "123456")
+        self.ql.duyet_gia_han(self.da, cv.ma_cong_viec)
+        self.assertEqual(cv.trang_thai, "Đang làm")
+        self.assertEqual(cv.ngay_ket_thuc, han_moi)
+
+        # Dữ liệu cũ thiếu các trường mới vẫn đọc được
+        from models.CongViec import CongViec
+        cu = cv.to_dict()
+        for k in ("LyDoChuaHoanThanh", "NguoiDanhDau", "ThoiGianDanhDau", "TrangThaiTruoc", "LyDoTuChoiHoanThanh"):
+            cu.pop(k, None)
+        doc_lai = CongViec.from_dict(cu)
+        self.assertEqual(doc_lai.ly_do_chua_hoan_thanh, "")
+        self.assertEqual(doc_lai.trang_thai_truoc, "")
+
+    def test_thong_ke_dung_han_tre_han_chua_hoan_thanh_bo_da_huy(self):
+        from services.thong_ke import thong_ke_du_an
+        han_tuong_lai = (date.today() + timedelta(days=5)).isoformat()
+        cv_dung = self.tao(ma="CV-030", nguoi="worker", han=han_tuong_lai)
+        cv_tre = self.tao(ma="CV-031", nguoi="worker")
+        cv_cht = self.tao(ma="CV-032", nguoi="worker")
+        cv_huy = self.tao(ma="CV-033", nguoi="worker")
+
+        self.ql.chuyen_trang_thai(self.da, cv_dung.ma_cong_viec, "Hoàn thành")
+        self.ql.chuyen_trang_thai(self.da, cv_tre.ma_cong_viec, "Hoàn thành")
+        self.ql.danh_dau_chua_hoan_thanh(self.da, cv_cht.ma_cong_viec, "Thiếu tài nguyên")
+        self.ql.huy_cong_viec(self.da, cv_huy.ma_cong_viec, "Hủy bỏ")
+
+        tk = thong_ke_du_an(self.da)
+        self.assertEqual(tk["tong"], 3)
+        self.assertEqual(tk["hoan_thanh_dung_han"], 1)
+        self.assertEqual(tk["hoan_thanh_tre_han"], 1)
+        self.assertEqual(tk["trang_thai_chua_hoan_thanh"], 1)
+        self.assertNotIn("Đã hủy", tk["theo_trang_thai"])
+
     def test_khong_gia_han_viec_da_huy(self):
         cv = self.tao()  # hạn chót hôm qua -> quá hạn
         self.ql.huy_cong_viec(self.da, cv.ma_cong_viec, "Không còn cần")

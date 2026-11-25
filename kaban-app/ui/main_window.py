@@ -20,7 +20,7 @@ from ui.dialogs.confirm_dialog import xac_nhan
 from ui.dialogs.doi_mat_khau_dialog import DoiMatKhauDialog
 from ui.dialogs.quy_trinh_dialog import (
     QuyTrinhDialog, yeu_cau_mo_lai_popup, yeu_cau_gia_han_popup,
-    nhap_tu_api_popup, xuat_bao_cao_popup
+    danh_dau_chua_hoan_thanh_popup, nhap_tu_api_popup, xuat_bao_cao_popup
 )
 
 class MainWindow(tk.Toplevel):
@@ -174,6 +174,7 @@ class MainWindow(tk.Toplevel):
         self.menu_phai.add_cascade(label="Chuyển sang cột", menu=self.menu_chuyen)
         self.menu_phai.add_separator()
         self.menu_phai.add_command(label="Xóa công việc", command=self.xoa_dang_chon)
+        self.menu_phai.add_command(label="Đánh dấu chưa hoàn thành", command=lambda: danh_dau_chua_hoan_thanh_popup(self, self.ql, self.du_an, self.cv_dang_chon, self.ve_lai))
         self.menu_phai.add_command(label="Yêu cầu mở lại", command=self.yeu_cau_mo_lai_dang_chon)
         self.menu_phai.add_command(label="Yêu cầu gia hạn", command=self.yeu_cau_gia_han_dang_chon)
 
@@ -244,7 +245,7 @@ class MainWindow(tk.Toplevel):
             return []
         ql, da, nd = self.ql, self.du_an, self.ql.nguoi_dung_hien_tai
         kq = ql.tim_kiem_cong_viec(da, self.topbar.var_tim_kiem.get())
-        kq = [cv for cv in kq if cv.trang_thai != "Đã hủy" and cv.trang_thai_duyet == "da_duyet"]
+        kq = [cv for cv in kq if cv.trang_thai not in ("Đã hủy", "Chưa hoàn thành") and cv.trang_thai_duyet == "da_duyet"]
         che_do = self.var_loc_nhanh.get()
         if che_do == "cua_toi":
             kq = [c for c in kq if c.nguoi_phu_trach == (nd.ten_dang_nhap if nd else "")]
@@ -269,7 +270,7 @@ class MainWindow(tk.Toplevel):
         cv_hien_thi = self._cong_viec_sau_loc()
         for ten, cot in self.cac_cot.items():
             cot.hien_thi([cv for cv in cv_hien_thi if cv.trang_thai == ten])
-        tat_ca = [cv for cv in self.du_an.cong_viec if cv.trang_thai != "Đã hủy" and cv.trang_thai_duyet == "da_duyet"]
+        tat_ca = [cv for cv in self.du_an.cong_viec if cv.trang_thai not in ("Đã hủy", "Chưa hoàn thành") and cv.trang_thai_duyet == "da_duyet"]
         tong = len(tat_ca)
         xong = sum(1 for c in tat_ca if c.is_hoan_thanh())
         dang_lam = sum(1 for c in tat_ca if c.trang_thai in TRANG_THAI_DANG_XU_LY)

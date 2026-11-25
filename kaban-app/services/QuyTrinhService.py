@@ -135,7 +135,33 @@ class QuyTrinhService:
         cv.ngay_ket_thuc = yeu_cau["han_moi"]
         cv.lich_su_gia_han.append({**yeu_cau, "han_cu": old["NgayKetThuc"]})
         cv.yeu_cau_gia_han = None
+        if cv.trang_thai == "Chưa hoàn thành":
+            cv.trang_thai = cv.trang_thai_truoc or "Cần làm"
+            cv.ly_do_chua_hoan_thanh = cv.nguoi_danh_dau = cv.thoi_gian_danh_dau = cv.trang_thai_truoc = ""
         return self._luu(du_an, cv, old, "gia_han", cv.ngay_ket_thuc)
+
+    def danh_dau_chua_hoan_thanh(self, du_an, ma_cong_viec, ly_do):
+        """Đánh dấu việc quá hạn sang 'Chưa hoàn thành' (chỉ Admin hoặc Leader nhóm)."""
+        cv = self._viec(du_an, ma_cong_viec)
+        nd = self._nguoi()
+        if (nd.vai_tro != "quan_tri" and not
+                (nd.vai_tro == "truong_nhom" and cv.nguoi_phu_trach in du_an.nhom.get(nd.ten_dang_nhap, []))):
+            raise KhongCoQuyenError("Chỉ admin hoặc leader nhóm được đánh dấu Chưa hoàn thành")
+        if cv.trang_thai in ("Hoàn thành", "Đã hủy", "Chưa hoàn thành"):
+            raise DuLieuKhongHopLeError("Không thể đánh dấu Chưa hoàn thành cho công việc ở trạng thái hiện tại")
+        if not cv.da_qua_han():
+            raise DuLieuKhongHopLeError("Chỉ được đánh dấu Chưa hoàn thành cho công việc đã quá hạn")
+        if not (ly_do or "").strip():
+            raise DuLieuKhongHopLeError("Cần nhập lý do đánh dấu Chưa hoàn thành")
+        old = cv.to_dict()
+        cv.trang_thai_truoc = cv.trang_thai
+        cv.trang_thai = "Chưa hoàn thành"
+        cv.ly_do_chua_hoan_thanh = ly_do.strip()
+        cv.nguoi_danh_dau = nd.ten_dang_nhap
+        cv.thoi_gian_danh_dau = datetime.now().isoformat()
+        cv.yeu_cau_mo_lai = None
+        cv.yeu_cau_gia_han = None
+        return self._luu(du_an, cv, old, "chua_hoan_thanh", cv.ly_do_chua_hoan_thanh)
 
     def huy_cong_viec(self, du_an, ma_cong_viec, ly_do):
         cv = self._viec(du_an, ma_cong_viec)

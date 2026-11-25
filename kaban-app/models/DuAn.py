@@ -19,7 +19,9 @@ class DuAn:
                  danh_sach_cong_viec=None, ngay_tao=None, nhom=None, thanh_vien_da_roi=None):
         self.ma_du_an = ma_du_an
         self.ten_du_an = ten_du_an
-        self.danh_sach_cot = danh_sach_cot if danh_sach_cot is not None else [cot for cot in TRANG_THAI_HOP_LE if cot != "Đã hủy"]
+        self.danh_sach_cot = danh_sach_cot if danh_sach_cot is not None else [
+            cot for cot in TRANG_THAI_HOP_LE if cot not in ("Đã hủy", "Chưa hoàn thành")
+        ]
         self.thanh_vien_tham_gia = thanh_vien_tham_gia if thanh_vien_tham_gia is not None else []
         self.danh_sach_cong_viec = danh_sach_cong_viec if danh_sach_cong_viec is not None else []
         self.ngay_tao = ngay_tao if ngay_tao is not None else datetime.now().strftime("%Y-%m-%d")
@@ -134,7 +136,9 @@ class DuAn:
 
     @property
     def danh_sach_cot(self):
-        return getattr(self, "_danh_sach_cot", [cot for cot in TRANG_THAI_HOP_LE if cot != "Đã hủy"])
+        return getattr(self, "_danh_sach_cot", [
+            cot for cot in TRANG_THAI_HOP_LE if cot not in ("Đã hủy", "Chưa hoàn thành")
+        ])
 
     @danh_sach_cot.setter
     def danh_sach_cot(self, danh_sach_cot):

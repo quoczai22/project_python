@@ -158,6 +158,8 @@ class CongViecService:
             raise KhongCoQuyenError("Việc hoàn thành phải được duyệt mở lại")
         if trang_thai_moi == "Đã hủy":
             raise KhongCoQuyenError("Hãy dùng chức năng hủy công việc")
+        if cv.trang_thai == "Chưa hoàn thành" or trang_thai_moi == "Chưa hoàn thành":
+            raise KhongCoQuyenError("Không thể kéo thả trực tiếp vào hoặc ra trạng thái Chưa hoàn thành")
         if trang_thai_moi == "Hoàn thành":
             nd = self.xac_thuc_service.nguoi_dung_hien_tai
             duoc_duyet = (

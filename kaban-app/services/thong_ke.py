@@ -31,11 +31,20 @@ def thong_ke_du_an(du_an, hom_nay=None):
 
     tong = len(cong_viec_hien_thi)
     hoan_thanh = theo_trang_thai.get("Hoàn thành", 0)
+    hoan_thanh_tre_han = sum(
+        1 for cv in cong_viec_hien_thi
+        if cv.trang_thai == "Hoàn thành" and getattr(cv, "hoan_thanh_tre", False)
+    )
+    hoan_thanh_dung_han = hoan_thanh - hoan_thanh_tre_han
+    so_chua_hoan_thanh = theo_trang_thai.get("Chưa hoàn thành", 0)
     chua_hoan_thanh = tong - hoan_thanh
     return {
         "tong": tong,
         "hoan_thanh": hoan_thanh,
+        "hoan_thanh_dung_han": hoan_thanh_dung_han,
+        "hoan_thanh_tre_han": hoan_thanh_tre_han,
         "chua_hoan_thanh": chua_hoan_thanh,
+        "trang_thai_chua_hoan_thanh": so_chua_hoan_thanh,
         "qua_han": qua_han,
         "ngay_khong_hop_le": ngay_khong_hop_le,
         "ty_le_hoan_thanh": round(hoan_thanh / tong * 100, 1) if tong else 0.0,
