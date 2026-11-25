@@ -161,7 +161,22 @@ class QuyTrinhService:
         cv.thoi_gian_danh_dau = datetime.now().isoformat()
         cv.yeu_cau_mo_lai = None
         cv.yeu_cau_gia_han = None
-        return self._luu(du_an, cv, old, "chua_hoan_thanh", cv.ly_do_chua_hoan_thanh)
+        kq = self._luu(du_an, cv, old, "chua_hoan_thanh", cv.ly_do_chua_hoan_thanh)
+        self._ghi_luu_tru_khong_hoan_thanh(du_an, cv, "chua_hoan_thanh", nd.ten_dang_nhap, cv.thoi_gian_danh_dau, cv.ly_do_chua_hoan_thanh)
+        return kq
+
+    def _ghi_luu_tru_khong_hoan_thanh(self, du_an, cv, hanh_dong, nguoi_thuc_hien, thoi_gian, ly_do):
+        ban_ghi = {
+            **cv.to_dict(),
+            "ma_du_an": du_an.ma_du_an,
+            "hanh_dong": hanh_dong,
+            "nguoi_thuc_hien": nguoi_thuc_hien,
+            "thoi_gian": thoi_gian,
+            "ly_do": ly_do,
+        }
+        ghi_fn = getattr(self.bo_luu_tru, "ghi_viec_chua_hoan_thanh", None)
+        if callable(ghi_fn):
+            ghi_fn(ban_ghi)
 
     def huy_cong_viec(self, du_an, ma_cong_viec, ly_do):
         cv = self._viec(du_an, ma_cong_viec)
@@ -179,7 +194,9 @@ class QuyTrinhService:
         # Hủy việc thì các yêu cầu đang chờ duyệt cũng hết hiệu lực
         cv.yeu_cau_mo_lai = None
         cv.yeu_cau_gia_han = None
-        return self._luu(du_an, cv, old, "huy_cong_viec", ly_do)
+        kq = self._luu(du_an, cv, old, "huy_cong_viec", ly_do)
+        self._ghi_luu_tru_khong_hoan_thanh(du_an, cv, "huy", nd.ten_dang_nhap, cv.thoi_gian_huy, cv.ly_do_huy)
+        return kq
 
     def khoi_phuc_cong_viec(self, du_an, ma_cong_viec):
         cv = self._viec(du_an, ma_cong_viec)

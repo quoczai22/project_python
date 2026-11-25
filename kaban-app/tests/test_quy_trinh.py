@@ -14,6 +14,7 @@ class TestQuyTrinh(unittest.TestCase):
         self.ql = QuanLyKanban(os.path.join(self.tmp.name, "du_an.json"),
                                os.path.join(self.tmp.name, "users.json"))
         self.ql.bo_luu_tru.ten_file_nhat_ky = os.path.join(self.tmp.name, "nhat_ky.json")
+        self.ql.bo_luu_tru.ten_file_viec_chua_hoan_thanh = os.path.join(self.tmp.name, "viec_chua_hoan_thanh.jsonl")
         self.ql.dang_ky("lead", "123456", "Leader", "lead@test.vn")
         self.ql.dang_ky("worker", "123456", "Worker", "worker@test.vn")
         self.ql.dang_nhap("admin", "123456")
@@ -356,6 +357,26 @@ class TestQuyTrinh(unittest.TestCase):
         self.ql.duyet_sua_thong_tin("worker", chap_nhan=True)
         ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
         self.assertEqual((ds["worker"].ho_ten, ds["worker"].email), ("Worker Chinh Thuc", "worker_ok@test.vn"))
+
+    def test_file_viec_chua_hoan_thanh_jsonl_chi_noi_them(self):
+        import json
+        cv1 = self.tao(ma="CV-040", nguoi="worker")
+        cv2 = self.tao(ma="CV-041", nguoi="worker")
+        duong_dan = self.ql.bo_luu_tru.ten_file_viec_chua_hoan_thanh
+
+        self.ql.huy_cong_viec(self.da, cv1.ma_cong_viec, "Không cần làm nữa")
+        with open(duong_dan, encoding="utf-8") as f:
+            dong_truoc = f.readlines()
+        self.assertEqual(len(dong_truoc), 1)
+
+        self.ql.danh_dau_chua_hoan_thanh(self.da, cv2.ma_cong_viec, "Quá hạn lâu")
+        with open(duong_dan, encoding="utf-8") as f:
+            dong_sau = f.readlines()
+        self.assertEqual(len(dong_sau), 2)
+        self.assertEqual(dong_sau[0], dong_truoc[0])
+        m1, m2 = json.loads(dong_sau[0]), json.loads(dong_sau[1])
+        self.assertEqual((m1["hanh_dong"], m1["MaCongViec"], m1["ma_du_an"]), ("huy", "CV-040", "DA-999"))
+        self.assertEqual((m2["hanh_dong"], m2["MaCongViec"], m2["ma_du_an"]), ("chua_hoan_thanh", "CV-041", "DA-999"))
 
     def test_khong_gia_han_viec_da_huy(self):
         cv = self.tao()  # hạn chót hôm qua -> quá hạn

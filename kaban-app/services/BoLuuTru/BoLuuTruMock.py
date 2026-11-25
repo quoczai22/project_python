@@ -10,7 +10,7 @@ from models.ThanhVien import NguoiDung
 from models.NguoiDung.NguoiDungBase import bam_mat_khau, la_mat_khau_da_bam
 from config import (
     TEN_FILE_DU_AN, TEN_FILE_DU_LIEU_MOC, TEN_FILE_NHAT_KY,
-    TEN_THU_MUC_SAO_LUU, SO_BAN_SAO_LUU_TOI_DA
+    TEN_FILE_VIEC_CHUA_HOAN_THANH, TEN_THU_MUC_SAO_LUU, SO_BAN_SAO_LUU_TOI_DA
 )
 from exceptions import KanbanException, LoiLuuTruError
 from logger import logger
@@ -46,6 +46,7 @@ class BoLuuTruMock(BoLuuTruBase):
         self.ten_file_du_an = ten_file_du_an or TEN_FILE_DU_AN
         self.ten_file_du_lieu_moc = ten_file_du_lieu_moc or TEN_FILE_DU_LIEU_MOC
         self.ten_file_nhat_ky = TEN_FILE_NHAT_KY
+        self.ten_file_viec_chua_hoan_thanh = TEN_FILE_VIEC_CHUA_HOAN_THANH
 
     # ==================== ĐƯỜNG DẪN ====================
     def _lay_duong_dan(self, ten_file: str) -> str:
@@ -357,6 +358,25 @@ class BoLuuTruMock(BoLuuTruBase):
                 logger.error(f"Không đọc được nhật ký: {err.thong_diep}")
             return []
         return [muc for muc in du_lieu if isinstance(muc, dict)]
+
+    def ghi_viec_chua_hoan_thanh(self, ban_ghi: dict) -> bool:
+        """Nối thêm 1 dòng JSON vào file viec_chua_hoan_thanh.jsonl (không ghi đè). Lỗi chỉ log."""
+        if not isinstance(ban_ghi, dict):
+            logger.error("Bản ghi việc chưa hoàn thành/đã hủy phải là dict")
+            return False
+        try:
+            duong_dan = self._lay_duong_dan(self.ten_file_viec_chua_hoan_thanh)
+            thu_muc = os.path.dirname(duong_dan)
+            if thu_muc:
+                os.makedirs(thu_muc, exist_ok=True)
+            with open(duong_dan, "a", encoding="utf-8") as f:
+                f.write(json.dumps(ban_ghi, ensure_ascii=False) + "\n")
+                f.flush()
+                os.fsync(f.fileno())
+            return True
+        except (OSError, TypeError, ValueError) as err:
+            logger.error(f"Lỗi ghi file việc chưa hoàn thành/đã hủy: {err}")
+            return False
 
     # ==================== NGƯỜI DÙNG ====================
     def ghi_danh_sach_thanh_vien(self, danh_sach):
