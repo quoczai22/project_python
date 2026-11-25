@@ -1,6 +1,7 @@
 """TaskDialog: Hộp thoại thêm / sửa / xem chi tiết công việc và trao đổi bình luận."""
 import re
 import tkinter as tk
+import threading
 from datetime import date, datetime, timedelta
 from tkinter import ttk, messagebox
 import customtkinter as ctk
@@ -28,7 +29,7 @@ class TaskDialog(tk.Toplevel):
         self._da_thay_doi_bl = False
 
         if cong_viec is not None:
-            self.co_quyen_sua = self.ql.kiem_tra_quyen_cong_viec(cong_viec)
+            self.co_quyen_sua = self.ql.kiem_tra_quyen_cong_viec(cong_viec, du_an=du_an)
         else:
             self.co_quyen_sua = self.ql.kiem_tra_quyen_du_an(du_an)
 
@@ -41,7 +42,17 @@ class TaskDialog(tk.Toplevel):
 
         hom_nay = date.today()
         ds_tv = list(du_an.thanh_vien_tham_gia)
+        nd = self.ql.nguoi_dung_hien_tai
+        if nd.vai_tro == "thanh_vien" and not cong_viec:
+            ds_tv = [nd.ten_dang_nhap]
+        elif nd.vai_tro == "truong_nhom":
+            ds_tv = [u for u in ds_tv if u == nd.ten_dang_nhap or u in du_an.nhom.get(nd.ten_dang_nhap, [])]
+            if cong_viec and cong_viec.nguoi_phu_trach and cong_viec.nguoi_phu_trach not in ds_tv:
+                ds_tv.append(cong_viec.nguoi_phu_trach)
+        self.ds_nguoi_co_the_gan = ds_tv
         tt_dau = trang_thai_mac_dinh if trang_thai_mac_dinh in du_an.danh_sach_cot else du_an.danh_sach_cot[0]
+        if not cong_viec and nd.vai_tro != "quan_tri":
+            tt_dau = "Cần làm"
 
         self.var_nguoi = tk.StringVar(value=ds_tv[0] if ds_tv else "")
         self.var_nhan = tk.StringVar(value=NHAN_HOP_LE[0])
@@ -105,8 +116,8 @@ class TaskDialog(tk.Toplevel):
         self.btn_luu.pack(side="right")
         theme.tao_nut_phu(hang_nut, text="Đóng" if not self.co_quyen_sua else "Hủy", command=self._dong, width=96, height=38).pack(side="right", padx=(0, 8))
 
-        if self.cong_viec and self.ql.nguoi_dung_hien_tai.co_quyen_xoa_cong_viec():
-            theme.tao_nut_nguy_hiem(hang_nut, text="Xóa công việc", command=self._xoa_cong_viec, width=126, height=38).pack(side="left", padx=(0, 10))
+        if self.cong_viec and self.ql.nguoi_dung_hien_tai.vai_tro in ("quan_tri", "truong_nhom"):
+            theme.tao_nut_nguy_hiem(hang_nut, text="Hủy công việc", command=self._xoa_cong_viec, width=126, height=38).pack(side="left", padx=(0, 10))
 
         noi_dung_tb = "Chế độ chỉ xem: chỉ người phụ trách hoặc Quản trị viên mới sửa được." if (self.cong_viec and not self.co_quyen_sua) else ""
         self.lbl_thong_bao = tk.Label(hang_nut, text=noi_dung_tb, bg=theme.MAU_THE, fg=theme.MAU_CANH_BAO if noi_dung_tb else theme.MAU_LOI, font=theme.FONT_NHO, anchor="w", wraplength=380)
@@ -117,11 +128,13 @@ class TaskDialog(tk.Toplevel):
 
         if self.cong_viec:
             cv = self.cong_viec
-            mau_canh = theme.MAU_HOAN_THANH if cv.is_hoan_thanh() else (theme.MAU_LOI if cv.da_qua_han() else theme.MAU_CHINH_DAM)
+            tre = cv.is_hoan_thanh() and getattr(cv, "hoan_thanh_tre", False)
+            mau_canh = theme.MAU_CANH_BAO if tre else (theme.MAU_HOAN_THANH if cv.is_hoan_thanh() else (theme.MAU_LOI if cv.da_qua_han() else theme.MAU_CHINH_DAM))
             nen_banner = theme.MAU_NEN_LOI_NHAT if (not cv.is_hoan_thanh() and cv.da_qua_han()) else theme.MAU_CHINH_NHAT
+            canh_bao_txt = "Hoàn thành (Trễ hạn)" if tre else cv.canh_bao()
             banner = ctk.CTkFrame(khung, fg_color=nen_banner, corner_radius=0, border_width=0)
             banner.pack(fill="x", pady=(0, 8))
-            tk.Label(banner, text=f"{cv.lay_loai_cong_viec()}  •  Cột: {cv.trang_thai}  •  {cv.canh_bao()}", bg=nen_banner, fg=mau_canh, font=theme.FONT_NHO_DAM, anchor="w", padx=12, pady=5).pack(fill="x")
+            tk.Label(banner, text=f"{cv.lay_loai_cong_viec()}  •  Cột: {cv.trang_thai}  •  {canh_bao_txt}", bg=nen_banner, fg=mau_canh, font=theme.FONT_NHO_DAM, anchor="w", padx=12, pady=5).pack(fill="x")
 
         # Hàng 1: Mã & Tiêu đề
         hang1 = tk.Frame(khung, bg=theme.MAU_THE)
@@ -173,7 +186,8 @@ class TaskDialog(tk.Toplevel):
         f_tt = tk.Frame(hang3, bg=theme.MAU_THE)
         f_tt.grid(row=0, column=0, sticky="ew", padx=(0, 8))
         self._nhan(f_tt, "Trạng thái")
-        self.cbb_trang_thai = theme.tao_combobox(f_tt, values=self.du_an.danh_sach_cot, variable=self.var_trang_thai, height=34)
+        ds_trang_thai = ["Cần làm"] if not self.cong_viec and self.ql.nguoi_dung_hien_tai.vai_tro != "quan_tri" else self.du_an.danh_sach_cot
+        self.cbb_trang_thai = theme.tao_combobox(f_tt, values=ds_trang_thai, variable=self.var_trang_thai, height=34)
         self.cbb_trang_thai.pack(fill="x")
 
         f_ut = tk.Frame(hang3, bg=theme.MAU_THE)
@@ -192,7 +206,7 @@ class TaskDialog(tk.Toplevel):
         vung_nguoi = tk.Frame(khung, bg=theme.MAU_THE)
         vung_nguoi.pack(fill="x", pady=(0, 7))
         self._nhan(vung_nguoi, "Người phụ trách *")
-        ds_tv = list(self.du_an.thanh_vien_tham_gia)
+        ds_tv = self.ds_nguoi_co_the_gan
         self.cbb_nguoi = theme.tao_combobox(vung_nguoi, values=ds_tv, variable=self.var_nguoi, height=34)
         self.cbb_nguoi.pack(fill="x")
 
@@ -214,6 +228,8 @@ class TaskDialog(tk.Toplevel):
         dau_kt.pack(fill="x", pady=(0, 2))
         tk.Label(dau_kt, text="Ngày kết thúc *", bg=theme.MAU_THE, fg=theme.MAU_CHU_NHAN, font=theme.FONT_DAM, anchor="w").pack(side="left")
         if self.co_quyen_sua:
+            ctk.CTkButton(dau_kt, text="Ngày LV", command=self._chon_han_ngay_lam_viec,
+                          width=68, height=20, corner_radius=0).pack(side="right", padx=(3, 0))
             for so_ngay in (14, 7, 3):
                 ctk.CTkButton(dau_kt, text=f"+{so_ngay}d", command=lambda n=so_ngay: self._chon_nhanh_han(n), width=46, height=20, corner_radius=0, fg_color=theme.MAU_CHINH_NHAT, hover_color="#c6e6e0", border_width=0, text_color=theme.MAU_CHINH_DAM, bg_color=theme.MAU_THE, font=theme.FONT_NHO_DAM).pack(side="right", padx=(3, 0))
 
@@ -258,6 +274,32 @@ class TaskDialog(tk.Toplevel):
     def _chon_nhanh_han(self, so_ngay: int):
         self.ent_ket_thuc.set_date(date.today() + timedelta(days=so_ngay))
         self._cap_nhat_goi_y_han()
+
+    def _chon_han_ngay_lam_viec(self):
+        from tkinter import simpledialog
+        from services.api_mo_rong import lay_ngay_le_viet_nam, cong_ngay_lam_viec
+        so_ngay = simpledialog.askinteger("Hạn làm việc", "Số ngày làm việc (1-90):",
+                                          minvalue=1, maxvalue=90, parent=self)
+        if so_ngay is None:
+            return
+        try:
+            bat_dau = date.fromisoformat(self.ent_bat_dau.get())
+        except ValueError:
+            self._bao_loi("Ngày bắt đầu không hợp lệ", popup=True)
+            return
+
+        def worker():
+            ngay_le = set()
+            for nam in {bat_dau.year, (bat_dau + timedelta(days=150)).year}:
+                ds, loi = lay_ngay_le_viet_nam(nam)
+                if loi:
+                    self.after(0, lambda msg=loi: self._bao_loi(f"Không lấy được ngày lễ: {msg}", popup=True))
+                    return
+                ngay_le.update(ds)
+            han = cong_ngay_lam_viec(bat_dau, so_ngay, ngay_le)
+            self.after(0, lambda: (self.ent_ket_thuc.set_date(han), self._cap_nhat_goi_y_han()))
+
+        threading.Thread(target=worker, daemon=True).start()
 
     def _khi_tick_khan_cap(self):
         if self.var_khan_cap.get():
@@ -358,7 +400,9 @@ class TaskDialog(tk.Toplevel):
                 du_lieu["muc_uu_tien"] = self.var_uu_tien.get()
                 du_lieu["trang_thai"] = self.var_trang_thai.get()
                 du_lieu["ma_cong_viec"] = self._sinh_ma()
-                self.ql.tao_cong_viec(self.du_an, du_lieu, la_cong_viec_khan=self.var_khan_cap.get())
+                moi = self.ql.tao_cong_viec(self.du_an, du_lieu, la_cong_viec_khan=self.var_khan_cap.get())
+                if moi.trang_thai_duyet == "cho_duyet":
+                    messagebox.showinfo("Đã gửi duyệt", "Công việc đang chờ duyệt và chưa xuất hiện trên bảng.", parent=self)
         except (DuLieuKhongHopLeError, KhongCoQuyenError, XungDotDuLieuError, LoiLuuTruError, KanbanException) as loi:
             self._bao_loi(loi.thong_diep, popup=True)
             return
@@ -379,10 +423,12 @@ class TaskDialog(tk.Toplevel):
     def _xoa_cong_viec(self):
         if not self.cong_viec:
             return
-        if not messagebox.askyesno("Xác nhận xóa", f"Bạn chắc chắn muốn xóa công việc '{self.cong_viec.ma_cong_viec}'?", parent=self):
+        from tkinter import simpledialog
+        ly_do = simpledialog.askstring("Hủy công việc", "Lý do hủy công việc:", parent=self)
+        if ly_do is None:
             return
         try:
-            self.ql.xoa_cong_viec(self.du_an, self.cong_viec.ma_cong_viec)
+            self.ql.huy_cong_viec(self.du_an, self.cong_viec.ma_cong_viec, ly_do)
         except (KhongCoQuyenError, LoiLuuTruError, KanbanException) as loi:
             self._bao_loi(loi.thong_diep, popup=True)
             return

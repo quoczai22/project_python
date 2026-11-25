@@ -2,6 +2,7 @@ from services.BoLuuTru import BoLuuTruBase, BoLuuTruMock
 from services.XacThucService import XacThucService
 from services.DuAnService import DuAnService
 from services.CongViecService import CongViecService
+from services.QuyTrinhService import QuyTrinhService
 from models.DuAn import DuAn
 from models.CongViec import CongViec
 
@@ -30,8 +31,9 @@ class QuanLyKanban:
 
         # Khởi tạo các sub-services chuyên trách
         self.xac_thuc = XacThucService()
-        self.du_an_service = DuAnService(self.bo_luu_tru)
+        self.du_an_service = DuAnService(self.bo_luu_tru, self.xac_thuc)
         self.cong_viec_service = CongViecService(self.du_an_service, self.xac_thuc, self.bo_luu_tru)
+        self.quy_trinh = QuyTrinhService(self.du_an_service, self.xac_thuc, self.bo_luu_tru)
 
     # ==================== PROPERTIES TƯƠNG THÍCH ====================
     @property
@@ -86,8 +88,8 @@ class QuanLyKanban:
     def kiem_tra_quyen_du_an(self, du_an: DuAn, bat_loi: bool = False) -> bool:
         return self.xac_thuc.kiem_tra_quyen_du_an(du_an, bat_loi)
 
-    def kiem_tra_quyen_cong_viec(self, cong_viec: CongViec, bat_loi: bool = False) -> bool:
-        return self.xac_thuc.kiem_tra_quyen_cong_viec(cong_viec, bat_loi)
+    def kiem_tra_quyen_cong_viec(self, cong_viec: CongViec, bat_loi: bool = False, du_an=None) -> bool:
+        return self.xac_thuc.kiem_tra_quyen_cong_viec(cong_viec, bat_loi, du_an=du_an)
 
     # ==================== QUẢN LÝ DỰ ÁN ====================
     def lay_danh_sach_du_an(self):
@@ -113,6 +115,112 @@ class QuanLyKanban:
         self.kiem_tra_quyen_du_an(du_an, bat_loi=True)
         return self.du_an_service.xoa_thanh_vien_du_an(du_an, ten_dang_nhap)
 
+    def cap_quyen_truong_nhom(self, du_an: DuAn, ten_dang_nhap: str):
+        from exceptions import KhongCoQuyenError, KhongTimThayError
+        from models.NguoiDung.TruongNhom import TruongNhom
+        if self.nguoi_dung_hien_tai is None or self.nguoi_dung_hien_tai.vai_tro != "quan_tri":
+            raise KhongCoQuyenError("Chỉ admin được cấp quyền trưởng nhóm")
+        ds = self.lay_danh_sach_nguoi_dung()
+        nd = next((x for x in ds if x.ten_dang_nhap == ten_dang_nhap), None)
+        if nd is None or ten_dang_nhap not in du_an.thanh_vien_tham_gia:
+            raise KhongTimThayError("Tài khoản phải tham gia dự án trước khi làm trưởng nhóm")
+        if nd.vai_tro != "truong_nhom":
+            ds[ds.index(nd)] = TruongNhom(nd.ten_dang_nhap, nd._mat_khau, nd.ho_ten, nd.email, da_bam=True)
+            self.bo_luu_tru.ghi_danh_sach_thanh_vien(ds)
+        du_an.nhom.setdefault(ten_dang_nhap, [])
+        self.du_an_service.luu_du_lieu()
+        self.bo_luu_tru.ghi_nhat_ky({"hanh_dong": "cap_leader", "ma_du_an": du_an.ma_du_an,
+                                     "ten_dang_nhap": self.nguoi_dung_hien_tai.ten_dang_nhap,
+                                     "thanh_vien": ten_dang_nhap})
+
+    def tao_tai_khoan_truong_nhom(self, du_an, ten_dang_nhap, mat_khau, ho_ten="", email=""):
+        from exceptions import KhongCoQuyenError
+        if self.nguoi_dung_hien_tai is None or self.nguoi_dung_hien_tai.vai_tro != "quan_tri":
+            raise KhongCoQuyenError("Chỉ admin được tạo tài khoản Leader")
+        self.dang_ky(ten_dang_nhap, mat_khau, ho_ten, email)
+        self.them_thanh_vien_du_an(du_an, ten_dang_nhap)
+        self.cap_quyen_truong_nhom(du_an, ten_dang_nhap)
+
+    def thu_hoi_quyen_truong_nhom(self, ten_dang_nhap):
+        from exceptions import KhongCoQuyenError, DuLieuKhongHopLeError, KhongTimThayError
+        from models.NguoiDung.ThanhVien import ThanhVien
+        if self.nguoi_dung_hien_tai is None or self.nguoi_dung_hien_tai.vai_tro != "quan_tri":
+            raise KhongCoQuyenError("Chỉ admin được thu hồi quyền Leader")
+        if any(da.nhom.get(ten_dang_nhap) for da in self.danh_sach_du_an):
+            raise DuLieuKhongHopLeError("Chuyển thành viên trong các nhóm trước khi thu hồi quyền")
+        ds = self.lay_danh_sach_nguoi_dung()
+        nd = next((x for x in ds if x.ten_dang_nhap == ten_dang_nhap), None)
+        if nd is None or nd.vai_tro != "truong_nhom":
+            raise KhongTimThayError("Không tìm thấy tài khoản Leader")
+        moi = ThanhVien(nd.ten_dang_nhap, nd._mat_khau, nd.ho_ten, nd.email, da_bam=True)
+        moi.bi_khoa = nd.bi_khoa
+        ds[ds.index(nd)] = moi
+        self.bo_luu_tru.ghi_danh_sach_thanh_vien(ds)
+        for da in self.danh_sach_du_an:
+            da.nhom.pop(ten_dang_nhap, None)
+        self.du_an_service.luu_du_lieu()
+        self.bo_luu_tru.ghi_nhat_ky({"hanh_dong": "thu_hoi_leader", "ten_dang_nhap": self.nguoi_dung_hien_tai.ten_dang_nhap,
+                                     "thanh_vien": ten_dang_nhap})
+
+    def dat_khoa_tai_khoan(self, ten_dang_nhap, bi_khoa=True):
+        from exceptions import KhongCoQuyenError, KhongTimThayError
+        if self.nguoi_dung_hien_tai is None or self.nguoi_dung_hien_tai.vai_tro != "quan_tri":
+            raise KhongCoQuyenError("Chỉ admin được khóa tài khoản")
+        if ten_dang_nhap == self.nguoi_dung_hien_tai.ten_dang_nhap:
+            raise KhongCoQuyenError("Không được tự khóa tài khoản admin đang dùng")
+        ds = self.lay_danh_sach_nguoi_dung()
+        nd = next((x for x in ds if x.ten_dang_nhap == ten_dang_nhap), None)
+        if nd is None:
+            raise KhongTimThayError("Không tìm thấy tài khoản")
+        nd.bi_khoa = bool(bi_khoa)
+        self.bo_luu_tru.ghi_danh_sach_thanh_vien(ds)
+        self.bo_luu_tru.ghi_nhat_ky({"hanh_dong": "khoa_tai_khoan" if bi_khoa else "mo_khoa_tai_khoan",
+                                     "ten_dang_nhap": self.nguoi_dung_hien_tai.ten_dang_nhap,
+                                     "thanh_vien": ten_dang_nhap})
+
+    def gan_thanh_vien_nhom(self, du_an: DuAn, leader: str, thanh_vien: str):
+        from exceptions import KhongCoQuyenError, DuLieuKhongHopLeError
+        if self.nguoi_dung_hien_tai is None or self.nguoi_dung_hien_tai.vai_tro != "quan_tri":
+            raise KhongCoQuyenError("Chỉ admin được phân nhóm")
+        if leader not in du_an.nhom or thanh_vien not in du_an.thanh_vien_tham_gia:
+            raise DuLieuKhongHopLeError("Leader hoặc thành viên chưa thuộc dự án")
+        if thanh_vien in du_an.nhom or any(thanh_vien in ds for ds in du_an.nhom.values()):
+            raise DuLieuKhongHopLeError("Mỗi thành viên chỉ thuộc một nhóm")
+        du_an.nhom[leader].append(thanh_vien)
+        try:
+            self.du_an_service.luu_du_lieu()
+        except Exception:
+            du_an.nhom[leader].remove(thanh_vien)
+            raise
+        self.bo_luu_tru.ghi_nhat_ky({"hanh_dong": "gan_nhom", "ma_du_an": du_an.ma_du_an,
+                                     "ten_dang_nhap": self.nguoi_dung_hien_tai.ten_dang_nhap,
+                                     "leader": leader, "thanh_vien": thanh_vien})
+
+    def chuyen_thanh_vien_nhom(self, du_an: DuAn, thanh_vien: str, leader_moi: str = None):
+        """Chuyển thành viên sang nhóm của leader mới, hoặc gỡ khỏi nhóm nếu leader_moi rỗng."""
+        from exceptions import KhongCoQuyenError, DuLieuKhongHopLeError
+        if self.nguoi_dung_hien_tai is None or self.nguoi_dung_hien_tai.vai_tro != "quan_tri":
+            raise KhongCoQuyenError("Chỉ admin được chuyển nhóm thành viên")
+        if thanh_vien not in du_an.thanh_vien_tham_gia or thanh_vien in du_an.nhom:
+            raise DuLieuKhongHopLeError("Chỉ chuyển nhóm được cho thành viên thường thuộc dự án")
+        leader_dich = (leader_moi or "").strip()
+        if leader_dich and leader_dich not in du_an.nhom:
+            raise DuLieuKhongHopLeError(f"Leader '{leader_dich}' chưa quản lý nhóm nào trong dự án")
+        nhom_cu = {k: list(v) for k, v in du_an.nhom.items()}
+        for ds in du_an.nhom.values():
+            if thanh_vien in ds:
+                ds.remove(thanh_vien)
+        if leader_dich:
+            du_an.nhom[leader_dich].append(thanh_vien)
+        try:
+            self.du_an_service.luu_du_lieu()
+        except Exception:
+            du_an.nhom = nhom_cu
+            raise
+        self.bo_luu_tru.ghi_nhat_ky({"hanh_dong": "chuyen_nhom", "ma_du_an": du_an.ma_du_an,
+                                     "ten_dang_nhap": self.nguoi_dung_hien_tai.ten_dang_nhap,
+                                     "thanh_vien": thanh_vien, "leader_moi": leader_dich})
+
     # ==================== QUẢN LÝ CÔNG VIỆC ====================
     def tao_cong_viec(self, du_an: DuAn, du_lieu: dict, la_cong_viec_khan: bool = False):
         return self.cong_viec_service.tao_cong_viec(du_an, du_lieu, la_cong_viec_khan)
@@ -121,7 +229,31 @@ class QuanLyKanban:
         return self.cong_viec_service.cap_nhat_cong_viec(du_an, ma_cong_viec, du_lieu_moi)
 
     def xoa_cong_viec(self, du_an: DuAn, ma_cong_viec: str):
-        return self.cong_viec_service.xoa_cong_viec(du_an, ma_cong_viec)
+        return self.quy_trinh.huy_cong_viec(du_an, ma_cong_viec, "Hủy từ giao diện")
+
+    def huy_cong_viec(self, du_an, ma_cong_viec, ly_do):
+        return self.quy_trinh.huy_cong_viec(du_an, ma_cong_viec, ly_do)
+
+    def khoi_phuc_cong_viec(self, du_an, ma_cong_viec):
+        return self.quy_trinh.khoi_phuc_cong_viec(du_an, ma_cong_viec)
+
+    def duyet_cong_viec(self, du_an, ma_cong_viec, chap_nhan=True):
+        return self.quy_trinh.duyet_cong_viec(du_an, ma_cong_viec, chap_nhan)
+
+    def gui_lai_cong_viec(self, du_an, ma_cong_viec):
+        return self.quy_trinh.gui_lai_cong_viec(du_an, ma_cong_viec)
+
+    def yeu_cau_mo_lai(self, du_an, ma_cong_viec, ly_do):
+        return self.quy_trinh.yeu_cau_mo_lai(du_an, ma_cong_viec, ly_do)
+
+    def duyet_mo_lai(self, du_an, ma_cong_viec, chap_nhan=True):
+        return self.quy_trinh.duyet_mo_lai(du_an, ma_cong_viec, chap_nhan)
+
+    def yeu_cau_gia_han(self, du_an, ma_cong_viec, han_moi, ly_do):
+        return self.quy_trinh.yeu_cau_gia_han(du_an, ma_cong_viec, han_moi, ly_do)
+
+    def duyet_gia_han(self, du_an, ma_cong_viec, chap_nhan=True):
+        return self.quy_trinh.duyet_gia_han(du_an, ma_cong_viec, chap_nhan)
 
     def chuyen_trang_thai(self, du_an: DuAn, ma_cong_viec: str, trang_thai_moi: str):
         return self.cong_viec_service.chuyen_trang_thai(du_an, ma_cong_viec, trang_thai_moi)

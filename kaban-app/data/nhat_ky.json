@@ -224,5 +224,90 @@
     "ma_cong_viec": "CV-004",
     "trang_thai_cu": "Kiểm tra",
     "trang_thai_moi": "Đang làm"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_1",
+    "thoi_gian": "2026-11-25T10:27:23.159788"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_2",
+    "thoi_gian": "2026-11-25T10:27:23.184153"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_3",
+    "thoi_gian": "2026-11-25T10:27:23.208572"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_4",
+    "thoi_gian": "2026-11-25T10:27:23.230808"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_5",
+    "thoi_gian": "2026-11-25T10:27:23.255226"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_6",
+    "thoi_gian": "2026-11-25T10:27:23.277174"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_7",
+    "thoi_gian": "2026-11-25T10:27:23.299137"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_8",
+    "thoi_gian": "2026-11-25T10:27:23.322801"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_9",
+    "thoi_gian": "2026-11-25T10:27:23.344343"
+  },
+  {
+    "hanh_dong": "them_thanh_vien",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "demo_10",
+    "thoi_gian": "2026-11-25T10:27:23.366037"
+  },
+  {
+    "hanh_dong": "huy_cong_viec",
+    "ma_du_an": "DA-001",
+    "ma_cong_viec": "CV-003",
+    "ten_dang_nhap": "admin",
+    "chi_tiet": "không cần nữa ",
+    "thoi_gian": "2026-11-25T10:27:57.689232"
+  },
+  {
+    "hanh_dong": "cap_leader",
+    "ma_du_an": "DA-001",
+    "ten_dang_nhap": "admin",
+    "thanh_vien": "huy",
+    "thoi_gian": "2026-11-25T10:35:57.588681"
   }
 ]

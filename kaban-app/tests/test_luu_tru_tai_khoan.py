@@ -190,6 +190,13 @@ class TestSaoLuuVaKhoiPhuc(CoSoTest):
 
 
 class TestNhatKy(CoSoTest):
+    def test_chuyen_nhat_ky_cu_sang_audit_append_only(self):
+        self.bo.ghi_json(self.f_nk, [{"ten_dang_nhap": "cu"}])
+        self.assertTrue(self.bo.ghi_nhat_ky({"ten_dang_nhap": "moi"}))
+        self.assertEqual([m["ten_dang_nhap"] for m in self.bo.doc_nhat_ky()], ["cu", "moi"])
+        with open(self.f_nk + "l", encoding="utf-8") as f:
+            self.assertEqual(len(f.readlines()), 2)
+
     def test_ghi_nhieu_ban_ghi_va_doc_lai(self):
         for i, (cu, moi) in enumerate([("Cần làm", "Đang làm"), ("Đang làm", "Hoàn thành")]):
             self.assertTrue(self.bo.ghi_nhat_ky({
@@ -208,9 +215,9 @@ class TestNhatKy(CoSoTest):
         self.bo.ghi_nhat_ky({"ten_dang_nhap": "b", "ma_cong_viec": "CV-2"})
         self.viet(self.f_nk, "[{hong")
         self.bo.ghi_nhat_ky({"ten_dang_nhap": "c", "ma_cong_viec": "CV-3"})
-        # File hỏng được khôi phục từ bản sao lưu gần nhất (trước bản ghi 'b'), rồi ghi tiếp 'c'.
+        # Nhật ký append-only giữ cả bản ghi 'b' dù file JSON gốc bị hỏng.
         ten = [m["ten_dang_nhap"] for m in self.bo.doc_nhat_ky()]
-        self.assertEqual(ten, ["a", "c"])
+        self.assertEqual(ten, ["a", "b", "c"])
 
     def test_nhat_ky_hong_khong_co_backup_van_giu_ban_hong(self):
         self.viet(self.f_nk, "[{hong")
@@ -229,9 +236,9 @@ class TestNhatKy(CoSoTest):
         def loi_io(ten_file):
             raise LoiLuuTruError("Lỗi khi đọc file giả lập")
         self.bo.doc_json = loi_io
-        self.assertFalse(self.bo.ghi_nhat_ky({"ten_dang_nhap": "b"}))
+        self.assertTrue(self.bo.ghi_nhat_ky({"ten_dang_nhap": "b"}))
         self.bo.doc_json = goc
-        self.assertEqual(len(self.bo.doc_nhat_ky()), 1)
+        self.assertEqual(len(self.bo.doc_nhat_ky()), 2)
 
 
 class TestTaiKhoan(CoSoTest):

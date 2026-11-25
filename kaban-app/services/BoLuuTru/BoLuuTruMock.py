@@ -303,7 +303,7 @@ class BoLuuTruMock(BoLuuTruBase):
         ban_ghi.setdefault("thoi_gian", datetime.now().isoformat())
 
         try:
-            danh_sach = self.doc_json(self.ten_file_nhat_ky)
+            danh_sach = self.doc_nhat_ky()
         except LoiLuuTruError as err:
             if err.chi_tiet.get("nguyen_nhan") not in ("file_thieu", "file_hong"):
                 logger.error(f"Không đọc được nhật ký, bỏ qua bản ghi mới: {err.thong_diep}")
@@ -313,13 +313,43 @@ class BoLuuTruMock(BoLuuTruBase):
 
         try:
             self.ghi_json(self.ten_file_nhat_ky, danh_sach)
+            # Bản audit chỉ nối thêm; không bị vòng quay 10 bản backup xóa mất.
+            duong_dan_audit = self._lay_duong_dan(self.ten_file_nhat_ky) + "l"
+            os.makedirs(os.path.dirname(duong_dan_audit), exist_ok=True)
+            moi_tao = not os.path.exists(duong_dan_audit)
+            with open(duong_dan_audit, "ab") as audit:
+                if not moi_tao and os.path.getsize(duong_dan_audit):
+                    with open(duong_dan_audit, "rb") as doc_cu:
+                        doc_cu.seek(-1, os.SEEK_END)
+                        if doc_cu.read(1) != b"\n":
+                            audit.write(b"\n")
+                for muc in (danh_sach if moi_tao else [ban_ghi]):
+                    audit.write((json.dumps(muc, ensure_ascii=False) + "\n").encode("utf-8"))
+                audit.flush()
+                os.fsync(audit.fileno())
             return True
-        except LoiLuuTruError as err:
-            logger.error(f"Lỗi ghi nhật ký hệ thống: {err.thong_diep}")
+        except (LoiLuuTruError, OSError) as err:
+            logger.error(f"Lỗi ghi nhật ký hệ thống: {err}")
             return False
 
     def doc_nhat_ky(self):
         """Đọc nhật ký theo thứ tự thời gian (cũ -> mới). Lỗi hoặc chưa có file -> danh sách rỗng."""
+        audit = self._lay_duong_dan(self.ten_file_nhat_ky) + "l"
+        if os.path.exists(audit):
+            try:
+                with open(audit, encoding="utf-8") as f:
+                    ket_qua = []
+                    for dong in f:
+                        try:
+                            muc = json.loads(dong)
+                        except ValueError:
+                            logger.error("Bỏ qua dòng audit JSONL hỏng")
+                            continue
+                        if isinstance(muc, dict):
+                            ket_qua.append(muc)
+                    return ket_qua
+            except OSError as err:
+                logger.error(f"Không đọc được audit append-only: {err}")
         try:
             du_lieu = self.doc_json(self.ten_file_nhat_ky)
         except LoiLuuTruError as err:

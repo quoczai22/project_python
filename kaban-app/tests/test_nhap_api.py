@@ -81,7 +81,9 @@ class TestNhapApi(CoSo):
         self.assertEqual((kq["them"], kq["trung"], kq["loi"], kq["thong_bao"]), (3, 0, 0, None))
         self.assertEqual(len(self.du_an.cong_viec), 3)
         trang_thai = {cv.tieu_de: cv.trang_thai for cv in self.du_an.cong_viec}
-        self.assertEqual(trang_thai["Do something nice"], "Hoàn thành")
+        mo_ta = {cv.tieu_de: cv.mo_ta for cv in self.du_an.cong_viec}
+        self.assertEqual(trang_thai["Do something nice"], "Cần làm")
+        self.assertIn("đã hoàn thành", mo_ta["Do something nice"])
         self.assertEqual(trang_thai["Learn Python"], "Cần làm")
         with open(self.f_api, encoding="utf-8") as f:
             da_luu = json.load(f)

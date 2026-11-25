@@ -42,6 +42,9 @@ class XacThucService:
                 khoa_tim_kiem=ten_dang_nhap
             )
 
+        if getattr(thanh_vien, "bi_khoa", False):
+            raise XacThucThatBaiError("Tài khoản đã bị khóa")
+
         if not thanh_vien.kiem_tra_mat_khau(mat_khau):
             raise XacThucThatBaiError("Mật khẩu không chính xác")
 
@@ -124,7 +127,7 @@ class XacThucService:
             )
         return co_quyen
 
-    def kiem_tra_quyen_cong_viec(self, cong_viec, bat_loi: bool = False) -> bool:
+    def kiem_tra_quyen_cong_viec(self, cong_viec, bat_loi: bool = False, du_an=None) -> bool:
         """ĐA HÌNH: Kiểm tra quyền thao tác trên công việc của người dùng hiện tại."""
         if self._nguoi_dung_hien_tai is None:
             if bat_loi:
@@ -132,6 +135,10 @@ class XacThucService:
             return False
 
         co_quyen = self._nguoi_dung_hien_tai.kiem_tra_quyen_cong_viec(cong_viec)
+        if (not co_quyen and du_an is not None
+                and self._nguoi_dung_hien_tai.vai_tro == "truong_nhom"
+                and getattr(cong_viec, "nguoi_phu_trach", None) in du_an.nhom.get(self._nguoi_dung_hien_tai.ten_dang_nhap, [])):
+            co_quyen = True
         if not co_quyen and bat_loi:
             raise KhongCoQuyenError(
                 f"Người dùng '{self._nguoi_dung_hien_tai.ten_dang_nhap}' không có quyền thao tác trên công việc '{getattr(cong_viec, 'ma_cong_viec', '')}'",

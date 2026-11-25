@@ -5,6 +5,7 @@ import customtkinter as ctk
 
 from ui.styles import theme
 from ui.components.column_widget import ColumnWidget
+from ui.components.workflow_tabs import TabChoDuyetComponent, TabDaHuyComponent
 
 
 class BoardView(tk.Frame):
@@ -117,6 +118,10 @@ class BoardView(tk.Frame):
         self.khung_danh_sach.columnconfigure(0, weight=1)
         self.khung_danh_sach.rowconfigure(0, weight=1)
 
+        # View 3 & 4: Tab Chờ duyệt và Tab Đã hủy
+        self.tab_cho_duyet = TabChoDuyetComponent(self.container_view)
+        self.tab_da_huy = TabDaHuyComponent(self.container_view)
+
         # 3. Ngăn kéo Nhật ký hoạt động nằm ở BÊN PHẢI (Right-side Panel)
         self.drawer_hoat_dong = ctk.CTkFrame(
             self.khu_vuc_chinh, width=320, fg_color="white", corner_radius=0,
@@ -190,17 +195,27 @@ class BoardView(tk.Frame):
         self._dong_bo_kich_thuoc_kanban(event.width, event.height)
 
     def chuyen_che_do(self, che_do):
-        """Chuyển đổi hiển thị giữa 'Bảng Kanban' và 'Danh sách'."""
+        """Chuyển đổi hiển thị giữa 'Bảng Kanban', 'Danh sách', 'Chờ duyệt' và 'Đã hủy'."""
         self.che_do_xem = che_do
+        for w in (self.canvas_kanban, self.khung_danh_sach, self.tab_cho_duyet, self.tab_da_huy):
+            w.pack_forget()
+        if self.thanh_cuon_ngang.winfo_ismapped():
+            self.thanh_cuon_ngang.pack_forget()
+
         if che_do == "Bảng Kanban":
-            self.khung_danh_sach.pack_forget()
             self.canvas_kanban.pack(fill="both", expand=True)
             self._cap_nhat_vung_cuon_ngang()
-        else:
-            self.canvas_kanban.pack_forget()
-            if self.thanh_cuon_ngang.winfo_ismapped():
-                self.thanh_cuon_ngang.pack_forget()
+        elif che_do == "Danh sách":
             self.khung_danh_sach.pack(fill="both", expand=True)
+        elif che_do == "Chờ duyệt":
+            self.tab_cho_duyet.pack(fill="both", expand=True)
+        elif che_do == "Đã hủy":
+            self.tab_da_huy.pack(fill="both", expand=True)
+
+    def cap_nhat_tab_quy_trinh(self, ql, du_an, ten_nguoi_map, khi_xong):
+        """Đồng bộ dữ liệu cho 2 tab Chờ duyệt và Đã hủy."""
+        self.tab_cho_duyet.cap_nhat(ql, du_an, ten_nguoi_map, khi_xong)
+        self.tab_da_huy.cap_nhat(ql, du_an, ten_nguoi_map, khi_xong)
 
     def bat_tat_hoat_dong(self):
         """Bật hoặc tắt ngăn kéo hoạt động ở bên phải màn hình."""

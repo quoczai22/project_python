@@ -33,6 +33,14 @@ class CongViec(ABC):
         self.muc_uu_tien = muc_uu_tien
         self.nhan = nhan
         self.danh_sach_binh_luan = danh_sach_binh_luan if danh_sach_binh_luan is not None else []
+        self.trang_thai_duyet = "da_duyet"
+        self.nguoi_tao = ""
+        self.lich_su_gia_han = []
+        self.ly_do_huy = self.nguoi_huy = self.thoi_gian_huy = ""
+        self.trang_thai_truoc_huy = ""
+        self.yeu_cau_mo_lai = None
+        self.yeu_cau_gia_han = None
+        self.hoan_thanh_tre = False
 
     # ==================== ĐÓNG GÓI & VALIDATION (PROPERTIES) ====================
     @property
@@ -259,7 +267,17 @@ class CongViec(ABC):
             "TrangThai": self.trang_thai,
             "MucUuTien": self.muc_uu_tien,
             "Nhan": self.nhan,
-            "DanhSachBinhLuan": [bl.to_dict() for bl in self.danh_sach_binh_luan]
+            "DanhSachBinhLuan": [bl.to_dict() for bl in self.danh_sach_binh_luan],
+            "TrangThaiDuyet": self.trang_thai_duyet,
+            "NguoiTao": self.nguoi_tao,
+            "LichSuGiaHan": list(self.lich_su_gia_han),
+            "LyDoHuy": self.ly_do_huy,
+            "NguoiHuy": self.nguoi_huy,
+            "ThoiGianHuy": self.thoi_gian_huy,
+            "TrangThaiTruocHuy": self.trang_thai_truoc_huy,
+            "YeuCauMoLai": self.yeu_cau_mo_lai,
+            "YeuCauGiaHan": self.yeu_cau_gia_han,
+            "HoanThanhTre": self.hoan_thanh_tre
         }
 
     @classmethod
@@ -281,7 +299,7 @@ class CongViec(ABC):
 
         if loai == "CongViecKhan" or muc_uu_tien == "Khẩn":
             from .CongViecKhan import CongViecKhan
-            return CongViecKhan(
+            cv = CongViecKhan(
                 ma_cong_viec=data.get("MaCongViec"),
                 tieu_de=data.get("TieuDe"),
                 mo_ta=data.get("MoTa", ""),
@@ -293,8 +311,9 @@ class CongViec(ABC):
                 danh_sach_binh_luan=danh_sach_bl
             )
 
-        from .CongViecThuong import CongViecThuong
-        return CongViecThuong(
+        else:
+            from .CongViecThuong import CongViecThuong
+            cv = CongViecThuong(
             ma_cong_viec=data.get("MaCongViec"),
             tieu_de=data.get("TieuDe"),
             mo_ta=data.get("MoTa", ""),
@@ -305,7 +324,21 @@ class CongViec(ABC):
             muc_uu_tien=data.get("MucUuTien", "Trung bình"),
             nhan=data.get("Nhan"),
             danh_sach_binh_luan=danh_sach_bl
-        )
+            )
+        for attr, key, default in (
+            ("trang_thai_duyet", "TrangThaiDuyet", "da_duyet"),
+            ("nguoi_tao", "NguoiTao", ""),
+            ("lich_su_gia_han", "LichSuGiaHan", []),
+            ("ly_do_huy", "LyDoHuy", ""),
+            ("nguoi_huy", "NguoiHuy", ""),
+            ("thoi_gian_huy", "ThoiGianHuy", ""),
+            ("trang_thai_truoc_huy", "TrangThaiTruocHuy", ""),
+            ("yeu_cau_mo_lai", "YeuCauMoLai", None),
+            ("yeu_cau_gia_han", "YeuCauGiaHan", None),
+            ("hoan_thanh_tre", "HoanThanhTre", False),
+        ):
+            setattr(cv, attr, data.get(key, default))
+        return cv
 
     def chuyen_trang_thai(self, trang_thai_moi):
         trang_thai_cu = self.trang_thai

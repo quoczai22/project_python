@@ -1,5 +1,6 @@
 """StatsView: Cửa sổ thống kê tiến độ, KPI tổng quan, biểu đồ và cảnh báo đa hình OOP."""
 import math
+import threading
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import customtkinter as ctk
@@ -42,6 +43,12 @@ class StatsView(tk.Toplevel):
             badge_text="TK",
             cao=74
         )
+        hang_quote = tk.Frame(self, bg=theme.MAU_NEN)
+        hang_quote.pack(fill="x", padx=14, pady=(4, 0))
+        self.lbl_quote = tk.Label(hang_quote, text="", bg=theme.MAU_NEN,
+                                  fg=theme.MAU_CHU_PHU, font=theme.FONT_NHO, anchor="w")
+        self.lbl_quote.pack(side="left", fill="x", expand=True)
+        tk.Button(hang_quote, text="Câu động viên", command=self._tai_quote).pack(side="right")
 
         # 1. KPI tổng quan
         hang_kpi = tk.Frame(self, bg=theme.MAU_NEN)
@@ -262,6 +269,19 @@ class StatsView(tk.Toplevel):
         self.du_an = du_an
         self.cap_nhat()
 
+    def _tai_quote(self):
+        from services.api_mo_rong import lay_cau_dong_vien
+        self.lbl_quote.configure(text="Đang tải...")
+
+        def worker():
+            cau, loi = lay_cau_dong_vien()
+            def hien_thi():
+                if self.winfo_exists():
+                    self.lbl_quote.configure(text=f"{cau['noi_dung']} — {cau['tac_gia']}" if cau else f"Không tải được: {loi}")
+            self.after(0, hien_thi)
+
+        threading.Thread(target=worker, daemon=True).start()
+
     def cap_nhat(self):
         da = self.du_an
         thong_ke = thong_ke_du_an(da)
@@ -270,7 +290,7 @@ class StatsView(tk.Toplevel):
         tong = thong_ke["tong"]
         xong = thong_ke["hoan_thanh"]
         dang_lam = self.so_lieu.get("Đang làm", 0) + self.so_lieu.get("Kiểm tra", 0)
-        canh_bao = sum(1 for cv in da.cong_viec if cv.can_chu_y())
+        canh_bao = sum(1 for cv in da.cong_viec if cv.trang_thai != "Đã hủy" and cv.trang_thai_duyet == "da_duyet" and cv.can_chu_y())
 
         ty_le = (xong / tong * 100) if tong > 0 else 0.0
 
@@ -355,6 +375,8 @@ class StatsView(tk.Toplevel):
         chi_chua_xong = self.var_chua_xong.get()
 
         for cv in self.du_an.cong_viec:
+            if cv.trang_thai == "Đã hủy" or cv.trang_thai_duyet != "da_duyet":
+                continue
             if chi_chua_xong and cv.is_hoan_thanh():
                 continue
 

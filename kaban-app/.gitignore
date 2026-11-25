@@ -67,6 +67,7 @@ backup/
 data/backup/
 *.loi-*
 *.tmp
+data/*.jsonl
 
 # Log files
 *.log

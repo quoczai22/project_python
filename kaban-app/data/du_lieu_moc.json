@@ -5,77 +5,168 @@
       "mat_khau": "8c846523df576a90391a87180dbb392b$79dd793c4986b30a43d2abf12cd8b68b5cb1fdb425c3f0cf330cd209f290c63c",
       "ho_ten": "Quản trị viên Hệ thống",
       "email": "admin@kanban.vn",
-      "vai_tro": "quan_tri"
+      "vai_tro": "quan_tri",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "quoc",
       "mat_khau": "e9fa971f4669f225d5608475241aba21$ac48cd7920e929f126dabdeb14cf815006ecb41d357f9e2347f0ec4d575cd667",
       "ho_ten": "Trịnh Quốc",
       "email": "quoc@kanban.vn",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "khoa",
       "mat_khau": "79f8576be277d104c8d784463d5990f8$e25c47aedb1350d0539e569ea775a874afe507c3f737f428097b039c8f6cc59e",
       "ho_ten": "Đăng Khoa",
       "email": "khoa@kanban.vn",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "huy",
       "mat_khau": "2522d29a30529896936899e89ecdf925$63e2bf654341a910005c2e73755933907aed8d63b7acee9d93cc32f12653ecae",
       "ho_ten": "Gia Huy",
       "email": "huy@kanban.vn",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "truong_nhom",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "phu",
       "mat_khau": "58b5668d17d510d9e8009025c2b7c01c$1d7891a5e3947c33d4a5b05ae8315dbf25959d1bdd35c522d768d7b181dce2e8",
       "ho_ten": "Hồng Phú",
       "email": "phu@kanban.vn",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "demo_an",
       "mat_khau": "5fde6cebf1db479cd837353c2c137393$3151385388f456c3d5095f2461f9d1e2bd88f7263ab60f58060325b446c874c3",
       "ho_ten": "An — phụ trách thư viện",
       "email": "demo_an@example.test",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "demo_binh",
       "mat_khau": "68828cca1490a4dd7772863b32233424$56f68dc435dda240fe5378ce893c2a268625c81d09f853c7f106efe8a004701d",
       "ho_ten": "Bình — kiểm thử nghiệp vụ",
       "email": "demo_binh@example.test",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "demo_chi",
       "mat_khau": "216dabd3595f5515746a92edb1148da4$1c397dffb7380735517798359d88477df2ce942b7d4a7499ed16b5c05c7df552",
       "ho_ten": "Chi — điều phối sự kiện",
       "email": "demo_chi@example.test",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "demo_dung",
       "mat_khau": "ff6117c2684d4a3847f461e108c110be$a90d20c1f4c5bc996bf254dcb0160282ea2b099b2e3f32dea298e723df2175d2",
       "ho_ten": "Dũng — phụ trách thiết bị",
       "email": "demo_dung@example.test",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "demo_linh",
       "mat_khau": "3d9c60df9e6f5f96eb85baad112c0fa5$a1e6bb8729ceb782e1cbb6b9f09a7ca9ce9161872568233f905fccd7799b91b4",
       "ho_ten": "Linh — thiết kế giao diện",
       "email": "demo_linh@example.test",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
     },
     {
       "ten_dang_nhap": "demo_mai",
       "mat_khau": "f7befc69395d4f45b9638cc79fd53d9a$379f214f40d225b6245debcdd71929c5fce8386dcd8848bcd747edd6d4760e88",
       "ho_ten": "Mai — phụ trách nội dung",
       "email": "demo_mai@example.test",
-      "vai_tro": "thanh_vien"
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_1",
+      "mat_khau": "6022452c40886bfb86cedf373c2c0215$e87810b005e90069149e7a87bb433a68657d8a4e501e45807634a6d5861680b2",
+      "ho_ten": "Leanne Graham",
+      "email": "Sincere@april.biz",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_2",
+      "mat_khau": "d573016a0a0db13b1e1f64332eeb40a4$90d97541b41a523961ef3d4c77b216253e1ba6e06b76e77b7dbc44f05fba866b",
+      "ho_ten": "Ervin Howell",
+      "email": "Shanna@melissa.tv",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_3",
+      "mat_khau": "f4f6da1953182c371b9199a8e4fc6cd5$bc8b3634c36cb566ae275bf164504bbee6991f95e12a1d7e3c24fd24eb2af8d3",
+      "ho_ten": "Clementine Bauch",
+      "email": "Nathan@yesenia.net",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_4",
+      "mat_khau": "b1065d16bfd050a1a682c15eb9356995$50d1b4c7d2533183989f50983405393b227cbd0900eff56939c8ad74aa7ad3bb",
+      "ho_ten": "Patricia Lebsack",
+      "email": "Julianne.OConner@kory.org",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_5",
+      "mat_khau": "78ba25b66ccdf3551945c7d392137187$c5c20036c2ff30e7608330c016313ca7371b0ee16fc9ad9db468f1f58183d2bd",
+      "ho_ten": "Chelsey Dietrich",
+      "email": "Lucio_Hettinger@annie.ca",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_6",
+      "mat_khau": "7e0230d8c89b7f5086f9607756d8c16c$9c8b03895761d171b3b21d609ec3159707a2c55393a7e0c929c1277aea9e1d43",
+      "ho_ten": "Mrs. Dennis Schulist",
+      "email": "Karley_Dach@jasper.info",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_7",
+      "mat_khau": "dafc33e7f4f965a749227dc6f56dad49$b44cb43c4da420a17acff34d5c42e32fc807c19dd0ff34e747d289bac0f127b8",
+      "ho_ten": "Kurtis Weissnat",
+      "email": "Telly.Hoeger@billy.biz",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_8",
+      "mat_khau": "e7802c727c72c67100bd513c1175d725$2f358ec85cf80088407a3973dc1bcd08abafc006d589afdbde231712460e4f15",
+      "ho_ten": "Nicholas Runolfsdottir V",
+      "email": "Sherwood@rosamond.me",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_9",
+      "mat_khau": "cb35c4e7f0c9b0031d4529c4276e766e$3c370bd696cafc1afe1f1dc9672505db16f31a76c795195baae7de5e4c9c51d6",
+      "ho_ten": "Glenna Reichert",
+      "email": "Chaim_McDermott@dana.io",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
+    },
+    {
+      "ten_dang_nhap": "demo_10",
+      "mat_khau": "cdda7c6c444585eb540676b79246cb1d$617125b5698f44531ee664e390d4d54e4f17f532ceda77c0c04de19d174d036d",
+      "ho_ten": "Clementina DuBuque",
+      "email": "Rey.Padberg@karina.biz",
+      "vai_tro": "thanh_vien",
+      "bi_khoa": false
     }
   ]
 }

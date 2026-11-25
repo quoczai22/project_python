@@ -208,8 +208,12 @@ class TaskCard(ctk.CTkFrame):
             self.btn_chuyen_tiep.pack_forget()
 
         if cv.is_hoan_thanh():
-            nen_han, chu_han, vien_han = "#dcfce7", "#166534", "#bbf7d0"
-            noi_dung_han = f"Hoàn thành ({cv.ngay_ket_thuc})"
+            if getattr(cv, "hoan_thanh_tre", False):
+                nen_han, chu_han, vien_han = "#fef3c7", "#b45309", "#fde68a"
+                noi_dung_han = f"Hoàn thành trễ hạn ({cv.ngay_ket_thuc})"
+            else:
+                nen_han, chu_han, vien_han = "#dcfce7", "#166534", "#bbf7d0"
+                noi_dung_han = f"Hoàn thành ({cv.ngay_ket_thuc})"
         else:
             if cv.da_qua_han():
                 nen_han, chu_han, vien_han = "#fee2e2", "#b91c1c", "#fecaca"

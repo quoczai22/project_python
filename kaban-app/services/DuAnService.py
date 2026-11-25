@@ -1,5 +1,5 @@
 from models.DuAn import DuAn
-from exceptions import XungDotDuLieuError, KhongTimThayError, LoiLuuTruError, KhongCoQuyenError
+from exceptions import XungDotDuLieuError, KhongTimThayError, LoiLuuTruError, KhongCoQuyenError, DuLieuKhongHopLeError
 from logger import logger
 
 
@@ -9,8 +9,9 @@ class DuAnService:
     Tích hợp cơ chế Rollback đảm bảo tính toàn vẹn dữ liệu.
     """
 
-    def __init__(self, bo_luu_tru):
+    def __init__(self, bo_luu_tru, xac_thuc_service=None):
         self.bo_luu_tru = bo_luu_tru
+        self.xac_thuc_service = xac_thuc_service
         self.danh_sach_du_an = self._nap_du_lieu()
 
     def _nap_du_lieu(self):
@@ -102,6 +103,10 @@ class DuAnService:
 
     def them_thanh_vien_du_an(self, du_an: DuAn, ten_dang_nhap: str):
         """Thêm thành viên vào dự án và đồng bộ lưu trữ file (kèm Rollback)."""
+        nd = getattr(self.xac_thuc_service, "nguoi_dung_hien_tai", None)
+        la_leader = nd is not None and nd.vai_tro == "truong_nhom" and nd.ten_dang_nhap in du_an.nhom
+        if nd is None or (nd.vai_tro != "quan_tri" and not la_leader):
+            raise KhongCoQuyenError("Chỉ admin hoặc leader dự án được thêm thành viên")
         danh_sach_tv = self.bo_luu_tru.doc_danh_sach_thanh_vien()
         if not any(tv.ten_dang_nhap == ten_dang_nhap for tv in danh_sach_tv):
             raise KhongTimThayError(
@@ -109,27 +114,68 @@ class DuAnService:
                 loai_tai_nguyen="ThanhVien",
                 khoa_tim_kiem=ten_dang_nhap
             )
+        if la_leader and any(tv.ten_dang_nhap == ten_dang_nhap and tv.vai_tro == "truong_nhom"
+                             for tv in danh_sach_tv):
+            raise KhongCoQuyenError("Leader không được thêm Leader khác")
 
         du_an.them_thanh_vien(ten_dang_nhap)
+        da_tung_roi = ten_dang_nhap in du_an.thanh_vien_da_roi
+        if da_tung_roi:
+            du_an.thanh_vien_da_roi.remove(ten_dang_nhap)
+        if la_leader:
+            du_an.nhom[nd.ten_dang_nhap].append(ten_dang_nhap)
 
         try:
             self.luu_du_lieu()
+            self.bo_luu_tru.ghi_nhat_ky({"hanh_dong": "them_thanh_vien", "ma_du_an": du_an.ma_du_an,
+                                        "ten_dang_nhap": nd.ten_dang_nhap, "thanh_vien": ten_dang_nhap})
             logger.info(f"Đã thêm thành viên '{ten_dang_nhap}' vào dự án '{du_an.ma_du_an}'")
             return True
         except Exception as err:
             du_an.xoa_thanh_vien(ten_dang_nhap)  # ROLLBACK
+            if da_tung_roi:
+                du_an.thanh_vien_da_roi.append(ten_dang_nhap)
+            if la_leader:
+                du_an.nhom[nd.ten_dang_nhap].remove(ten_dang_nhap)
             logger.error(f"Rollback: Đã gỡ bỏ thành viên '{ten_dang_nhap}' do lỗi lưu trữ: {err}")
             raise LoiLuuTruError(f"Thêm thành viên vào dự án thất bại: {err}", loi_goc=err)
 
     def xoa_thanh_vien_du_an(self, du_an: DuAn, ten_dang_nhap: str):
         """Xóa thành viên khỏi dự án và đồng bộ lưu trữ file (kèm Rollback)."""
+        nguoi_dung = getattr(self.xac_thuc_service, "nguoi_dung_hien_tai", None)
+        la_admin = nguoi_dung is not None and nguoi_dung.vai_tro == "quan_tri"
+        la_leader_nhom = (nguoi_dung is not None and nguoi_dung.vai_tro == "truong_nhom" and
+                          ten_dang_nhap in du_an.nhom.get(nguoi_dung.ten_dang_nhap, []))
+        if not (la_admin or la_leader_nhom):
+            raise KhongCoQuyenError("Không có quyền gỡ thành viên này", hanh_dong="XOA_THANH_VIEN")
+        if ten_dang_nhap in du_an.nhom and du_an.nhom[ten_dang_nhap]:
+            raise DuLieuKhongHopLeError("Phải chuyển thành viên trong nhóm trước khi gỡ leader")
+        viec_chua_xong = [cv.ma_cong_viec for cv in du_an.cong_viec
+                         if cv.nguoi_phu_trach == ten_dang_nhap and cv.trang_thai in ("Cần làm", "Đang làm", "Kiểm tra")]
+        if viec_chua_xong:
+            raise DuLieuKhongHopLeError(
+                f"Cần bàn giao công việc chưa hoàn thành trước khi gỡ thành viên: {', '.join(viec_chua_xong)}",
+                truong_loi="ten_dang_nhap", gia_tri=ten_dang_nhap)
         du_an.xoa_thanh_vien(ten_dang_nhap)
+        da_co_trong_da_roi = ten_dang_nhap in du_an.thanh_vien_da_roi
+        if not da_co_trong_da_roi:
+            du_an.thanh_vien_da_roi.append(ten_dang_nhap)
+        nhom_cu = {leader: list(ds) for leader, ds in du_an.nhom.items()}
+        for ds in du_an.nhom.values():
+            if ten_dang_nhap in ds:
+                ds.remove(ten_dang_nhap)
+        du_an.nhom.pop(ten_dang_nhap, None)
 
         try:
             self.luu_du_lieu()
+            self.bo_luu_tru.ghi_nhat_ky({"hanh_dong": "go_thanh_vien", "ma_du_an": du_an.ma_du_an,
+                                        "ten_dang_nhap": nguoi_dung.ten_dang_nhap, "thanh_vien": ten_dang_nhap})
             logger.info(f"Đã xóa thành viên '{ten_dang_nhap}' khỏi dự án '{du_an.ma_du_an}'")
             return True
         except Exception as err:
             du_an.them_thanh_vien(ten_dang_nhap)  # ROLLBACK
+            du_an.nhom = nhom_cu
+            if not da_co_trong_da_roi and ten_dang_nhap in du_an.thanh_vien_da_roi:
+                du_an.thanh_vien_da_roi.remove(ten_dang_nhap)
             logger.error(f"Rollback: Đã khôi phục thành viên '{ten_dang_nhap}' do lỗi lưu trữ: {err}")
             raise LoiLuuTruError(f"Xóa thành viên khỏi dự án thất bại: {err}", loi_goc=err)

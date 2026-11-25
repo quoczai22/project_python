@@ -19,7 +19,7 @@ Dữ liệu ngày không hợp lệ được ghi nhận riêng, tránh làm hỏ
 
 ## 3. API/Crawl và lưu JSON
 
-Ứng dụng sử dụng DummyJSON Todos (`https://dummyjson.com/docs/todos`) làm nguồn dữ liệu mẫu. Luồng xử lý: gọi API → kiểm tra và làm sạch dữ liệu → lưu JSON qua tầng lưu trữ → chuyển đổi thành công việc Kanban. Dữ liệu được giới hạn số lượng, loại bỏ bản ghi lỗi/trùng, chuẩn hóa tiêu đề. Các lỗi URL, HTTP, timeout, mất mạng và JSON không hợp lệ được xử lý để không làm dừng ứng dụng.
+Ứng dụng sử dụng DummyJSON Todos (`https://dummyjson.com/docs/todos`) làm nguồn dữ liệu mẫu. Luồng xử lý: chọn vị trí trang và số lượng → gọi API → làm sạch và lưu JSON → xem trước/chọn todo → chọn người phụ trách và mức ưu tiên → tạo thẻ ở cột “Cần làm”. Người dùng tiếp tục xử lý thẻ qua các cột Kanban hiện có. Trạng thái hoàn thành gốc được giữ trong mô tả để tham khảo, không bỏ qua quy trình xử lý. Todo đã nhập được nhận diện theo mã nguồn để tránh tạo trùng; hạn mặc định là 7 ngày. Các lỗi URL, HTTP, timeout, mất mạng và JSON không hợp lệ được xử lý để không làm dừng ứng dụng.
 
 File dữ liệu API mặc định: `data/api_todos.json`. Khi nhập lại cùng dữ liệu, ứng dụng đánh dấu nguồn API trong mô tả để hạn chế tạo công việc trùng.
 

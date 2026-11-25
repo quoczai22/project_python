@@ -3,16 +3,14 @@
 Luồng xử lý: gọi API -> kiểm tra/làm sạch -> lưu JSON (data/api_todos.json) -> tạo công việc.
 Nguồn dữ liệu: https://dummyjson.com/docs/todos (miễn phí, không cần khóa API).
 """
-import random
 import re
 from datetime import date, datetime, timedelta
 
-from config import NHAN_HOP_LE, SO_VIEC_API_TOI_DA, TEN_FILE_API, TIMEOUT_API, URL_API_TODOS
+from config import SO_VIEC_API_TOI_DA, TEN_FILE_API, TIMEOUT_API, URL_API_TODOS
 from exceptions import KanbanException
 from logger import logger
 from services.quote_api import lay_du_lieu_api
 
-MUC_UU_TIEN_NGAU_NHIEN = ("Thấp", "Trung bình", "Cao")  # "Khẩn" là loại công việc riêng nên không random
 DO_DAI_TIEU_DE_TOI_DA = 80
 
 
@@ -49,7 +47,11 @@ def lam_sach_todos(du_lieu, so_luong_toi_da=SO_VIEC_API_TOI_DA):
 def lay_todos_tu_api(so_luong, bo_luu_tru, skip=None):
     """Gọi API, làm sạch và lưu vào JSON. Trả về (danh_sach_sach, thong_bao_loi)."""
     if skip is None:
-        skip = random.randint(0, 100)       # lấy ngẫu nhiên một đoạn trong kho dữ liệu của API
+        skip = 0                            # đồng bộ theo thứ tự ổn định để dễ xem trước/đối chiếu
+    if not isinstance(so_luong, int) or isinstance(so_luong, bool) or not 1 <= so_luong <= SO_VIEC_API_TOI_DA:
+        return [], f"Số lượng todo phải từ 1 đến {SO_VIEC_API_TOI_DA}."
+    if not isinstance(skip, int) or isinstance(skip, bool) or skip < 0:
+        return [], "Vị trí bắt đầu phải là số nguyên không âm."
     url = f"{URL_API_TODOS}?limit={so_luong}&skip={skip}"
 
     du_lieu, loi = lay_du_lieu_api(url, TIMEOUT_API)
@@ -80,34 +82,37 @@ def _sinh_ma(du_an):
     return f"CV-{(max(so) + 1 if so else 1):03d}"
 
 
-def nhap_cong_viec_tu_api(ql, du_an, so_luong):
-    """Nhập công việc từ API vào dự án qua QuanLyKanban (có kiểm tra quyền, validation, rollback).
-
-    Trả về dict: them / trung / loi (số lượng) và thong_bao (None nếu thành công).
-    """
+def nhap_todos_da_chon(ql, du_an, danh_sach, ids_duoc_chon=None,
+                       nguoi_phu_trach=None, muc_uu_tien="Trung bình"):
+    """Tạo công việc từ danh sách todo đã xem trước, không gọi API lần nữa."""
     ket_qua = {"them": 0, "trung": 0, "loi": 0, "thong_bao": None}
-    danh_sach, loi = lay_todos_tu_api(so_luong, ql.bo_luu_tru)
-    if loi:
-        ket_qua["thong_bao"] = loi
+    ids = None if ids_duoc_chon is None else {int(ma) for ma in ids_duoc_chon}
+    danh_sach = [todo for todo in danh_sach if ids is None or todo["id"] in ids]
+    if not danh_sach:
+        ket_qua["thong_bao"] = "Bạn chưa chọn công việc nào để nhập."
         return ket_qua
 
-    nguoi = ql.nguoi_dung_hien_tai.ten_dang_nhap
+    nguoi = nguoi_phu_trach or ql.nguoi_dung_hien_tai.ten_dang_nhap
     hom_nay = date.today()
+    cot_dau_tien = "Cần làm" if "Cần làm" in du_an.danh_sach_cot else (
+        du_an.danh_sach_cot[0] if du_an.danh_sach_cot else "Cần làm"
+    )
     for todo in danh_sach:
-        the_nguon = f"[API#{todo['id']}]"          # đánh dấu để lần sau không nhập trùng
+        the_nguon = f"[API#{todo['id']}]"
         if any(the_nguon in (cv.mo_ta or "") for cv in du_an.cong_viec):
             ket_qua["trung"] += 1
             continue
         du_lieu = {
             "ma_cong_viec": _sinh_ma(du_an),
             "tieu_de": todo["tieu_de"],
-            "mo_ta": f"Nhập từ DummyJSON API {the_nguon}",
+            "mo_ta": (f"Nhập từ DummyJSON API {the_nguon}. "
+                      f"Trạng thái nguồn: {'đã hoàn thành' if todo['hoan_thanh'] else 'chưa hoàn thành'}"),
             "nguoi_phu_trach": nguoi,
             "ngay_bat_dau": hom_nay.isoformat(),
-            "ngay_ket_thuc": (hom_nay + timedelta(days=random.randint(3, 14))).isoformat(),
-            "trang_thai": "Hoàn thành" if todo["hoan_thanh"] else "Cần làm",
-            "muc_uu_tien": random.choice(MUC_UU_TIEN_NGAU_NHIEN),
-            "nhan": random.choice(NHAN_HOP_LE),
+            "ngay_ket_thuc": (hom_nay + timedelta(days=7)).isoformat(),
+            "trang_thai": cot_dau_tien,
+            "muc_uu_tien": muc_uu_tien,
+            "nhan": None,
         }
         try:
             ql.tao_cong_viec(du_an, du_lieu)
@@ -116,3 +121,14 @@ def nhap_cong_viec_tu_api(ql, du_an, so_luong):
             ket_qua["loi"] += 1
             logger.warning(f"Bỏ qua việc API #{todo['id']}: {err.thong_diep}")
     return ket_qua
+
+
+def nhap_cong_viec_tu_api(ql, du_an, so_luong, ids_duoc_chon=None, skip=0):
+    """Lấy, làm sạch và nhập các todo được chọn vào dự án Kanban.
+
+    Trả về dict: them / trung / loi (số lượng) và thong_bao (None nếu thành công).
+    """
+    danh_sach, loi = lay_todos_tu_api(so_luong, ql.bo_luu_tru, skip=skip)
+    if loi:
+        return {"them": 0, "trung": 0, "loi": 0, "thong_bao": loi}
+    return nhap_todos_da_chon(ql, du_an, danh_sach, ids_duoc_chon)

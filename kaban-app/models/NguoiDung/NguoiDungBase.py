@@ -58,6 +58,7 @@ class NguoiDung(ABC):
         self.ho_ten = ho_ten
         self.email = email
         self._vai_tro = vai_tro
+        self.bi_khoa = False
 
     # ==================== ĐÓNG GÓI THUỘC TÍNH ====================
     @property
@@ -128,7 +129,8 @@ class NguoiDung(ABC):
             "mat_khau": self._mat_khau,  # luôn là chuỗi đã băm salt$sha256
             "ho_ten": self.ho_ten,
             "email": self.email,
-            "vai_tro": self.vai_tro
+            "vai_tro": self.vai_tro,
+            "bi_khoa": self.bi_khoa
         }
 
     @classmethod
@@ -144,21 +146,31 @@ class NguoiDung(ABC):
         vai_tro = data.get("vai_tro", "thanh_vien")
         if vai_tro == "quan_tri":
             from .QuanTriVien import QuanTriVien
-            return QuanTriVien(
+            nd = QuanTriVien(
                 ten_dang_nhap=data.get("ten_dang_nhap"),
                 mat_khau=mat_khau,
                 ho_ten=data.get("ho_ten", ""),
                 email=data.get("email", ""),
                 da_bam=da_bam
             )
+            nd.bi_khoa = bool(data.get("bi_khoa", False))
+            return nd
+        if vai_tro == "truong_nhom":
+            from .TruongNhom import TruongNhom
+            nd = TruongNhom(data.get("ten_dang_nhap"), mat_khau,
+                            data.get("ho_ten", ""), data.get("email", ""), da_bam=da_bam)
+            nd.bi_khoa = bool(data.get("bi_khoa", False))
+            return nd
         from .ThanhVien import ThanhVien
-        return ThanhVien(
+        nd = ThanhVien(
             ten_dang_nhap=data.get("ten_dang_nhap"),
             mat_khau=mat_khau,
             ho_ten=data.get("ho_ten", ""),
             email=data.get("email", ""),
             da_bam=da_bam
         )
+        nd.bi_khoa = bool(data.get("bi_khoa", False))
+        return nd
 
     def __str__(self):
         return f"{self.__class__.__name__}(ten_dang_nhap='{self.ten_dang_nhap}', vai_tro='{self.vai_tro}')"

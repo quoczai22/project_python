@@ -38,6 +38,14 @@ class CongViecService:
         trang_thai = du_lieu.get("trang_thai", du_lieu.get("TrangThai", "Cần làm"))
         muc_uu_tien = du_lieu.get("muc_uu_tien", du_lieu.get("MucUuTien", "Trung bình"))
         nhan = du_lieu.get("nhan", du_lieu.get("Nhan", "Backend"))
+        nguoi_tao = self.xac_thuc_service.nguoi_dung_hien_tai
+        if nguoi_tao.vai_tro == "thanh_vien" and nguoi_phu_trach != nguoi_tao.ten_dang_nhap:
+            raise KhongCoQuyenError("Thành viên chỉ được tạo việc cho chính mình")
+        if (nguoi_tao.vai_tro == "truong_nhom" and nguoi_phu_trach != nguoi_tao.ten_dang_nhap
+                and nguoi_phu_trach not in du_an.nhom.get(nguoi_tao.ten_dang_nhap, [])):
+            raise KhongCoQuyenError("Leader chỉ được tạo việc cho nhóm mình")
+        if nguoi_tao.vai_tro != "quan_tri" and trang_thai != "Cần làm":
+            raise DuLieuKhongHopLeError("Việc mới chờ duyệt phải bắt đầu ở cột Cần làm")
 
         if la_cong_viec_khan or muc_uu_tien == "Khẩn":
             cv = CongViecKhan(
@@ -64,6 +72,8 @@ class CongViecService:
             )
 
         du_an.them_cong_viec(cv)
+        cv.nguoi_tao = nguoi_tao.ten_dang_nhap if nguoi_tao else ""
+        cv.trang_thai_duyet = "da_duyet" if nguoi_tao and nguoi_tao.vai_tro == "quan_tri" else "cho_duyet"
 
         try:
             self.du_an_service.luu_du_lieu()
@@ -87,7 +97,18 @@ class CongViecService:
                 khoa_tim_kiem=ma_cong_viec
             )
 
-        self.xac_thuc_service.kiem_tra_quyen_cong_viec(cv, bat_loi=True)
+        self.xac_thuc_service.kiem_tra_quyen_cong_viec(cv, bat_loi=True, du_an=du_an)
+        nd = self.xac_thuc_service.nguoi_dung_hien_tai
+        moi = du_lieu_moi.get("nguoi_phu_trach", du_lieu_moi.get("NguoiPhuTrach", cv.nguoi_phu_trach))
+        if nd.vai_tro == "thanh_vien" and moi != nd.ten_dang_nhap:
+            raise KhongCoQuyenError("Thành viên không được giao việc cho người khác")
+        if nd.vai_tro == "truong_nhom" and moi != nd.ten_dang_nhap and moi not in du_an.nhom.get(nd.ten_dang_nhap, []):
+            raise KhongCoQuyenError("Leader chỉ được giao việc cho nhóm mình")
+        han_moi = du_lieu_moi.get("ngay_ket_thuc", du_lieu_moi.get("NgayKetThuc", cv.ngay_ket_thuc))
+        if cv.da_qua_han() and han_moi != cv.ngay_ket_thuc:
+            raise KhongCoQuyenError("Việc quá hạn phải xin gia hạn")
+        if cv.trang_thai == "Đã hủy":
+            raise KhongCoQuyenError("Không được sửa việc đã hủy")
 
         snapshot_cu = cv.to_dict()
         cv.cap_nhat_cong_viec(du_lieu_moi)
@@ -102,27 +123,10 @@ class CongViecService:
             raise LoiLuuTruError(f"Cập nhật công việc thất bại: {err}", loi_goc=err)
 
     def xoa_cong_viec(self, du_an: DuAn, ma_cong_viec: str):
-        """Xóa công việc khỏi dự án, kiểm tra quyền quản trị và ROLLBACK nếu lưu file lỗi."""
-        if not self.xac_thuc_service.co_quyen_xoa():
-            raise KhongCoQuyenError(
-                "Chỉ quản trị viên mới có quyền xóa công việc",
-                nguoi_dung=getattr(self.xac_thuc_service.nguoi_dung_hien_tai, "ten_dang_nhap", ""),
-                hanh_dong="XOA_CONG_VIEC"
-            )
-
-        if du_an is None:
-            raise DuLieuKhongHopLeError("Đối tượng dự án không được là None")
-
-        cv_bi_xoa = du_an.xoa_cong_viec(ma_cong_viec)
-
-        try:
-            self.du_an_service.luu_du_lieu()
-            logger.info(f"Đã xóa công việc '{ma_cong_viec}' khỏi dự án '{du_an.ma_du_an}'")
-            return cv_bi_xoa
-        except Exception as err:
-            du_an.them_cong_viec(cv_bi_xoa)  # ROLLBACK
-            logger.error(f"Rollback: Đã khôi phục công việc '{ma_cong_viec}' do lỗi lưu trữ: {err}")
-            raise LoiLuuTruError(f"Xóa công việc thất bại: {err}", loi_goc=err)
+        """Tương thích lời gọi cũ; giữ dữ liệu bằng xóa mềm."""
+        from services.QuyTrinhService import QuyTrinhService
+        return QuyTrinhService(self.du_an_service, self.xac_thuc_service,
+                              self.bo_luu_tru).huy_cong_viec(du_an, ma_cong_viec, "Hủy công việc")
 
     def chuyen_trang_thai(self, du_an: DuAn, ma_cong_viec: str, trang_thai_moi: str):
         """Chuyển cột Kanban, ghi nhật ký và ROLLBACK nếu lưu thất bại."""
@@ -133,9 +137,19 @@ class CongViecService:
         if cv is None:
             raise KhongTimThayError(f"Không tìm thấy công việc '{ma_cong_viec}'", loai_tai_nguyen="CongViec", khoa_tim_kiem=ma_cong_viec)
 
-        self.xac_thuc_service.kiem_tra_quyen_cong_viec(cv, bat_loi=True)
+        self.xac_thuc_service.kiem_tra_quyen_cong_viec(cv, bat_loi=True, du_an=du_an)
+        if cv.trang_thai_duyet != "da_duyet" or cv.trang_thai == "Đã hủy":
+            raise KhongCoQuyenError("Công việc chưa được duyệt hoặc đã hủy")
+        if cv.trang_thai == "Hoàn thành" and trang_thai_moi != "Hoàn thành":
+            raise KhongCoQuyenError("Việc hoàn thành phải được duyệt mở lại")
+        if trang_thai_moi == "Đã hủy":
+            raise KhongCoQuyenError("Hãy dùng chức năng hủy công việc")
 
+        tre_han_cu = cv.hoan_thanh_tre
+        tre_han = trang_thai_moi == "Hoàn thành" and cv.da_qua_han()
         trang_thai_cu, trang_thai_cap_nhat = cv.chuyen_trang_thai(trang_thai_moi)
+        if tre_han:
+            cv.hoan_thanh_tre = True
 
         ten_dang_nhap = getattr(self.xac_thuc_service.nguoi_dung_hien_tai, "ten_dang_nhap", "unknown")
         du_lieu_log = {
@@ -144,15 +158,16 @@ class CongViecService:
             "ma_cong_viec": ma_cong_viec,
             "trang_thai_cu": trang_thai_cu,
             "trang_thai_moi": trang_thai_cap_nhat,
+            "hoan_thanh_tre": tre_han,
         }
-        self.bo_luu_tru.ghi_nhat_ky(du_lieu_log)
-
         try:
             self.du_an_service.luu_du_lieu()
+            self.bo_luu_tru.ghi_nhat_ky(du_lieu_log)
             logger.info(f"Đã chuyển công việc '{ma_cong_viec}' từ '{trang_thai_cu}' sang '{trang_thai_cap_nhat}'")
             return trang_thai_cu, trang_thai_cap_nhat
         except Exception as err:
             cv.trang_thai = trang_thai_cu  # ROLLBACK
+            cv.hoan_thanh_tre = tre_han_cu
             logger.error(f"Rollback: Đã phục hồi trạng thái cũ cho '{ma_cong_viec}' do lỗi lưu trữ: {err}")
             raise LoiLuuTruError(f"Chuyển trạng thái thất bại: {err}", loi_goc=err)
 

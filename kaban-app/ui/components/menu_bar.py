@@ -35,6 +35,7 @@ class AppMenuBar(tk.Menu):
             ("Công việc", [
                 ("Thêm công việc mới...", self.cb.get("them_cong_viec")),
                 ("Lấy mẫu từ API...", self.cb.get("nhap_tu_api")),
+                ("Duyệt và khôi phục...", self.cb.get("quy_trinh")),
                 None,
                 ("Xem thống kê", self.cb.get("mo_thong_ke"))
             ])

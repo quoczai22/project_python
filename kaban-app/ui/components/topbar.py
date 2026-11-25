@@ -175,7 +175,7 @@ class TopbarComponent(tk.Frame):
 
         self.seg_che_do = ctk.CTkSegmentedButton(
             khung_tab,
-            values=["Bảng Kanban", "Danh sách"],
+            values=["Bảng Kanban", "Danh sách", "Chờ duyệt", "Đã hủy"],
             command=self._khi_chuyen_tab,
             font=theme.FONT_NHO_DAM,
             fg_color="#e2e8f0",

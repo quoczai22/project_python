@@ -16,13 +16,15 @@ class DuAn:
     """
 
     def __init__(self, ma_du_an, ten_du_an, danh_sach_cot=None, thanh_vien_tham_gia=None,
-                 danh_sach_cong_viec=None, ngay_tao=None):
+                 danh_sach_cong_viec=None, ngay_tao=None, nhom=None, thanh_vien_da_roi=None):
         self.ma_du_an = ma_du_an
         self.ten_du_an = ten_du_an
-        self.danh_sach_cot = danh_sach_cot if danh_sach_cot is not None else list(TRANG_THAI_HOP_LE)
+        self.danh_sach_cot = danh_sach_cot if danh_sach_cot is not None else [cot for cot in TRANG_THAI_HOP_LE if cot != "Đã hủy"]
         self.thanh_vien_tham_gia = thanh_vien_tham_gia if thanh_vien_tham_gia is not None else []
         self.danh_sach_cong_viec = danh_sach_cong_viec if danh_sach_cong_viec is not None else []
         self.ngay_tao = ngay_tao if ngay_tao is not None else datetime.now().strftime("%Y-%m-%d")
+        self.nhom = nhom if nhom is not None else {}
+        self.thanh_vien_da_roi = thanh_vien_da_roi if thanh_vien_da_roi is not None else []
 
     # ==================== ĐÓNG GÓI THUỘC TÍNH (PROPERTIES) ====================
     @property
@@ -105,8 +107,34 @@ class DuAn:
         return self.danh_sach_cong_viec
 
     @property
+    def nhom(self):
+        return getattr(self, "_nhom", {})
+
+    @nhom.setter
+    def nhom(self, value):
+        if not isinstance(value, dict) or any(not isinstance(k, str) or not isinstance(v, list)
+                                               for k, v in value.items()):
+            raise DuLieuKhongHopLeError("Nhóm phải là mapping Leader -> danh sách thành viên")
+        tat_ca = [ten for ds in value.values() for ten in ds]
+        if len(tat_ca) != len(set(tat_ca)) or any(ten not in self.thanh_vien_tham_gia for ten in tat_ca):
+            raise DuLieuKhongHopLeError("Thành viên nhóm phải thuộc dự án và không thuộc hai nhóm")
+        if any(leader not in self.thanh_vien_tham_gia for leader in value):
+            raise DuLieuKhongHopLeError("Leader phải thuộc dự án")
+        self._nhom = value
+
+    @property
+    def thanh_vien_da_roi(self):
+        return getattr(self, "_thanh_vien_da_roi", [])
+
+    @thanh_vien_da_roi.setter
+    def thanh_vien_da_roi(self, value):
+        if not isinstance(value, list) or any(not isinstance(ten, str) for ten in value):
+            raise DuLieuKhongHopLeError("Danh sách thành viên đã rời không hợp lệ")
+        self._thanh_vien_da_roi = value
+
+    @property
     def danh_sach_cot(self):
-        return getattr(self, "_danh_sach_cot", list(TRANG_THAI_HOP_LE))
+        return getattr(self, "_danh_sach_cot", [cot for cot in TRANG_THAI_HOP_LE if cot != "Đã hủy"])
 
     @danh_sach_cot.setter
     def danh_sach_cot(self, danh_sach_cot):
@@ -181,12 +209,14 @@ class DuAn:
 
     def tinh_tien_do(self):
         """Tính phần trăm tiến độ hoàn thành của dự án."""
-        if not self._danh_sach_cong_viec:
+        danh_sach = [cv for cv in self._danh_sach_cong_viec if cv.trang_thai != "Đã hủy" and
+                     getattr(cv, "trang_thai_duyet", "da_duyet") == "da_duyet"]
+        if not danh_sach:
             return 0.0
         so_luong_hoan_thanh = sum(
-            1 for cv in self._danh_sach_cong_viec if cv.is_hoan_thanh()
+            1 for cv in danh_sach if cv.is_hoan_thanh()
         )
-        return round((so_luong_hoan_thanh / len(self._danh_sach_cong_viec)) * 100, 2)
+        return round((so_luong_hoan_thanh / len(danh_sach)) * 100, 2)
 
     def lay_danh_sach_canh_bao(self):
         """
@@ -214,6 +244,8 @@ class DuAn:
                 cong_viec.to_dict() for cong_viec in self.danh_sach_cong_viec
             ],
             "NgayTao": self.ngay_tao,
+            "Nhom": self.nhom,
+            "ThanhVienDaRoi": self.thanh_vien_da_roi,
         }
 
     @classmethod
@@ -239,6 +271,8 @@ class DuAn:
             thanh_vien_tham_gia=data.get("ThanhVienThamGia", []),
             danh_sach_cong_viec=danh_sach_cv,
             ngay_tao=data.get("NgayTao"),
+            nhom=data.get("Nhom", {}),
+            thanh_vien_da_roi=data.get("ThanhVienDaRoi", []),
         )
 
     def __str__(self):

@@ -14,7 +14,9 @@ def thong_ke_du_an(du_an, hom_nay=None):
     theo_thanh_vien = {}
     qua_han = ngay_khong_hop_le = 0
 
-    for cong_viec in du_an.cong_viec:
+    cong_viec_hien_thi = [cv for cv in du_an.cong_viec if cv.trang_thai != "Đã hủy" and
+                         getattr(cv, "trang_thai_duyet", "da_duyet") == "da_duyet"]
+    for cong_viec in cong_viec_hien_thi:
         trang_thai = cong_viec.trang_thai
         theo_trang_thai[trang_thai] = theo_trang_thai.get(trang_thai, 0) + 1
         nguoi = cong_viec.nguoi_phu_trach or "Chưa phân công"
@@ -27,7 +29,7 @@ def thong_ke_du_an(du_an, hom_nay=None):
             else:
                 qua_han += han < hom_nay
 
-    tong = len(du_an.cong_viec)
+    tong = len(cong_viec_hien_thi)
     hoan_thanh = theo_trang_thai.get("Hoàn thành", 0)
     chua_hoan_thanh = tong - hoan_thanh
     return {
@@ -118,6 +120,8 @@ def xuat_bao_cao_file(du_an, duong_dan_file: str, ql=None) -> str:
             "-" * 60,
         ])
         for cv in du_an.cong_viec:
+            if cv.trang_thai == "Đã hủy" or getattr(cv, "trang_thai_duyet", "da_duyet") != "da_duyet":
+                continue
             lines.append(
                 f"{cv.ma_cong_viec:<10} {cv.trang_thai:<14} {cv.muc_uu_tien:<12} {cv.nguoi_phu_trach:<12} {cv.ngay_ket_thuc:<12} {cv.tieu_de}"
             )

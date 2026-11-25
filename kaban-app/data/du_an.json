@@ -12,7 +12,17 @@
       "quoc",
       "khoa",
       "huy",
-      "phu"
+      "phu",
+      "demo_1",
+      "demo_2",
+      "demo_3",
+      "demo_4",
+      "demo_5",
+      "demo_6",
+      "demo_7",
+      "demo_8",
+      "demo_9",
+      "demo_10"
     ],
     "DanhSachCongViec": [
       {
@@ -26,7 +36,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Cao",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -39,7 +59,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Cao",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -49,7 +79,7 @@
         "NguoiPhuTrach": "khoa",
         "NgayBatDau": "2026-10-14",
         "NgayKetThuc": "2026-11-21",
-        "TrangThai": "Hoàn thành",
+        "TrangThai": "Đã hủy",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
         "DanhSachBinhLuan": [
@@ -59,7 +89,17 @@
             "NoiDung": "hi",
             "ThoiGian": "2026-11-18 08:23:52"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "không cần nữa",
+        "NguoiHuy": "admin",
+        "ThoiGianHuy": "2026-11-25T10:27:57.682486",
+        "TrangThaiTruocHuy": "Hoàn thành",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -72,7 +112,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Khẩn",
         "Nhan": "Lỗi",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -85,7 +135,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -98,7 +158,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -111,7 +181,17 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Cao",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -124,10 +204,24 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       }
     ],
-    "NgayTao": "2026-10-07"
+    "NgayTao": "2026-10-07",
+    "Nhom": {
+      "huy": []
+    },
+    "ThanhVienDaRoi": []
   },
   {
     "MaDuAn": "DA-002",
@@ -154,7 +248,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -167,10 +271,22 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       }
     ],
-    "NgayTao": "2026-10-18"
+    "NgayTao": "2026-10-18",
+    "Nhom": {},
+    "ThanhVienDaRoi": []
   },
   {
     "MaDuAn": "DA-003",
@@ -206,7 +322,17 @@
             "NoiDung": "Đã đối chiếu với danh sách hiện có và lưu kết quả kiểm tra.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -219,7 +345,17 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Cao",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -232,7 +368,17 @@
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -245,7 +391,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -265,7 +421,17 @@
             "NoiDung": "Đã tái hiện ca lỗi, đang kiểm tra lại sau khi sửa.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -278,7 +444,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Trung bình",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -291,7 +467,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Thấp",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -311,7 +497,17 @@
             "NoiDung": "Đã thử ca thông thường, nhờ kiểm tra thêm ca biên trong mô tả.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -324,7 +520,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Trung bình",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -337,7 +543,17 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Thấp",
         "Nhan": "Lỗi",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -350,7 +566,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Cao",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -363,10 +589,22 @@
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Khẩn",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       }
     ],
-    "NgayTao": "2026-10-22"
+    "NgayTao": "2026-10-22",
+    "Nhom": {},
+    "ThanhVienDaRoi": []
   },
   {
     "MaDuAn": "DA-004",
@@ -402,7 +640,17 @@
             "NoiDung": "Đã đối chiếu với danh sách hiện có và lưu kết quả kiểm tra.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -415,7 +663,17 @@
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Cao",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -428,7 +686,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -441,7 +709,17 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -461,7 +739,17 @@
             "NoiDung": "Đã tái hiện ca lỗi, đang kiểm tra lại sau khi sửa.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -474,7 +762,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -487,7 +785,17 @@
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Thấp",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -507,7 +815,17 @@
             "NoiDung": "Đã thử ca thông thường, nhờ kiểm tra thêm ca biên trong mô tả.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -520,7 +838,17 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -533,7 +861,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Thấp",
         "Nhan": "Lỗi",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -546,7 +884,17 @@
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Cao",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -559,10 +907,22 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Khẩn",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       }
     ],
-    "NgayTao": "2026-10-22"
+    "NgayTao": "2026-10-22",
+    "Nhom": {},
+    "ThanhVienDaRoi": []
   },
   {
     "MaDuAn": "DA-005",
@@ -598,7 +958,17 @@
             "NoiDung": "Đã đối chiếu với danh sách hiện có và lưu kết quả kiểm tra.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -611,7 +981,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Cao",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -624,7 +1004,17 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -637,7 +1027,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -657,7 +1057,17 @@
             "NoiDung": "Đã tái hiện ca lỗi, đang kiểm tra lại sau khi sửa.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -670,7 +1080,17 @@
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Trung bình",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -683,7 +1103,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Thấp",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -703,7 +1133,17 @@
             "NoiDung": "Đã thử ca thông thường, nhờ kiểm tra thêm ca biên trong mô tả.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -716,7 +1156,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -729,7 +1179,17 @@
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Thấp",
         "Nhan": "Lỗi",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -742,7 +1202,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Cao",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -755,10 +1225,22 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Khẩn",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       }
     ],
-    "NgayTao": "2026-10-22"
+    "NgayTao": "2026-10-22",
+    "Nhom": {},
+    "ThanhVienDaRoi": []
   },
   {
     "MaDuAn": "DA-006",
@@ -794,7 +1276,17 @@
             "NoiDung": "Đã đối chiếu với danh sách hiện có và lưu kết quả kiểm tra.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -807,7 +1299,17 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Cao",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -820,7 +1322,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -833,7 +1345,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Thấp",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -853,7 +1375,17 @@
             "NoiDung": "Đã tái hiện ca lỗi, đang kiểm tra lại sau khi sửa.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -866,7 +1398,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Trung bình",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -879,7 +1421,17 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -899,7 +1451,17 @@
             "NoiDung": "Đã thử ca thông thường, nhờ kiểm tra thêm ca biên trong mô tả.",
             "ThoiGian": "2026-11-15 14:00:00"
           }
-        ]
+        ],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -912,7 +1474,17 @@
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Trung bình",
         "Nhan": "Tài liệu",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -925,7 +1497,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Thấp",
         "Nhan": "Lỗi",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -938,7 +1520,17 @@
         "TrangThai": "Đang làm",
         "MucUuTien": "Cao",
         "Nhan": "Backend",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecKhan",
@@ -951,7 +1543,17 @@
         "TrangThai": "Kiểm tra",
         "MucUuTien": "Khẩn",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -964,7 +1566,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -977,7 +1589,17 @@
         "TrangThai": "Hoàn thành",
         "MucUuTien": "Thấp",
         "Nhan": "Giao diện",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -990,7 +1612,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1003,7 +1635,17 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Cao",
         "Nhan": "Lỗi",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       },
       {
         "LoaiCongViec": "CongViecThuong",
@@ -1016,9 +1658,21 @@
         "TrangThai": "Cần làm",
         "MucUuTien": "Trung bình",
         "Nhan": "Kiểm thử",
-        "DanhSachBinhLuan": []
+        "DanhSachBinhLuan": [],
+        "TrangThaiDuyet": "da_duyet",
+        "NguoiTao": "",
+        "LichSuGiaHan": [],
+        "LyDoHuy": "",
+        "NguoiHuy": "",
+        "ThoiGianHuy": "",
+        "TrangThaiTruocHuy": "",
+        "YeuCauMoLai": null,
+        "YeuCauGiaHan": null,
+        "HoanThanhTre": false
       }
     ],
-    "NgayTao": "2026-10-22"
+    "NgayTao": "2026-10-22",
+    "Nhom": {},
+    "ThanhVienDaRoi": []
   }
 ]
