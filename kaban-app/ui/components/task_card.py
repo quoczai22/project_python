@@ -210,7 +210,7 @@ class TaskCard(ctk.CTkFrame):
         if cv.is_hoan_thanh():
             if getattr(cv, "hoan_thanh_tre", False):
                 nen_han, chu_han, vien_han = "#fef3c7", "#b45309", "#fde68a"
-                noi_dung_han = f"Hoàn thành trễ hạn ({cv.ngay_ket_thuc})"
+                noi_dung_han = f"[Trễ hạn] Hoàn thành ({cv.ngay_ket_thuc})"
             else:
                 nen_han, chu_han, vien_han = "#dcfce7", "#166534", "#bbf7d0"
                 noi_dung_han = f"Hoàn thành ({cv.ngay_ket_thuc})"

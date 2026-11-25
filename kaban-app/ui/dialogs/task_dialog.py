@@ -131,7 +131,7 @@ class TaskDialog(tk.Toplevel):
             tre = cv.is_hoan_thanh() and getattr(cv, "hoan_thanh_tre", False)
             mau_canh = theme.MAU_CANH_BAO if tre else (theme.MAU_HOAN_THANH if cv.is_hoan_thanh() else (theme.MAU_LOI if cv.da_qua_han() else theme.MAU_CHINH_DAM))
             nen_banner = theme.MAU_NEN_LOI_NHAT if (not cv.is_hoan_thanh() and cv.da_qua_han()) else theme.MAU_CHINH_NHAT
-            canh_bao_txt = "Hoàn thành (Trễ hạn)" if tre else cv.canh_bao()
+            canh_bao_txt = "[Trễ hạn] Hoàn thành trễ hạn" if tre else cv.canh_bao()
             banner = ctk.CTkFrame(khung, fg_color=nen_banner, corner_radius=0, border_width=0)
             banner.pack(fill="x", pady=(0, 8))
             tk.Label(banner, text=f"{cv.lay_loai_cong_viec()}  •  Cột: {cv.trang_thai}  •  {canh_bao_txt}", bg=nen_banner, fg=mau_canh, font=theme.FONT_NHO_DAM, anchor="w", padx=12, pady=5).pack(fill="x")

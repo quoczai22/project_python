@@ -14,6 +14,7 @@ class TestQuyTrinh(unittest.TestCase):
         self.ql = QuanLyKanban(os.path.join(self.tmp.name, "du_an.json"),
                                os.path.join(self.tmp.name, "users.json"))
         self.ql.bo_luu_tru.ten_file_nhat_ky = os.path.join(self.tmp.name, "nhat_ky.json")
+        self.ql.bo_luu_tru.ten_file_viec_chua_hoan_thanh = os.path.join(self.tmp.name, "viec_chua_hoan_thanh.jsonl")
         self.ql.dang_ky("lead", "123456", "Leader", "lead@test.vn")
         self.ql.dang_ky("worker", "123456", "Worker", "worker@test.vn")
         self.ql.dang_nhap("admin", "123456")
@@ -199,6 +200,203 @@ class TestQuyTrinh(unittest.TestCase):
         self.assertEqual(cv.ly_do_huy, "")
         self.assertEqual(cv.nguoi_huy, "")
         self.assertEqual(cv.thoi_gian_huy, "")
+
+    def test_duyet_hoan_thanh_cong_viec(self):
+        cv = self.tao(nguoi="worker")
+        self.ql.dang_nhap("worker", "123456")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.chuyen_trang_thai(self.da, cv.ma_cong_viec, "Hoàn thành")
+        self.ql.chuyen_trang_thai(self.da, cv.ma_cong_viec, "Kiểm tra")
+        self.assertEqual(cv.trang_thai, "Kiểm tra")
+
+        # Leader từ chối không lý do bị chặn, có lý do -> về Đang làm
+        self.ql.dang_nhap("lead", "123456")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.duyet_hoan_thanh(self.da, cv.ma_cong_viec, chap_nhan=False, ly_do="   ")
+        self.ql.duyet_hoan_thanh(self.da, cv.ma_cong_viec, chap_nhan=False, ly_do="Thiếu kiểm thử")
+        self.assertEqual(cv.trang_thai, "Đang làm")
+        self.assertEqual(cv.ly_do_tu_choi_hoan_thanh, "Thiếu kiểm thử")
+
+        # Chuyển lại sang Kiểm tra -> Leader duyệt -> Hoàn thành (và ghi nhận trễ hạn)
+        self.ql.dang_nhap("worker", "123456")
+        self.ql.chuyen_trang_thai(self.da, cv.ma_cong_viec, "Kiểm tra")
+        self.ql.dang_nhap("lead", "123456")
+        self.ql.duyet_hoan_thanh(self.da, cv.ma_cong_viec, chap_nhan=True)
+        self.assertEqual(cv.trang_thai, "Hoàn thành")
+        self.assertTrue(cv.hoan_thanh_tre)
+
+    def test_leader_khong_duyet_hoan_thanh_cua_minh_hoac_ngoai_nhom_va_admin_tu_duyet(self):
+        self.ql.dang_ky("ngoai", "123456", "Ngoai", "ngoai@test.vn")
+        self.ql.them_thanh_vien_du_an(self.da, "ngoai")
+        cv_lead = self.tao(ma="CV-010", nguoi="lead")
+        cv_ngoai = self.tao(ma="CV-011", nguoi="ngoai")
+        cv_admin = self.tao(ma="CV-012", nguoi="admin")
+
+        # Admin tự chuyển sang Hoàn thành được
+        self.ql.chuyen_trang_thai(self.da, cv_admin.ma_cong_viec, "Hoàn thành")
+        self.assertEqual(cv_admin.trang_thai, "Hoàn thành")
+
+        # Leader không tự chuyển việc của mình sang Hoàn thành, không duyệt việc của mình / ngoài nhóm
+        self.ql.dang_nhap("lead", "123456")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.chuyen_trang_thai(self.da, cv_lead.ma_cong_viec, "Hoàn thành")
+        self.ql.chuyen_trang_thai(self.da, cv_lead.ma_cong_viec, "Kiểm tra")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.duyet_hoan_thanh(self.da, cv_lead.ma_cong_viec)
+
+        cv_ngoai.trang_thai = "Kiểm tra"
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.duyet_hoan_thanh(self.da, cv_ngoai.ma_cong_viec)
+
+        # Admin duyệt được việc của Leader
+        self.ql.dang_nhap("admin", "123456")
+        self.ql.duyet_hoan_thanh(self.da, cv_lead.ma_cong_viec)
+        self.assertEqual(cv_lead.trang_thai, "Hoàn thành")
+
+    def test_chua_hoan_thanh_va_ban_giao_gia_han_va_du_lieu_cu(self):
+        # Chặn khi chưa quá hạn
+        cv_con_han = self.tao(ma="CV-020", nguoi="worker", han=(date.today() + timedelta(days=5)).isoformat())
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.danh_dau_chua_hoan_thanh(self.da, cv_con_han.ma_cong_viec, "Quá tải")
+
+        # Quá hạn: chặn thành viên, chặn thiếu lý do
+        cv = self.tao(ma="CV-021", nguoi="worker")
+        cv.trang_thai = "Đang làm"
+        self.ql.dang_nhap("worker", "123456")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.danh_dau_chua_hoan_thanh(self.da, cv.ma_cong_viec, "Không làm kịp")
+        self.ql.dang_nhap("lead", "123456")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.danh_dau_chua_hoan_thanh(self.da, cv.ma_cong_viec, "  ")
+
+        # Leader đánh dấu Chưa hoàn thành thành công; chặn kéo thả trực tiếp ra/vào
+        self.ql.danh_dau_chua_hoan_thanh(self.da, cv.ma_cong_viec, "Nhân sự nghỉ phép")
+        self.assertEqual(cv.trang_thai, "Chưa hoàn thành")
+        self.assertEqual(cv.trang_thai_truoc, "Đang làm")
+        self.assertEqual(cv.nguoi_danh_dau, "lead")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.chuyen_trang_thai(self.da, cv.ma_cong_viec, "Đang làm")
+
+        # Bàn giao sang worker2 + gia hạn -> trả về trạng thái trước ("Đang làm")
+        self.ql.dang_nhap("admin", "123456")
+        self.ql.dang_ky("worker2", "123456", "Worker 2", "w2@test.vn")
+        self.ql.them_thanh_vien_du_an(self.da, "worker2")
+        self.ql.gan_thanh_vien_nhom(self.da, "lead", "worker2")
+        self.ql.dang_nhap("lead", "123456")
+        self.ql.cap_nhat_cong_viec(self.da, cv.ma_cong_viec, {"nguoi_phu_trach": "worker2"})
+        self.ql.dang_nhap("worker2", "123456")
+        han_moi = (date.today() + timedelta(days=4)).isoformat()
+        self.ql.yeu_cau_gia_han(self.da, cv.ma_cong_viec, han_moi, "Nhận bàn giao làm tiếp")
+        self.ql.dang_nhap("lead", "123456")
+        self.ql.duyet_gia_han(self.da, cv.ma_cong_viec)
+        self.assertEqual(cv.trang_thai, "Đang làm")
+        self.assertEqual(cv.ngay_ket_thuc, han_moi)
+
+        # Dữ liệu cũ thiếu các trường mới vẫn đọc được
+        from models.CongViec import CongViec
+        cu = cv.to_dict()
+        for k in ("LyDoChuaHoanThanh", "NguoiDanhDau", "ThoiGianDanhDau", "TrangThaiTruoc", "LyDoTuChoiHoanThanh"):
+            cu.pop(k, None)
+        doc_lai = CongViec.from_dict(cu)
+        self.assertEqual(doc_lai.ly_do_chua_hoan_thanh, "")
+        self.assertEqual(doc_lai.trang_thai_truoc, "")
+
+    def test_thong_ke_dung_han_tre_han_chua_hoan_thanh_bo_da_huy(self):
+        from services.thong_ke import thong_ke_du_an
+        han_tuong_lai = (date.today() + timedelta(days=5)).isoformat()
+        cv_dung = self.tao(ma="CV-030", nguoi="worker", han=han_tuong_lai)
+        cv_tre = self.tao(ma="CV-031", nguoi="worker")
+        cv_cht = self.tao(ma="CV-032", nguoi="worker")
+        cv_huy = self.tao(ma="CV-033", nguoi="worker")
+
+        self.ql.chuyen_trang_thai(self.da, cv_dung.ma_cong_viec, "Hoàn thành")
+        self.ql.chuyen_trang_thai(self.da, cv_tre.ma_cong_viec, "Hoàn thành")
+        self.ql.danh_dau_chua_hoan_thanh(self.da, cv_cht.ma_cong_viec, "Thiếu tài nguyên")
+        self.ql.huy_cong_viec(self.da, cv_huy.ma_cong_viec, "Hủy bỏ")
+
+        tk = thong_ke_du_an(self.da)
+        self.assertEqual(tk["tong"], 3)
+        self.assertEqual(tk["hoan_thanh_dung_han"], 1)
+        self.assertEqual(tk["hoan_thanh_tre_han"], 1)
+        self.assertEqual(tk["trang_thai_chua_hoan_thanh"], 1)
+        self.assertNotIn("Đã hủy", tk["theo_trang_thai"])
+
+    def test_sua_thong_tin_nguoi_dung_co_duyet(self):
+        from exceptions import XungDotDuLieuError
+        # Admin sửa trực tiếp + validate email sai/trùng
+        self.ql.sua_thong_tin_nguoi_dung("worker", "Worker Updated", "worker_new@test.vn")
+        ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self.assertEqual((ds["worker"].ho_ten, ds["worker"].email), ("Worker Updated", "worker_new@test.vn"))
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.sua_thong_tin_nguoi_dung("worker", "W", "khong-phai-email")
+        with self.assertRaises(XungDotDuLieuError):
+            self.ql.sua_thong_tin_nguoi_dung("worker", "W", "lead@test.vn")
+
+        # Thành viên gửi yêu cầu -> chưa đổi ngay, không gửi được 2 yêu cầu cùng lúc
+        self.ql.dang_nhap("worker", "123456")
+        self.ql.yeu_cau_sua_thong_tin("Worker Doi Ten", "worker_yc@test.vn")
+        ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self.assertEqual(ds["worker"].ho_ten, "Worker Updated")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.yeu_cau_sua_thong_tin("Lan 2", "worker_yc2@test.vn")
+
+        # Admin từ chối -> giữ nguyên thông tin cũ
+        self.ql.dang_nhap("admin", "123456")
+        self.assertEqual(len(self.ql.lay_danh_sach_yeu_cau_sua_thong_tin()), 1)
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.duyet_sua_thong_tin("worker", chap_nhan=False, ly_do=" ")
+        self.ql.duyet_sua_thong_tin("worker", chap_nhan=False, ly_do="Sai quy ước email")
+        ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self.assertEqual(ds["worker"].ho_ten, "Worker Updated")
+        self.assertIsNone(ds["worker"].yeu_cau_sua_thong_tin)
+
+        # Gửi lại rồi Admin duyệt -> áp dụng
+        self.ql.dang_nhap("worker", "123456")
+        self.ql.yeu_cau_sua_thong_tin("Worker Chinh Thuc", "worker_ok@test.vn")
+        self.ql.dang_nhap("admin", "123456")
+        self.ql.duyet_sua_thong_tin("worker", chap_nhan=True)
+        ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self.assertEqual((ds["worker"].ho_ten, ds["worker"].email), ("Worker Chinh Thuc", "worker_ok@test.vn"))
+
+    def test_file_viec_chua_hoan_thanh_jsonl_chi_noi_them(self):
+        import json
+        cv1 = self.tao(ma="CV-040", nguoi="worker")
+        cv2 = self.tao(ma="CV-041", nguoi="worker")
+        duong_dan = self.ql.bo_luu_tru.ten_file_viec_chua_hoan_thanh
+
+        self.ql.huy_cong_viec(self.da, cv1.ma_cong_viec, "Không cần làm nữa")
+        with open(duong_dan, encoding="utf-8") as f:
+            dong_truoc = f.readlines()
+        self.assertEqual(len(dong_truoc), 1)
+
+        self.ql.danh_dau_chua_hoan_thanh(self.da, cv2.ma_cong_viec, "Quá hạn lâu")
+        with open(duong_dan, encoding="utf-8") as f:
+            dong_sau = f.readlines()
+        self.assertEqual(len(dong_sau), 2)
+        self.assertEqual(dong_sau[0], dong_truoc[0])
+        m1, m2 = json.loads(dong_sau[0]), json.loads(dong_sau[1])
+        self.assertEqual((m1["hanh_dong"], m1["MaCongViec"], m1["ma_du_an"]), ("huy", "CV-040", "DA-999"))
+        self.assertEqual((m2["hanh_dong"], m2["MaCongViec"], m2["ma_du_an"]), ("chua_hoan_thanh", "CV-041", "DA-999"))
+
+    def test_tim_kiem_toan_bo_theo_quyen_du_an(self):
+        da2 = self.ql.tao_du_an("DA-888", "Dự án mật")
+        self.tao(ma="CV-050", nguoi="worker")
+        self.ql.tao_cong_viec(da2, {
+            "ma_cong_viec": "CV-051", "tieu_de": "Việc thử bí mật", "nguoi_phu_trach": "admin",
+            "ngay_bat_dau": date.today().isoformat(),
+            "ngay_ket_thuc": (date.today() + timedelta(days=5)).isoformat(),
+            "trang_thai": "Cần làm", "muc_uu_tien": "Cao", "nhan": "Backend",
+        })
+
+        # Admin thấy ở cả 2 dự án
+        kq_admin = self.ql.tim_kiem_toan_bo("Việc thử")
+        self.assertEqual({(d.ma_du_an, c.ma_cong_viec) for d, c in kq_admin},
+                         {("DA-999", "CV-050"), ("DA-888", "CV-051")})
+
+        # Thành viên chỉ thấy ở dự án mình tham gia (không thấy DA-888)
+        self.ql.dang_nhap("worker", "123456")
+        kq_worker = self.ql.tim_kiem_toan_bo("Việc thử")
+        self.assertEqual([(d.ma_du_an, c.ma_cong_viec) for d, c in kq_worker], [("DA-999", "CV-050")])
 
     def test_khong_gia_han_viec_da_huy(self):
         cv = self.tao()  # hạn chót hôm qua -> quá hạn

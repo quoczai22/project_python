@@ -18,9 +18,12 @@ from ui.dialogs.task_dialog import TaskDialog
 from ui.dialogs.column_dialog import TaoDuAnDialog, ThanhVienDuAnDialog
 from ui.dialogs.confirm_dialog import xac_nhan
 from ui.dialogs.doi_mat_khau_dialog import DoiMatKhauDialog
+from ui.dialogs.thong_tin_ca_nhan_dialog import (
+    ThongTinCaNhanDialog, DuyetSuaThongTinDialog, TimKiemToanBoDialog
+)
 from ui.dialogs.quy_trinh_dialog import (
     QuyTrinhDialog, yeu_cau_mo_lai_popup, yeu_cau_gia_han_popup,
-    nhap_tu_api_popup, xuat_bao_cao_popup
+    danh_dau_chua_hoan_thanh_popup, nhap_tu_api_popup, xuat_bao_cao_popup
 )
 
 class MainWindow(tk.Toplevel):
@@ -58,6 +61,12 @@ class MainWindow(tk.Toplevel):
         if self.du_an:
             QuyTrinhDialog(self, self.ql, self.du_an, khi_xong=self.ve_lai)
 
+    def mo_tim_kiem_toan_bo(self):
+        def mo_kq(da, cv):
+            self._nap_du_an(chon_ma=da.ma_du_an)
+            self.mo_the(cv)
+        TimKiemToanBoDialog(self, self.ql, khi_mo_ket_qua=mo_kq, tu_khoa_dau=self.topbar.var_tim_kiem.get())
+
     def yeu_cau_mo_lai_dang_chon(self):
         yeu_cau_mo_lai_popup(self, self.ql, self.du_an, self.cv_dang_chon)
 
@@ -67,10 +76,13 @@ class MainWindow(tk.Toplevel):
     def _dung_thanh_menu(self):
         """Tạo menu bar chuẩn phía trên cửa sổ thông qua AppMenuBar component."""
         self.menubar = AppMenuBar(self, {
+            "thong_tin_ca_nhan": lambda: ThongTinCaNhanDialog(self, self.ql, khi_xong=self.ve_lai),
+            "duyet_sua_thong_tin": lambda: DuyetSuaThongTinDialog(self, self.ql, khi_xong=self.ve_lai),
             "doi_mat_khau": self.doi_mat_khau, "dang_xuat": self.dang_xuat, "thoat": self.destroy,
             "tao_du_an": self.tao_du_an, "quan_ly_thanh_vien": self.quan_ly_thanh_vien,
             "xuat_bao_cao": self.xuat_bao_cao, "xoa_du_an": self.xoa_du_an_hien_tai,
-            "them_cong_viec": self.them_cong_viec, "nhap_tu_api": self.nhap_tu_api, "mo_thong_ke": self.mo_thong_ke,
+            "them_cong_viec": self.them_cong_viec, "tim_toan_bo": self.mo_tim_kiem_toan_bo,
+            "nhap_tu_api": self.nhap_tu_api, "mo_thong_ke": self.mo_thong_ke,
             "quy_trinh": self.mo_quy_trinh
         })
         self.configure(menu=self.menubar)
@@ -110,7 +122,8 @@ class MainWindow(tk.Toplevel):
             self.khung_phai, khi_them_viec=self.them_cong_viec,
             khi_bat_tat_hoat_dong=self.bat_tat_hoat_dong, khi_mo_thong_ke=self.mo_thong_ke,
             khi_ql_thanh_vien=self.quan_ly_thanh_vien, khi_xoa_du_an=self.xoa_du_an_hien_tai,
-            khi_thay_doi_loc=self.ve_lai, khi_dat_lai_loc=self.ve_lai, khi_doi_che_do=self._doi_che_do_xem
+            khi_thay_doi_loc=self.ve_lai, khi_dat_lai_loc=self.ve_lai,
+            khi_doi_che_do=self._doi_che_do_xem, khi_tim_toan_bo=self.mo_tim_kiem_toan_bo
         )
         self.topbar.pack(fill="x")
 
@@ -174,6 +187,7 @@ class MainWindow(tk.Toplevel):
         self.menu_phai.add_cascade(label="Chuyển sang cột", menu=self.menu_chuyen)
         self.menu_phai.add_separator()
         self.menu_phai.add_command(label="Xóa công việc", command=self.xoa_dang_chon)
+        self.menu_phai.add_command(label="Đánh dấu chưa hoàn thành", command=lambda: danh_dau_chua_hoan_thanh_popup(self, self.ql, self.du_an, self.cv_dang_chon, self.ve_lai))
         self.menu_phai.add_command(label="Yêu cầu mở lại", command=self.yeu_cau_mo_lai_dang_chon)
         self.menu_phai.add_command(label="Yêu cầu gia hạn", command=self.yeu_cau_gia_han_dang_chon)
 
@@ -244,7 +258,7 @@ class MainWindow(tk.Toplevel):
             return []
         ql, da, nd = self.ql, self.du_an, self.ql.nguoi_dung_hien_tai
         kq = ql.tim_kiem_cong_viec(da, self.topbar.var_tim_kiem.get())
-        kq = [cv for cv in kq if cv.trang_thai != "Đã hủy" and cv.trang_thai_duyet == "da_duyet"]
+        kq = [cv for cv in kq if cv.trang_thai not in ("Đã hủy", "Chưa hoàn thành") and cv.trang_thai_duyet == "da_duyet"]
         che_do = self.var_loc_nhanh.get()
         if che_do == "cua_toi":
             kq = [c for c in kq if c.nguoi_phu_trach == (nd.ten_dang_nhap if nd else "")]
@@ -269,7 +283,7 @@ class MainWindow(tk.Toplevel):
         cv_hien_thi = self._cong_viec_sau_loc()
         for ten, cot in self.cac_cot.items():
             cot.hien_thi([cv for cv in cv_hien_thi if cv.trang_thai == ten])
-        tat_ca = [cv for cv in self.du_an.cong_viec if cv.trang_thai != "Đã hủy" and cv.trang_thai_duyet == "da_duyet"]
+        tat_ca = [cv for cv in self.du_an.cong_viec if cv.trang_thai not in ("Đã hủy", "Chưa hoàn thành") and cv.trang_thai_duyet == "da_duyet"]
         tong = len(tat_ca)
         xong = sum(1 for c in tat_ca if c.is_hoan_thanh())
         dang_lam = sum(1 for c in tat_ca if c.trang_thai in TRANG_THAI_DANG_XU_LY)

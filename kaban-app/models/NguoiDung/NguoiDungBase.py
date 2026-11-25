@@ -59,6 +59,8 @@ class NguoiDung(ABC):
         self.email = email
         self._vai_tro = vai_tro
         self.bi_khoa = False
+        self.yeu_cau_sua_thong_tin = None
+        self.ly_do_tu_choi_sua = ""
 
     # ==================== ĐÓNG GÓI THUỘC TÍNH ====================
     @property
@@ -130,7 +132,9 @@ class NguoiDung(ABC):
             "ho_ten": self.ho_ten,
             "email": self.email,
             "vai_tro": self.vai_tro,
-            "bi_khoa": self.bi_khoa
+            "bi_khoa": self.bi_khoa,
+            "yeu_cau_sua_thong_tin": self.yeu_cau_sua_thong_tin,
+            "ly_do_tu_choi_sua": self.ly_do_tu_choi_sua,
         }
 
     @classmethod
@@ -153,23 +157,23 @@ class NguoiDung(ABC):
                 email=data.get("email", ""),
                 da_bam=da_bam
             )
-            nd.bi_khoa = bool(data.get("bi_khoa", False))
-            return nd
-        if vai_tro == "truong_nhom":
+        elif vai_tro == "truong_nhom":
             from .TruongNhom import TruongNhom
             nd = TruongNhom(data.get("ten_dang_nhap"), mat_khau,
                             data.get("ho_ten", ""), data.get("email", ""), da_bam=da_bam)
-            nd.bi_khoa = bool(data.get("bi_khoa", False))
-            return nd
-        from .ThanhVien import ThanhVien
-        nd = ThanhVien(
-            ten_dang_nhap=data.get("ten_dang_nhap"),
-            mat_khau=mat_khau,
-            ho_ten=data.get("ho_ten", ""),
-            email=data.get("email", ""),
-            da_bam=da_bam
-        )
+        else:
+            from .ThanhVien import ThanhVien
+            nd = ThanhVien(
+                ten_dang_nhap=data.get("ten_dang_nhap"),
+                mat_khau=mat_khau,
+                ho_ten=data.get("ho_ten", ""),
+                email=data.get("email", ""),
+                da_bam=da_bam
+            )
         nd.bi_khoa = bool(data.get("bi_khoa", False))
+        yc = data.get("yeu_cau_sua_thong_tin")
+        nd.yeu_cau_sua_thong_tin = yc if isinstance(yc, dict) else None
+        nd.ly_do_tu_choi_sua = str(data.get("ly_do_tu_choi_sua", "") or "")
         return nd
 
     def __str__(self):

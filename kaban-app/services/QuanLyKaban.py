@@ -92,6 +92,18 @@ class QuanLyKanban:
     def kiem_tra_quyen_cong_viec(self, cong_viec: CongViec, bat_loi: bool = False, du_an=None) -> bool:
         return self.xac_thuc.kiem_tra_quyen_cong_viec(cong_viec, bat_loi, du_an=du_an)
 
+    def sua_thong_tin_nguoi_dung(self, ten_dang_nhap: str, ho_ten=None, email=None):
+        return self.xac_thuc.sua_thong_tin_nguoi_dung(self.bo_luu_tru, ten_dang_nhap, ho_ten, email)
+
+    def yeu_cau_sua_thong_tin(self, ho_ten: str, email: str):
+        return self.xac_thuc.yeu_cau_sua_thong_tin(self.bo_luu_tru, ho_ten, email)
+
+    def lay_danh_sach_yeu_cau_sua_thong_tin(self):
+        return self.xac_thuc.lay_danh_sach_yeu_cau_sua_thong_tin(self.bo_luu_tru)
+
+    def duyet_sua_thong_tin(self, ten_dang_nhap: str, chap_nhan: bool = True, ly_do: str = ""):
+        return self.xac_thuc.duyet_sua_thong_tin(self.bo_luu_tru, ten_dang_nhap, chap_nhan, ly_do)
+
     # ==================== QUẢN LÝ DỰ ÁN ====================
     def lay_danh_sach_du_an(self):
         return self.du_an_service.danh_sach_du_an
@@ -235,6 +247,9 @@ class QuanLyKanban:
     def huy_cong_viec(self, du_an, ma_cong_viec, ly_do):
         return self.quy_trinh.huy_cong_viec(du_an, ma_cong_viec, ly_do)
 
+    def danh_dau_chua_hoan_thanh(self, du_an, ma_cong_viec, ly_do):
+        return self.quy_trinh.danh_dau_chua_hoan_thanh(du_an, ma_cong_viec, ly_do)
+
     def khoi_phuc_cong_viec(self, du_an, ma_cong_viec):
         return self.quy_trinh.khoi_phuc_cong_viec(du_an, ma_cong_viec)
 
@@ -243,6 +258,9 @@ class QuanLyKanban:
 
     def gui_lai_cong_viec(self, du_an, ma_cong_viec):
         return self.quy_trinh.gui_lai_cong_viec(du_an, ma_cong_viec)
+
+    def duyet_hoan_thanh(self, du_an, ma_cong_viec, chap_nhan=True, ly_do=""):
+        return self.quy_trinh.duyet_hoan_thanh(du_an, ma_cong_viec, chap_nhan, ly_do)
 
     def yeu_cau_mo_lai(self, du_an, ma_cong_viec, ly_do):
         return self.quy_trinh.yeu_cau_mo_lai(du_an, ma_cong_viec, ly_do)
@@ -275,6 +293,26 @@ class QuanLyKanban:
     # ==================== TÌM KIẾM & LỌC ====================
     def tim_kiem_cong_viec(self, du_an: DuAn, tu_khoa: str):
         return self.cong_viec_service.tim_kiem_cong_viec(du_an, tu_khoa)
+
+    def tim_kiem_toan_bo(self, tu_khoa: str):
+        """Tìm kiếm công việc qua mọi dự án mà người dùng hiện tại có quyền xem.
+
+        Trả về list tuple ``(du_an, cong_viec)`` khớp mã, tiêu đề, mô tả hoặc người phụ trách.
+        """
+        if self.nguoi_dung_hien_tai is None:
+            return []
+        kw = str(tu_khoa or "").strip().lower()
+        ket_qua = []
+        for da in self.lay_danh_sach_du_an():
+            if not self.kiem_tra_quyen_du_an(da):
+                continue
+            for cv in da.cong_viec:
+                if not kw or any(
+                    kw in str(val or "").lower()
+                    for val in (cv.ma_cong_viec, cv.tieu_de, cv.mo_ta, cv.nguoi_phu_trach)
+                ):
+                    ket_qua.append((da, cv))
+        return ket_qua
 
     def loc_theo_thanh_vien(self, du_an: DuAn, ten_dang_nhap: str):
         return self.cong_viec_service.loc_theo_thanh_vien(du_an, ten_dang_nhap)

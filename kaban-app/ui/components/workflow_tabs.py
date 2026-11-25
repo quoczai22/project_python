@@ -1,6 +1,6 @@
 """WorkflowTabs: Hai tab trực tiếp 'Chờ duyệt' và 'Đã hủy' ngay trên không gian làm việc."""
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 
 from ui.styles import theme
 
@@ -74,15 +74,27 @@ class TabChoDuyetComponent(_BangQuyTrinhBase):
             ("chi_tiet", "Chi tiết / Lý do", 280, "w"),
         )
         cac_nut = (
-            ("chinh", "Duyệt việc", lambda: self._thuc_thi(self.ql.duyet_cong_viec), 96),
-            ("nguy_hiem", "Từ chối việc", lambda: self._thuc_thi(lambda d, m: self.ql.duyet_cong_viec(d, m, False)), 104),
-            ("phu", "Gửi lại", lambda: self._thuc_thi(self.ql.gui_lai_cong_viec), 78),
-            ("chinh", "Duyệt mở lại", lambda: self._thuc_thi(self.ql.duyet_mo_lai), 110),
-            ("phu", "Từ chối mở lại", lambda: self._thuc_thi(lambda d, m: self.ql.duyet_mo_lai(d, m, False)), 114),
-            ("chinh", "Duyệt gia hạn", lambda: self._thuc_thi(self.ql.duyet_gia_han), 114),
-            ("phu", "Từ chối gia hạn", lambda: self._thuc_thi(lambda d, m: self.ql.duyet_gia_han(d, m, False)), 118),
+            ("chinh", "Duyệt việc", lambda: self._thuc_thi(self.ql.duyet_cong_viec), 88),
+            ("nguy_hiem", "Từ chối việc", lambda: self._thuc_thi(lambda d, m: self.ql.duyet_cong_viec(d, m, False)), 96),
+            ("phu", "Gửi lại", lambda: self._thuc_thi(self.ql.gui_lai_cong_viec), 70),
+            ("chinh", "Duyệt HT", lambda: self._thuc_thi(self.ql.duyet_hoan_thanh), 88),
+            ("nguy_hiem", "Từ chối HT", self._tu_choi_hoan_thanh, 92),
+            ("chinh", "Duyệt mở lại", lambda: self._thuc_thi(self.ql.duyet_mo_lai), 102),
+            ("phu", "Từ chối mở lại", lambda: self._thuc_thi(lambda d, m: self.ql.duyet_mo_lai(d, m, False)), 108),
+            ("chinh", "Duyệt gia hạn", lambda: self._thuc_thi(self.ql.duyet_gia_han), 106),
+            ("phu", "Từ chối gia hạn", lambda: self._thuc_thi(lambda d, m: self.ql.duyet_gia_han(d, m, False)), 112),
         )
         super().__init__(master, cac_cot, cac_nut)
+
+    def _tu_choi_hoan_thanh(self):
+        chon = self.tree.selection()
+        if not chon:
+            messagebox.showinfo("Chưa chọn", "Hãy chọn một công việc trong danh sách.", parent=self.winfo_toplevel())
+            return
+        ly_do = simpledialog.askstring("Từ chối hoàn thành", "Nhập lý do từ chối:", parent=self.winfo_toplevel())
+        if ly_do is None:
+            return
+        self._thuc_thi(lambda d, m: self.ql.duyet_hoan_thanh(d, m, False, ly_do))
 
     def cap_nhat(self, ql, du_an, ten_nguoi_map, khi_xong):
         self.ql, self.du_an, self.khi_xong = ql, du_an, khi_xong
@@ -95,7 +107,8 @@ class TabChoDuyetComponent(_BangQuyTrinhBase):
             if cv.trang_thai == "Đã hủy":
                 continue
             co_duyet = getattr(cv, "trang_thai_duyet", "da_duyet") in ("cho_duyet", "tu_choi")
-            if not (co_duyet or cv.yeu_cau_mo_lai or cv.yeu_cau_gia_han):
+            cho_ht = cv.trang_thai == "Kiểm tra" and getattr(cv, "trang_thai_duyet", "da_duyet") == "da_duyet"
+            if not (co_duyet or cho_ht or cv.yeu_cau_mo_lai or cv.yeu_cau_gia_han):
                 continue
             loai, chi_tiet = [], []
             if cv.trang_thai_duyet == "cho_duyet":
@@ -104,6 +117,9 @@ class TabChoDuyetComponent(_BangQuyTrinhBase):
             elif cv.trang_thai_duyet == "tu_choi":
                 loai.append("Bị từ chối")
                 chi_tiet.append("Cần người tạo gửi lại")
+            if cho_ht:
+                loai.append("Chờ duyệt HT")
+                chi_tiet.append("Đang ở cột Kiểm tra, chờ duyệt hoàn thành")
             if cv.yeu_cau_mo_lai:
                 yc = cv.yeu_cau_mo_lai
                 loai.append("Xin mở lại")
@@ -156,3 +172,74 @@ class TabDaHuyComponent(_BangQuyTrinhBase):
                                      cv.trang_thai_truoc_huy or "Cần làm", nguoi_huy, mo_ta))
             dem += 1
         self.lbl_dem.configure(text=f"{dem} việc đã hủy")
+
+
+class TabChuaHoanThanhComponent(_BangQuyTrinhBase):
+    """Tab Chưa hoàn thành: việc quá hạn không ai làm tiếp; hỗ trợ bàn giao, gia hạn hoặc hủy mềm."""
+
+    def __init__(self, master, khi_mo_task=None):
+        self.khi_mo_task = khi_mo_task
+        cac_cot = (
+            ("ma", "Mã", 75, "center"),
+            ("tieu_de", "Tiêu đề", 220, "w"),
+            ("nguoi", "Phụ trách", 130, "w"),
+            ("trang_thai_cu", "Cột trước", 100, "center"),
+            ("nguoi_danh_dau", "Người đánh dấu", 115, "w"),
+            ("ly_do", "Lý do & Thời gian", 280, "w"),
+        )
+        cac_nut = (
+            ("chinh", "Bàn giao / Sửa", self._ban_giao, 120),
+            ("phu", "Xin gia hạn", self._xin_gia_han, 105),
+            ("nguy_hiem", "Hủy công việc", self._huy_viec, 118),
+        )
+        super().__init__(master, cac_cot, cac_nut)
+
+    def _chon_cv(self):
+        chon = self.tree.selection()
+        if not chon or not self.du_an:
+            messagebox.showinfo("Chưa chọn", "Hãy chọn một công việc trong danh sách.", parent=self.winfo_toplevel())
+            return None
+        return self.du_an.tim_cong_viec_theo_ma(chon[0])
+
+    def _ban_giao(self):
+        cv = self._chon_cv()
+        if cv and self.khi_mo_task:
+            self.khi_mo_task(cv)
+
+    def _xin_gia_han(self):
+        cv = self._chon_cv()
+        if not cv or not self.ql:
+            return
+        from ui.dialogs.quy_trinh_dialog import yeu_cau_gia_han_popup
+        yeu_cau_gia_han_popup(self.winfo_toplevel(), self.ql, self.du_an, cv)
+        if self.khi_xong:
+            self.khi_xong()
+
+    def _huy_viec(self):
+        cv = self._chon_cv()
+        if not cv:
+            return
+        ly_do = simpledialog.askstring("Hủy công việc", "Lý do hủy công việc:", parent=self.winfo_toplevel())
+        if ly_do is None:
+            return
+        self._thuc_thi(lambda d, m: self.ql.huy_cong_viec(d, m, ly_do))
+
+    def cap_nhat(self, ql, du_an, ten_nguoi_map, khi_xong):
+        self.ql, self.du_an, self.khi_xong = ql, du_an, khi_xong
+        self.tree.delete(*self.tree.get_children())
+        if not du_an:
+            self.lbl_dem.configure(text="0 việc")
+            return
+        dem = 0
+        for cv in du_an.cong_viec:
+            if cv.trang_thai != "Chưa hoàn thành":
+                continue
+            ten_tv = ten_nguoi_map.get(cv.nguoi_phu_trach, cv.nguoi_phu_trach)
+            nguoi_dd = ten_nguoi_map.get(cv.nguoi_danh_dau, cv.nguoi_danh_dau)
+            thoi_gian = (cv.thoi_gian_danh_dau or "")[:19].replace("T", " ")
+            mo_ta = f"{cv.ly_do_chua_hoan_thanh} ({thoi_gian})" if thoi_gian else cv.ly_do_chua_hoan_thanh
+            self.tree.insert("", "end", iid=cv.ma_cong_viec,
+                             values=(cv.ma_cong_viec, cv.tieu_de, ten_tv,
+                                     cv.trang_thai_truoc or "Cần làm", nguoi_dd, mo_ta))
+            dem += 1
+        self.lbl_dem.configure(text=f"{dem} việc chưa hoàn thành")

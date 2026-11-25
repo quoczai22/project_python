@@ -41,6 +41,11 @@ class CongViec(ABC):
         self.yeu_cau_mo_lai = None
         self.yeu_cau_gia_han = None
         self.hoan_thanh_tre = False
+        self.ly_do_tu_choi_hoan_thanh = ""
+        self.ly_do_chua_hoan_thanh = ""
+        self.nguoi_danh_dau = ""
+        self.thoi_gian_danh_dau = ""
+        self.trang_thai_truoc = ""
 
     # ==================== ĐÓNG GÓI & VALIDATION (PROPERTIES) ====================
     @property
@@ -277,7 +282,12 @@ class CongViec(ABC):
             "TrangThaiTruocHuy": self.trang_thai_truoc_huy,
             "YeuCauMoLai": self.yeu_cau_mo_lai,
             "YeuCauGiaHan": self.yeu_cau_gia_han,
-            "HoanThanhTre": self.hoan_thanh_tre
+            "HoanThanhTre": self.hoan_thanh_tre,
+            "LyDoTuChoiHoanThanh": self.ly_do_tu_choi_hoan_thanh,
+            "LyDoChuaHoanThanh": self.ly_do_chua_hoan_thanh,
+            "NguoiDanhDau": self.nguoi_danh_dau,
+            "ThoiGianDanhDau": self.thoi_gian_danh_dau,
+            "TrangThaiTruoc": self.trang_thai_truoc
         }
 
     @classmethod
@@ -336,6 +346,11 @@ class CongViec(ABC):
             ("yeu_cau_mo_lai", "YeuCauMoLai", None),
             ("yeu_cau_gia_han", "YeuCauGiaHan", None),
             ("hoan_thanh_tre", "HoanThanhTre", False),
+            ("ly_do_tu_choi_hoan_thanh", "LyDoTuChoiHoanThanh", ""),
+            ("ly_do_chua_hoan_thanh", "LyDoChuaHoanThanh", ""),
+            ("nguoi_danh_dau", "NguoiDanhDau", ""),
+            ("thoi_gian_danh_dau", "ThoiGianDanhDau", ""),
+            ("trang_thai_truoc", "TrangThaiTruoc", ""),
         ):
             setattr(cv, attr, data.get(key, default))
         return cv

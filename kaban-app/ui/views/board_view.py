@@ -5,7 +5,9 @@ import customtkinter as ctk
 
 from ui.styles import theme
 from ui.components.column_widget import ColumnWidget
-from ui.components.workflow_tabs import TabChoDuyetComponent, TabDaHuyComponent
+from ui.components.workflow_tabs import (
+    TabChoDuyetComponent, TabChuaHoanThanhComponent, TabDaHuyComponent
+)
 
 
 class BoardView(tk.Frame):
@@ -118,8 +120,9 @@ class BoardView(tk.Frame):
         self.khung_danh_sach.columnconfigure(0, weight=1)
         self.khung_danh_sach.rowconfigure(0, weight=1)
 
-        # View 3 & 4: Tab Chờ duyệt và Tab Đã hủy
+        # View 3, 4 & 5: Tab Chờ duyệt, Tab Chưa hoàn thành và Tab Đã hủy
         self.tab_cho_duyet = TabChoDuyetComponent(self.container_view)
+        self.tab_chua_hoan_thanh = TabChuaHoanThanhComponent(self.container_view, khi_mo_task=self.khi_mo_task)
         self.tab_da_huy = TabDaHuyComponent(self.container_view)
 
         # 3. Ngăn kéo Nhật ký hoạt động nằm ở BÊN PHẢI (Right-side Panel)
@@ -195,9 +198,10 @@ class BoardView(tk.Frame):
         self._dong_bo_kich_thuoc_kanban(event.width, event.height)
 
     def chuyen_che_do(self, che_do):
-        """Chuyển đổi hiển thị giữa 'Bảng Kanban', 'Danh sách', 'Chờ duyệt' và 'Đã hủy'."""
+        """Chuyển đổi hiển thị giữa 'Bảng Kanban', 'Danh sách', 'Chờ duyệt', 'Chưa hoàn thành' và 'Đã hủy'."""
         self.che_do_xem = che_do
-        for w in (self.canvas_kanban, self.khung_danh_sach, self.tab_cho_duyet, self.tab_da_huy):
+        for w in (self.canvas_kanban, self.khung_danh_sach, self.tab_cho_duyet,
+                  self.tab_chua_hoan_thanh, self.tab_da_huy):
             w.pack_forget()
         if self.thanh_cuon_ngang.winfo_ismapped():
             self.thanh_cuon_ngang.pack_forget()
@@ -209,12 +213,15 @@ class BoardView(tk.Frame):
             self.khung_danh_sach.pack(fill="both", expand=True)
         elif che_do == "Chờ duyệt":
             self.tab_cho_duyet.pack(fill="both", expand=True)
+        elif che_do == "Chưa hoàn thành":
+            self.tab_chua_hoan_thanh.pack(fill="both", expand=True)
         elif che_do == "Đã hủy":
             self.tab_da_huy.pack(fill="both", expand=True)
 
     def cap_nhat_tab_quy_trinh(self, ql, du_an, ten_nguoi_map, khi_xong):
-        """Đồng bộ dữ liệu cho 2 tab Chờ duyệt và Đã hủy."""
+        """Đồng bộ dữ liệu cho 3 tab Chờ duyệt, Chưa hoàn thành và Đã hủy."""
         self.tab_cho_duyet.cap_nhat(ql, du_an, ten_nguoi_map, khi_xong)
+        self.tab_chua_hoan_thanh.cap_nhat(ql, du_an, ten_nguoi_map, khi_xong)
         self.tab_da_huy.cap_nhat(ql, du_an, ten_nguoi_map, khi_xong)
 
     def bat_tat_hoat_dong(self):
