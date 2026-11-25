@@ -6,7 +6,7 @@ import customtkinter as ctk
 
 from ui.styles import theme
 from utils.helpers import can_giua
-from services.thong_ke import xuat_bao_cao_file
+from services.thong_ke import thong_ke_du_an, xuat_bao_cao_file
 
 
 class StatsView(tk.Toplevel):
@@ -264,18 +264,13 @@ class StatsView(tk.Toplevel):
 
     def cap_nhat(self):
         da = self.du_an
-        self.so_lieu = {ten: 0 for ten in da.danh_sach_cot}
-        for cv in da.cong_viec:
-            if cv.trang_thai in self.so_lieu:
-                self.so_lieu[cv.trang_thai] += 1
+        thong_ke = thong_ke_du_an(da)
+        self.so_lieu = thong_ke["theo_trang_thai"]
 
-        tong = len(da.cong_viec)
-        xong = self.so_lieu.get("Hoàn thành", 0)
+        tong = thong_ke["tong"]
+        xong = thong_ke["hoan_thanh"]
         dang_lam = self.so_lieu.get("Đang làm", 0) + self.so_lieu.get("Kiểm tra", 0)
-        canh_bao = sum(
-            1 for cv in da.cong_viec
-            if cv.can_chu_y()
-        )
+        canh_bao = sum(1 for cv in da.cong_viec if cv.can_chu_y())
 
         ty_le = (xong / tong * 100) if tong > 0 else 0.0
 

@@ -4,28 +4,40 @@ from datetime import date, datetime
 
 
 def thong_ke_du_an(du_an, hom_nay=None):
-    """Trả về số công việc theo trạng thái, người phụ trách và hạn xử lý."""
+    """Tổng hợp tiến độ, thành viên và hạn xử lý của một dự án.
+
+    Ngày kết thúc thiếu/sai định dạng được tính vào ``ngay_khong_hop_le``
+    thay vì làm dừng toàn bộ màn hình thống kê.
+    """
     hom_nay = hom_nay or date.today()
     theo_trang_thai = {cot: 0 for cot in du_an.danh_sach_cot}
     theo_thanh_vien = {}
-    qua_han = 0
+    qua_han = ngay_khong_hop_le = 0
 
     for cong_viec in du_an.cong_viec:
         trang_thai = cong_viec.trang_thai
         theo_trang_thai[trang_thai] = theo_trang_thai.get(trang_thai, 0) + 1
-        nguoi = cong_viec.nguoi_phu_trach
+        nguoi = cong_viec.nguoi_phu_trach or "Chưa phân công"
         theo_thanh_vien[nguoi] = theo_thanh_vien.get(nguoi, 0) + 1
         if trang_thai != "Hoàn thành":
-            han = datetime.strptime(cong_viec.ngay_ket_thuc, "%Y-%m-%d").date()
-            qua_han += han < hom_nay
+            try:
+                han = datetime.strptime(cong_viec.ngay_ket_thuc, "%Y-%m-%d").date()
+            except (TypeError, ValueError):
+                ngay_khong_hop_le += 1
+            else:
+                qua_han += han < hom_nay
 
     tong = len(du_an.cong_viec)
     hoan_thanh = theo_trang_thai.get("Hoàn thành", 0)
+    chua_hoan_thanh = tong - hoan_thanh
     return {
         "tong": tong,
         "hoan_thanh": hoan_thanh,
+        "chua_hoan_thanh": chua_hoan_thanh,
         "qua_han": qua_han,
+        "ngay_khong_hop_le": ngay_khong_hop_le,
         "ty_le_hoan_thanh": round(hoan_thanh / tong * 100, 1) if tong else 0.0,
+        "ty_le_chua_hoan_thanh": round(chua_hoan_thanh / tong * 100, 1) if tong else 0.0,
         "theo_trang_thai": theo_trang_thai,
         "theo_thanh_vien": theo_thanh_vien,
     }
@@ -51,7 +63,9 @@ def xuat_bao_cao_file(du_an, duong_dan_file: str, ql=None) -> str:
             writer.writerow(["TỔNG QUAN"])
             writer.writerow(["Tổng số công việc", tk["tong"]])
             writer.writerow(["Đã hoàn thành", tk["hoan_thanh"]])
+            writer.writerow(["Chưa hoàn thành", tk["chua_hoan_thanh"]])
             writer.writerow(["Quá hạn", tk["qua_han"]])
+            writer.writerow(["Ngày hạn không hợp lệ", tk["ngay_khong_hop_le"]])
             writer.writerow(["Tỷ lệ hoàn thành (%)", tk["ty_le_hoan_thanh"]])
             writer.writerow([])
             writer.writerow(["PHÂN BỔ THEO CỘT"])
@@ -79,7 +93,9 @@ def xuat_bao_cao_file(du_an, duong_dan_file: str, ql=None) -> str:
             "1. TỔNG QUAN TIẾN ĐỘ:",
             f"  • Tổng số công việc : {tk['tong']}",
             f"  • Đã hoàn thành    : {tk['hoan_thanh']}",
+            f"  • Chưa hoàn thành  : {tk['chua_hoan_thanh']}",
             f"  • Quá hạn          : {tk['qua_han']}",
+            f"  • Hạn không hợp lệ : {tk['ngay_khong_hop_le']}",
             f"  • Tỷ lệ hoàn thành : {tk['ty_le_hoan_thanh']}%",
             "",
             "2. PHÂN BỔ CÔNG VIỆC THEO CỘT:",
