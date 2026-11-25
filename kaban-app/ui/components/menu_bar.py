@@ -20,6 +20,8 @@ class AppMenuBar(tk.Menu):
     def _dung_menu(self):
         cau_truc = [
             ("Hệ thống", [
+                ("Thông tin cá nhân...", self.cb.get("thong_tin_ca_nhan")),
+                ("Yêu cầu sửa thông tin...", self.cb.get("duyet_sua_thong_tin")),
                 ("Đổi mật khẩu...", self.cb.get("doi_mat_khau")),
                 ("Đăng xuất", self.cb.get("dang_xuat")),
                 None,

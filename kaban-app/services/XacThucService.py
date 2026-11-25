@@ -152,3 +152,116 @@ class XacThucService:
         if self._nguoi_dung_hien_tai is None:
             return False
         return self._nguoi_dung_hien_tai.co_quyen_xoa_cong_viec()
+
+    @staticmethod
+    def _kiem_tra_ho_ten_email(ho_ten, email, danh_sach, bo_qua_ten):
+        ho_ten_s = str(ho_ten or "").strip()
+        email_s = str(email or "").strip()
+        if email_s and not re.fullmatch(MAU_EMAIL, email_s):
+            raise DuLieuKhongHopLeError(
+                f"Email '{email_s}' không đúng định dạng",
+                truong_loi="email", gia_tri=email_s
+            )
+        if email_s and any(
+            tv.ten_dang_nhap.lower() != bo_qua_ten.lower()
+            and (tv.email or "").lower() == email_s.lower()
+            for tv in danh_sach
+        ):
+            raise XungDotDuLieuError(
+                f"Email '{email_s}' đã được dùng cho tài khoản khác",
+                khoa_trung="email", gia_tri=email_s
+            )
+        return ho_ten_s, email_s
+
+    def sua_thong_tin_nguoi_dung(self, bo_luu_tru, ten_dang_nhap: str, ho_ten=None, email=None):
+        """Admin sửa trực tiếp họ tên, email của bất kỳ tài khoản nào (không đổi username/vai trò)."""
+        if self._nguoi_dung_hien_tai is None or self._nguoi_dung_hien_tai.vai_tro != "quan_tri":
+            raise KhongCoQuyenError("Chỉ quản trị viên mới được sửa trực tiếp thông tin người dùng")
+        danh_sach = bo_luu_tru.doc_danh_sach_thanh_vien()
+        nd = next((tv for tv in danh_sach if tv.ten_dang_nhap == ten_dang_nhap), None)
+        if nd is None:
+            raise KhongTimThayError(f"Không tìm thấy tài khoản '{ten_dang_nhap}'", loai_tai_nguyen="ThanhVien", khoa_tim_kiem=ten_dang_nhap)
+        ho_ten_moi = nd.ho_ten if ho_ten is None else ho_ten
+        email_moi = nd.email if email is None else email
+        ho_ten_s, email_s = self._kiem_tra_ho_ten_email(ho_ten_moi, email_moi, danh_sach, nd.ten_dang_nhap)
+        cu_ten, cu_email = nd.ho_ten, nd.email
+        nd.ho_ten, nd.email = ho_ten_s, email_s
+        try:
+            bo_luu_tru.ghi_danh_sach_thanh_vien(danh_sach)
+        except Exception as err:
+            nd.ho_ten, nd.email = cu_ten, cu_email
+            raise LoiLuuTruError(f"Không lưu được thông tin người dùng: {err}", loi_goc=err)
+        if self._nguoi_dung_hien_tai.ten_dang_nhap == nd.ten_dang_nhap:
+            self._nguoi_dung_hien_tai.ho_ten, self._nguoi_dung_hien_tai.email = ho_ten_s, email_s
+        bo_luu_tru.ghi_nhat_ky({
+            "hanh_dong": "sua_thong_tin_nguoi_dung",
+            "ten_dang_nhap": self._nguoi_dung_hien_tai.ten_dang_nhap,
+            "thanh_vien": nd.ten_dang_nhap,
+            "chi_tiet": f"{ho_ten_s} | {email_s}",
+        })
+        return nd
+
+    def yeu_cau_sua_thong_tin(self, bo_luu_tru, ho_ten: str, email: str):
+        """Leader/thành viên gửi yêu cầu sửa họ tên, email của chính mình (chờ admin duyệt)."""
+        from datetime import datetime
+        if self._nguoi_dung_hien_tai is None:
+            raise KhongCoQuyenError("Bạn chưa đăng nhập vào hệ thống")
+        danh_sach = bo_luu_tru.doc_danh_sach_thanh_vien()
+        nd = next((tv for tv in danh_sach if tv.ten_dang_nhap == self._nguoi_dung_hien_tai.ten_dang_nhap), None)
+        if nd is None:
+            raise KhongTimThayError("Không tìm thấy tài khoản hiện tại")
+        if nd.yeu_cau_sua_thong_tin:
+            raise DuLieuKhongHopLeError("Bạn đã có một yêu cầu sửa thông tin đang chờ duyệt")
+        ho_ten_s, email_s = self._kiem_tra_ho_ten_email(ho_ten, email, danh_sach, nd.ten_dang_nhap)
+        yc = {"ho_ten": ho_ten_s, "email": email_s, "thoi_gian": datetime.now().isoformat()}
+        nd.yeu_cau_sua_thong_tin = yc
+        try:
+            bo_luu_tru.ghi_danh_sach_thanh_vien(danh_sach)
+        except Exception as err:
+            nd.yeu_cau_sua_thong_tin = None
+            raise LoiLuuTruError(f"Không lưu được yêu cầu sửa thông tin: {err}", loi_goc=err)
+        self._nguoi_dung_hien_tai.yeu_cau_sua_thong_tin = yc
+        bo_luu_tru.ghi_nhat_ky({
+            "hanh_dong": "yeu_cau_sua_thong_tin",
+            "ten_dang_nhap": nd.ten_dang_nhap,
+            "chi_tiet": f"{ho_ten_s} | {email_s}",
+        })
+        return yc
+
+    def lay_danh_sach_yeu_cau_sua_thong_tin(self, bo_luu_tru):
+        """Admin lấy danh sách tài khoản đang có yêu cầu sửa thông tin chờ duyệt."""
+        if self._nguoi_dung_hien_tai is None or self._nguoi_dung_hien_tai.vai_tro != "quan_tri":
+            raise KhongCoQuyenError("Chỉ quản trị viên mới được xem yêu cầu sửa thông tin")
+        return [tv for tv in bo_luu_tru.doc_danh_sach_thanh_vien() if tv.yeu_cau_sua_thong_tin]
+
+    def duyet_sua_thong_tin(self, bo_luu_tru, ten_dang_nhap: str, chap_nhan: bool = True, ly_do: str = ""):
+        """Admin duyệt (áp dụng) hoặc từ chối (kèm lý do) yêu cầu sửa thông tin."""
+        if self._nguoi_dung_hien_tai is None or self._nguoi_dung_hien_tai.vai_tro != "quan_tri":
+            raise KhongCoQuyenError("Chỉ quản trị viên mới được duyệt yêu cầu sửa thông tin")
+        danh_sach = bo_luu_tru.doc_danh_sach_thanh_vien()
+        nd = next((tv for tv in danh_sach if tv.ten_dang_nhap == ten_dang_nhap), None)
+        if nd is None or not nd.yeu_cau_sua_thong_tin:
+            raise DuLieuKhongHopLeError(f"Tài khoản '{ten_dang_nhap}' không có yêu cầu sửa thông tin đang chờ")
+        if not chap_nhan and not (ly_do or "").strip():
+            raise DuLieuKhongHopLeError("Cần nhập lý do khi từ chối yêu cầu sửa thông tin")
+        yc = nd.yeu_cau_sua_thong_tin
+        cu_ten, cu_email, cu_ly_do = nd.ho_ten, nd.email, nd.ly_do_tu_choi_sua
+        if chap_nhan:
+            ho_ten_s, email_s = self._kiem_tra_ho_ten_email(yc.get("ho_ten", ""), yc.get("email", ""), danh_sach, nd.ten_dang_nhap)
+            nd.ho_ten, nd.email = ho_ten_s, email_s
+            nd.ly_do_tu_choi_sua = ""
+        else:
+            nd.ly_do_tu_choi_sua = ly_do.strip()
+        nd.yeu_cau_sua_thong_tin = None
+        try:
+            bo_luu_tru.ghi_danh_sach_thanh_vien(danh_sach)
+        except Exception as err:
+            nd.ho_ten, nd.email, nd.yeu_cau_sua_thong_tin, nd.ly_do_tu_choi_sua = cu_ten, cu_email, yc, cu_ly_do
+            raise LoiLuuTruError(f"Không lưu được kết quả duyệt thông tin: {err}", loi_goc=err)
+        bo_luu_tru.ghi_nhat_ky({
+            "hanh_dong": "duyet_sua_thong_tin" if chap_nhan else "tu_choi_sua_thong_tin",
+            "ten_dang_nhap": self._nguoi_dung_hien_tai.ten_dang_nhap,
+            "thanh_vien": nd.ten_dang_nhap,
+            "chi_tiet": f"{nd.ho_ten} | {nd.email}" if chap_nhan else nd.ly_do_tu_choi_sua,
+        })
+        return nd

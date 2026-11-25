@@ -320,6 +320,43 @@ class TestQuyTrinh(unittest.TestCase):
         self.assertEqual(tk["trang_thai_chua_hoan_thanh"], 1)
         self.assertNotIn("Đã hủy", tk["theo_trang_thai"])
 
+    def test_sua_thong_tin_nguoi_dung_co_duyet(self):
+        from exceptions import XungDotDuLieuError
+        # Admin sửa trực tiếp + validate email sai/trùng
+        self.ql.sua_thong_tin_nguoi_dung("worker", "Worker Updated", "worker_new@test.vn")
+        ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self.assertEqual((ds["worker"].ho_ten, ds["worker"].email), ("Worker Updated", "worker_new@test.vn"))
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.sua_thong_tin_nguoi_dung("worker", "W", "khong-phai-email")
+        with self.assertRaises(XungDotDuLieuError):
+            self.ql.sua_thong_tin_nguoi_dung("worker", "W", "lead@test.vn")
+
+        # Thành viên gửi yêu cầu -> chưa đổi ngay, không gửi được 2 yêu cầu cùng lúc
+        self.ql.dang_nhap("worker", "123456")
+        self.ql.yeu_cau_sua_thong_tin("Worker Doi Ten", "worker_yc@test.vn")
+        ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self.assertEqual(ds["worker"].ho_ten, "Worker Updated")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.yeu_cau_sua_thong_tin("Lan 2", "worker_yc2@test.vn")
+
+        # Admin từ chối -> giữ nguyên thông tin cũ
+        self.ql.dang_nhap("admin", "123456")
+        self.assertEqual(len(self.ql.lay_danh_sach_yeu_cau_sua_thong_tin()), 1)
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.duyet_sua_thong_tin("worker", chap_nhan=False, ly_do=" ")
+        self.ql.duyet_sua_thong_tin("worker", chap_nhan=False, ly_do="Sai quy ước email")
+        ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self.assertEqual(ds["worker"].ho_ten, "Worker Updated")
+        self.assertIsNone(ds["worker"].yeu_cau_sua_thong_tin)
+
+        # Gửi lại rồi Admin duyệt -> áp dụng
+        self.ql.dang_nhap("worker", "123456")
+        self.ql.yeu_cau_sua_thong_tin("Worker Chinh Thuc", "worker_ok@test.vn")
+        self.ql.dang_nhap("admin", "123456")
+        self.ql.duyet_sua_thong_tin("worker", chap_nhan=True)
+        ds = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self.assertEqual((ds["worker"].ho_ten, ds["worker"].email), ("Worker Chinh Thuc", "worker_ok@test.vn"))
+
     def test_khong_gia_han_viec_da_huy(self):
         cv = self.tao()  # hạn chót hôm qua -> quá hạn
         self.ql.huy_cong_viec(self.da, cv.ma_cong_viec, "Không còn cần")

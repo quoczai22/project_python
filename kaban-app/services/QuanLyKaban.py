@@ -92,6 +92,18 @@ class QuanLyKanban:
     def kiem_tra_quyen_cong_viec(self, cong_viec: CongViec, bat_loi: bool = False, du_an=None) -> bool:
         return self.xac_thuc.kiem_tra_quyen_cong_viec(cong_viec, bat_loi, du_an=du_an)
 
+    def sua_thong_tin_nguoi_dung(self, ten_dang_nhap: str, ho_ten=None, email=None):
+        return self.xac_thuc.sua_thong_tin_nguoi_dung(self.bo_luu_tru, ten_dang_nhap, ho_ten, email)
+
+    def yeu_cau_sua_thong_tin(self, ho_ten: str, email: str):
+        return self.xac_thuc.yeu_cau_sua_thong_tin(self.bo_luu_tru, ho_ten, email)
+
+    def lay_danh_sach_yeu_cau_sua_thong_tin(self):
+        return self.xac_thuc.lay_danh_sach_yeu_cau_sua_thong_tin(self.bo_luu_tru)
+
+    def duyet_sua_thong_tin(self, ten_dang_nhap: str, chap_nhan: bool = True, ly_do: str = ""):
+        return self.xac_thuc.duyet_sua_thong_tin(self.bo_luu_tru, ten_dang_nhap, chap_nhan, ly_do)
+
     # ==================== QUẢN LÝ DỰ ÁN ====================
     def lay_danh_sach_du_an(self):
         return self.du_an_service.danh_sach_du_an

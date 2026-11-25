@@ -109,9 +109,9 @@ class ThanhVienDuAnDialog(tk.Toplevel):
             hang_quyen = tk.Frame(khung, bg=theme.MAU_THE)
             hang_quyen.pack(fill="x", pady=(8, 0))
             for text, fn in (("Tạo Leader", self.tao_leader), ("Thu hồi Leader", self.thu_hoi_leader),
-                             ("Khóa tài khoản", self.khoa_tai_khoan), ("Mở khóa", self.mo_khoa_tai_khoan),
-                             ("Tài khoản mẫu API", self.nhap_tai_khoan_mau)):
-                theme.tao_nut_phu(hang_quyen, text=text, command=fn, width=130, height=34).pack(side="left", padx=3)
+                             ("Sửa thông tin", self.sua_thong_tin), ("Khóa tài khoản", self.khoa_tai_khoan),
+                             ("Mở khóa", self.mo_khoa_tai_khoan), ("Tài khoản mẫu API", self.nhap_tai_khoan_mau)):
+                theme.tao_nut_phu(hang_quyen, text=text, command=fn, width=116, height=34).pack(side="left", padx=2)
 
     def _so_viec(self, ten):
         return sum(1 for cv in self.du_an.cong_viec if cv.nguoi_phu_trach == ten and cv.trang_thai in ("Cần làm", "Đang làm", "Kiểm tra"))
@@ -175,6 +175,28 @@ class ThanhVienDuAnDialog(tk.Toplevel):
 
     def khoa_tai_khoan(self):
         self._dat_khoa(True)
+
+    def sua_thong_tin(self):
+        chon = self.tree.selection()
+        if not chon:
+            return
+        nd = self.nguoi_dung.get(chon[0])
+        if not nd:
+            return
+        ho_ten = simpledialog.askstring("Sửa thông tin", "Họ và tên mới:", initialvalue=nd.ho_ten, parent=self)
+        if ho_ten is None:
+            return
+        email = simpledialog.askstring("Sửa thông tin", "Email mới:", initialvalue=nd.email, parent=self)
+        if email is None:
+            return
+        try:
+            self.ql.sua_thong_tin_nguoi_dung(chon[0], ho_ten, email)
+        except KanbanException as err:
+            messagebox.showerror("Không sửa được", err.thong_diep, parent=self)
+            return
+        self.nguoi_dung = {u.ten_dang_nhap: u for u in self.ql.lay_danh_sach_nguoi_dung()}
+        self._nap()
+        self._bao_doi()
 
     def mo_khoa_tai_khoan(self):
         self._dat_khoa(False)

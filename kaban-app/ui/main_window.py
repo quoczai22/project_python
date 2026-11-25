@@ -18,6 +18,7 @@ from ui.dialogs.task_dialog import TaskDialog
 from ui.dialogs.column_dialog import TaoDuAnDialog, ThanhVienDuAnDialog
 from ui.dialogs.confirm_dialog import xac_nhan
 from ui.dialogs.doi_mat_khau_dialog import DoiMatKhauDialog
+from ui.dialogs.thong_tin_ca_nhan_dialog import ThongTinCaNhanDialog, DuyetSuaThongTinDialog
 from ui.dialogs.quy_trinh_dialog import (
     QuyTrinhDialog, yeu_cau_mo_lai_popup, yeu_cau_gia_han_popup,
     danh_dau_chua_hoan_thanh_popup, nhap_tu_api_popup, xuat_bao_cao_popup
@@ -67,6 +68,8 @@ class MainWindow(tk.Toplevel):
     def _dung_thanh_menu(self):
         """Tạo menu bar chuẩn phía trên cửa sổ thông qua AppMenuBar component."""
         self.menubar = AppMenuBar(self, {
+            "thong_tin_ca_nhan": lambda: ThongTinCaNhanDialog(self, self.ql, khi_xong=self.ve_lai),
+            "duyet_sua_thong_tin": lambda: DuyetSuaThongTinDialog(self, self.ql, khi_xong=self.ve_lai),
             "doi_mat_khau": self.doi_mat_khau, "dang_xuat": self.dang_xuat, "thoat": self.destroy,
             "tao_du_an": self.tao_du_an, "quan_ly_thanh_vien": self.quan_ly_thanh_vien,
             "xuat_bao_cao": self.xuat_bao_cao, "xoa_du_an": self.xoa_du_an_hien_tai,
