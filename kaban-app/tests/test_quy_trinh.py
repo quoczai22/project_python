@@ -200,6 +200,58 @@ class TestQuyTrinh(unittest.TestCase):
         self.assertEqual(cv.nguoi_huy, "")
         self.assertEqual(cv.thoi_gian_huy, "")
 
+    def test_duyet_hoan_thanh_cong_viec(self):
+        cv = self.tao(nguoi="worker")
+        self.ql.dang_nhap("worker", "123456")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.chuyen_trang_thai(self.da, cv.ma_cong_viec, "Hoàn thành")
+        self.ql.chuyen_trang_thai(self.da, cv.ma_cong_viec, "Kiểm tra")
+        self.assertEqual(cv.trang_thai, "Kiểm tra")
+
+        # Leader từ chối không lý do bị chặn, có lý do -> về Đang làm
+        self.ql.dang_nhap("lead", "123456")
+        with self.assertRaises(DuLieuKhongHopLeError):
+            self.ql.duyet_hoan_thanh(self.da, cv.ma_cong_viec, chap_nhan=False, ly_do="   ")
+        self.ql.duyet_hoan_thanh(self.da, cv.ma_cong_viec, chap_nhan=False, ly_do="Thiếu kiểm thử")
+        self.assertEqual(cv.trang_thai, "Đang làm")
+        self.assertEqual(cv.ly_do_tu_choi_hoan_thanh, "Thiếu kiểm thử")
+
+        # Chuyển lại sang Kiểm tra -> Leader duyệt -> Hoàn thành (và ghi nhận trễ hạn)
+        self.ql.dang_nhap("worker", "123456")
+        self.ql.chuyen_trang_thai(self.da, cv.ma_cong_viec, "Kiểm tra")
+        self.ql.dang_nhap("lead", "123456")
+        self.ql.duyet_hoan_thanh(self.da, cv.ma_cong_viec, chap_nhan=True)
+        self.assertEqual(cv.trang_thai, "Hoàn thành")
+        self.assertTrue(cv.hoan_thanh_tre)
+
+    def test_leader_khong_duyet_hoan_thanh_cua_minh_hoac_ngoai_nhom_va_admin_tu_duyet(self):
+        self.ql.dang_ky("ngoai", "123456", "Ngoai", "ngoai@test.vn")
+        self.ql.them_thanh_vien_du_an(self.da, "ngoai")
+        cv_lead = self.tao(ma="CV-010", nguoi="lead")
+        cv_ngoai = self.tao(ma="CV-011", nguoi="ngoai")
+        cv_admin = self.tao(ma="CV-012", nguoi="admin")
+
+        # Admin tự chuyển sang Hoàn thành được
+        self.ql.chuyen_trang_thai(self.da, cv_admin.ma_cong_viec, "Hoàn thành")
+        self.assertEqual(cv_admin.trang_thai, "Hoàn thành")
+
+        # Leader không tự chuyển việc của mình sang Hoàn thành, không duyệt việc của mình / ngoài nhóm
+        self.ql.dang_nhap("lead", "123456")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.chuyen_trang_thai(self.da, cv_lead.ma_cong_viec, "Hoàn thành")
+        self.ql.chuyen_trang_thai(self.da, cv_lead.ma_cong_viec, "Kiểm tra")
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.duyet_hoan_thanh(self.da, cv_lead.ma_cong_viec)
+
+        cv_ngoai.trang_thai = "Kiểm tra"
+        with self.assertRaises(KhongCoQuyenError):
+            self.ql.duyet_hoan_thanh(self.da, cv_ngoai.ma_cong_viec)
+
+        # Admin duyệt được việc của Leader
+        self.ql.dang_nhap("admin", "123456")
+        self.ql.duyet_hoan_thanh(self.da, cv_lead.ma_cong_viec)
+        self.assertEqual(cv_lead.trang_thai, "Hoàn thành")
+
     def test_khong_gia_han_viec_da_huy(self):
         cv = self.tao()  # hạn chót hôm qua -> quá hạn
         self.ql.huy_cong_viec(self.da, cv.ma_cong_viec, "Không còn cần")

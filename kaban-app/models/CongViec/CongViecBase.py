@@ -41,6 +41,7 @@ class CongViec(ABC):
         self.yeu_cau_mo_lai = None
         self.yeu_cau_gia_han = None
         self.hoan_thanh_tre = False
+        self.ly_do_tu_choi_hoan_thanh = ""
 
     # ==================== ĐÓNG GÓI & VALIDATION (PROPERTIES) ====================
     @property
@@ -277,7 +278,8 @@ class CongViec(ABC):
             "TrangThaiTruocHuy": self.trang_thai_truoc_huy,
             "YeuCauMoLai": self.yeu_cau_mo_lai,
             "YeuCauGiaHan": self.yeu_cau_gia_han,
-            "HoanThanhTre": self.hoan_thanh_tre
+            "HoanThanhTre": self.hoan_thanh_tre,
+            "LyDoTuChoiHoanThanh": self.ly_do_tu_choi_hoan_thanh
         }
 
     @classmethod
@@ -336,6 +338,7 @@ class CongViec(ABC):
             ("yeu_cau_mo_lai", "YeuCauMoLai", None),
             ("yeu_cau_gia_han", "YeuCauGiaHan", None),
             ("hoan_thanh_tre", "HoanThanhTre", False),
+            ("ly_do_tu_choi_hoan_thanh", "LyDoTuChoiHoanThanh", ""),
         ):
             setattr(cv, attr, data.get(key, default))
         return cv

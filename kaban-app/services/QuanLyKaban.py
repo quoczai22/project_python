@@ -244,6 +244,9 @@ class QuanLyKanban:
     def gui_lai_cong_viec(self, du_an, ma_cong_viec):
         return self.quy_trinh.gui_lai_cong_viec(du_an, ma_cong_viec)
 
+    def duyet_hoan_thanh(self, du_an, ma_cong_viec, chap_nhan=True, ly_do=""):
+        return self.quy_trinh.duyet_hoan_thanh(du_an, ma_cong_viec, chap_nhan, ly_do)
+
     def yeu_cau_mo_lai(self, du_an, ma_cong_viec, ly_do):
         return self.quy_trinh.yeu_cau_mo_lai(du_an, ma_cong_viec, ly_do)
 

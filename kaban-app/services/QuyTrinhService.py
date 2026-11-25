@@ -61,6 +61,27 @@ class QuyTrinhService:
         cv.trang_thai_duyet = "cho_duyet"
         return self._luu(du_an, cv, old, "gui_lai_cong_viec")
 
+    def duyet_hoan_thanh(self, du_an, ma_cong_viec, chap_nhan=True, ly_do=""):
+        """Duyệt hoặc từ chối hoàn thành công việc đang ở cột Kiểm tra."""
+        cv = self._viec(du_an, ma_cong_viec)
+        if cv.trang_thai != "Kiểm tra" or cv.trang_thai_duyet != "da_duyet":
+            raise DuLieuKhongHopLeError("Chỉ duyệt hoàn thành công việc đã duyệt và đang ở cột Kiểm tra")
+        if not self._duyet_duoc(du_an, cv, cv.nguoi_phu_trach):
+            raise KhongCoQuyenError("Không có quyền duyệt hoàn thành công việc này")
+        if not chap_nhan and not (ly_do or "").strip():
+            raise DuLieuKhongHopLeError("Cần nhập lý do khi từ chối hoàn thành công việc")
+        old = cv.to_dict()
+        if chap_nhan:
+            if cv.da_qua_han():
+                cv.hoan_thanh_tre = True
+            cv.trang_thai = "Hoàn thành"
+            cv.ly_do_tu_choi_hoan_thanh = ""
+            return self._luu(du_an, cv, old, "duyet_hoan_thanh",
+                             "tre_han" if cv.hoan_thanh_tre else "dung_han")
+        cv.trang_thai = "Đang làm"
+        cv.ly_do_tu_choi_hoan_thanh = ly_do.strip()
+        return self._luu(du_an, cv, old, "tu_choi_hoan_thanh", cv.ly_do_tu_choi_hoan_thanh)
+
     def yeu_cau_mo_lai(self, du_an, ma_cong_viec, ly_do):
         cv = self._viec(du_an, ma_cong_viec)
         nd = self._nguoi()

@@ -153,6 +153,8 @@ class QuyTrinhDialog(tk.Toplevel):
             ("Duyệt việc", self._duyet),
             ("Từ chối việc", self._tu_choi),
             ("Gửi lại", self._gui_lai),
+            ("Duyệt HT", self._duyet_ht),
+            ("Từ chối HT", self._tu_choi_ht),
             ("Duyệt mở lại", self._mo_lai),
             ("Từ chối mở lại", self._tu_choi_mo_lai),
             ("Duyệt gia hạn", self._gia_han),
@@ -177,9 +179,12 @@ class QuyTrinhDialog(tk.Toplevel):
     def nap(self):
         self.tree.delete(*self.tree.get_children())
         for cv in self.du_an.cong_viec:
+            cho_ht = cv.trang_thai == "Kiểm tra" and cv.trang_thai_duyet == "da_duyet"
             if (cv.trang_thai == "Đã hủy" or cv.trang_thai_duyet in ("cho_duyet", "tu_choi") or
-                    cv.yeu_cau_mo_lai or cv.yeu_cau_gia_han):
-                yeu_cau = "Mở lại" if cv.yeu_cau_mo_lai else "Gia hạn" if cv.yeu_cau_gia_han else ""
+                    cho_ht or cv.yeu_cau_mo_lai or cv.yeu_cau_gia_han):
+                yeu_cau = ("Mở lại" if cv.yeu_cau_mo_lai else
+                           "Gia hạn" if cv.yeu_cau_gia_han else
+                           "Duyệt HT" if cho_ht else "")
                 self.tree.insert("", "end", iid=cv.ma_cong_viec,
                                  values=(cv.ma_cong_viec, cv.tieu_de, cv.trang_thai,
                                          cv.trang_thai_duyet, yeu_cau, self._mo_ta_chi_tiet(cv)))
@@ -206,6 +211,19 @@ class QuyTrinhDialog(tk.Toplevel):
 
     def _gui_lai(self):
         self._chay(self.ql.gui_lai_cong_viec)
+
+    def _duyet_ht(self):
+        self._chay(self.ql.duyet_hoan_thanh)
+
+    def _tu_choi_ht(self):
+        chon = self.tree.selection()
+        if not chon:
+            messagebox.showinfo("Chưa chọn", "Hãy chọn công việc", parent=self)
+            return
+        ly_do = simpledialog.askstring("Từ chối hoàn thành", "Nhập lý do từ chối:", parent=self)
+        if ly_do is None:
+            return
+        self._chay(lambda du_an, ma: self.ql.duyet_hoan_thanh(du_an, ma, False, ly_do))
 
     def _mo_lai(self):
         self._chay(self.ql.duyet_mo_lai)
