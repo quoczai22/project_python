@@ -210,6 +210,40 @@ class CongViecService:
             logger.error(f"Rollback: Đã gỡ bỏ bình luận '{bl.ma_binh_luan}' do lỗi lưu trữ: {err}")
             raise LoiLuuTruError(f"Thêm bình luận thất bại: {err}", loi_goc=err)
 
+    # ==================== ĐỒNG BỘ BÌNH LUẬN TỪ MÁY KHÁC (WebSocket) ====================
+    def ap_dung_binh_luan_tu_xa(self, du_an: DuAn, ma_cong_viec: str, du_lieu_bl: dict):
+        """Ghi bình luận nhận từ server vào công việc. Bỏ qua nếu đã có (trùng mã).
+
+        Trả về BinhLuan vừa thêm, hoặc None nếu không có gì thay đổi.
+        """
+        cv = du_an.tim_cong_viec_theo_ma(ma_cong_viec) if du_an else None
+        if cv is None:
+            return None
+        bl = BinhLuan.from_dict(du_lieu_bl)
+        if any(b.ma_binh_luan == bl.ma_binh_luan for b in cv.danh_sach_binh_luan):
+            return None
+        cv.them_binh_luan(bl)
+        try:
+            self.du_an_service.luu_du_lieu()
+        except Exception as err:
+            cv.xoa_binh_luan(bl.ma_binh_luan)  # ROLLBACK
+            raise LoiLuuTruError(f"Lưu bình luận đồng bộ thất bại: {err}", loi_goc=err)
+        logger.info(f"Đã nhận bình luận '{bl.ma_binh_luan}' của '{bl.nguoi_gui}' trên '{ma_cong_viec}'")
+        return bl
+
+    def ap_dung_xoa_binh_luan_tu_xa(self, du_an: DuAn, ma_cong_viec: str, ma_binh_luan: str):
+        """Xóa bình luận theo thông báo từ server. Trả về True nếu có xóa."""
+        cv = du_an.tim_cong_viec_theo_ma(ma_cong_viec) if du_an else None
+        if cv is None or not any(b.ma_binh_luan == ma_binh_luan for b in cv.danh_sach_binh_luan):
+            return False
+        bl = cv.xoa_binh_luan(ma_binh_luan)
+        try:
+            self.du_an_service.luu_du_lieu()
+        except Exception as err:
+            cv.them_binh_luan(bl)  # ROLLBACK
+            raise LoiLuuTruError(f"Lưu thao tác xóa bình luận đồng bộ thất bại: {err}", loi_goc=err)
+        return True
+
     def xoa_binh_luan_cong_viec(self, du_an: DuAn, ma_cong_viec: str, ma_binh_luan: str):
         """Xóa bình luận khỏi công việc (người tạo hoặc quản trị viên có quyền)."""
         self.xac_thuc_service.kiem_tra_quyen_du_an(du_an, bat_loi=True)

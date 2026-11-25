@@ -4,6 +4,8 @@ Cách chạy:
     - Chạy bình thường (giao diện đăng nhập):  python main.py
     - Chạy thẳng với quyền Admin:              python main.py --admin
     - Chạy chế độ Terminal/CLI:               python main.py --cli
+    - Bật bình luận realtime (WebSocket):      python main.py --chat ws://192.168.1.10:8765
+      (hoặc đặt biến môi trường KANBAN_CHAT_URL; server chạy bằng `python chat_server.py`)
 """
 import os
 import shutil
@@ -82,6 +84,36 @@ def chuan_bi_du_lieu_khi_dong_goi():
             logger.error(f"Không chép được dữ liệu mẫu (thư mục có thể không cho ghi): {loi}")
 
 
+def lay_dia_chi_chat(argv=None):
+    """Lấy địa chỉ server bình luận từ `--chat <url>` hoặc biến môi trường KANBAN_CHAT_URL."""
+    argv = sys.argv if argv is None else argv
+    if "--chat" in argv:
+        i = argv.index("--chat")
+        if i + 1 < len(argv) and not argv[i + 1].startswith("--"):
+            return argv[i + 1]
+        logger.warning("Thiếu địa chỉ sau --chat, ví dụ: --chat ws://192.168.1.10:8765")
+        return None
+    return os.environ.get("KANBAN_CHAT_URL") or None
+
+
+def ket_noi_chat(ql: QuanLyKanban, url):
+    """Gắn ChatClient vào ql nếu có địa chỉ server; lỗi thì chạy ngoại tuyến như cũ."""
+    if not url:
+        return None
+    try:
+        from services.chat_client import ChatClient
+        client = ChatClient(url)
+    except ImportError:
+        logger.warning("Chưa cài thư viện 'websockets' (pip install -r requirements.txt); bình luận chạy ngoại tuyến.")
+        return None
+    except ValueError as loi:
+        logger.warning(f"{loi}; bình luận chạy ngoại tuyến.")
+        return None
+    client.bat_dau()
+    ql.chat = client
+    return client
+
+
 def main():
     chuan_bi_du_lieu_khi_dong_goi()
     logger.info("Khởi động Ứng dụng Quản lý Kanban...")
@@ -90,7 +122,12 @@ def main():
     if "--cli" in sys.argv:
         chay_che_do_cli(ql)
     else:
-        chay_giao_dien(ql)
+        client = ket_noi_chat(ql, lay_dia_chi_chat())
+        try:
+            chay_giao_dien(ql)
+        finally:
+            if client is not None:
+                client.dung()
 
 if __name__ == "__main__":
     main()
