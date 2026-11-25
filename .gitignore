@@ -27,6 +27,11 @@ Thumbs.db
 REPORT_QUAN_LY_KANBAN.md
 REPORT_CLAUDE_MODEL_REVIEW.md
 XUAT_CODE_DE_REVIEW.md
+CHUAN_BI_BAO_CAO_LAN_1.md
+PIPELINE_PHU.md
+deliverables/
+BaoCao_*.txt
+**/BaoCao_*.txt
 
 # Bản sao lưu tự động của tầng lưu trữ JSON
 backup/
